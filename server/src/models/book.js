@@ -11,8 +11,15 @@ const bookSchema = new mongoose.Schema({
   },
   image: {
     type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    default: 0,
   },
   description: String,
+  review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
 });
 
 const Book = mongoose.model("Book", bookSchema, "books");

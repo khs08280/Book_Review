@@ -61,13 +61,26 @@ export const login = async (req, res) => {
     user.token = token;
     await user.save();
 
-    res
-      .cookie("x_auth", token, { httpOnly: true })
-      .status(200)
-      .json({ loginSuccess: true, userId: user._id, message: "로그인 성공" });
-    console.log(user);
+    res.cookie("x_auth", token, { httpOnly: true }).status(200).json({
+      loginSuccess: true,
+      userId: user._id,
+      token,
+      message: "로그인 성공",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "서버 에러" });
   }
+};
+
+export const logout = (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" })
+    .then((user) => {
+      return res
+        .status(200)
+        .send({ success: true, message: "로그아웃에 성공했습니다." });
+    })
+    .catch((err) => {
+      if (err) return res.json({ success: false, err });
+    });
 };
