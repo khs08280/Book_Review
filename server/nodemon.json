@@ -1,0 +1,6 @@
+{
+  "watch": ["src", "index.js"],
+  "ext": "js,json",
+  "ignore": ["/src/api/__tests__"],
+  "exec": "babel-node index.js"
+}
