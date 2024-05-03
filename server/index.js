@@ -19,6 +19,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+// saveScrapedData();
 app.use("/api", router);
 
 app.listen(port, () => {

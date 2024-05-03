@@ -1,6 +1,5 @@
 import express from "express";
 import bookRouter from "./books.js";
-import mongoose from "mongoose";
 import userRouter from "./users.js";
 
 const apiRouter = express.Router();

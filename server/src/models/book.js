@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const bookSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
   },
@@ -15,10 +15,29 @@ const bookSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    required: true,
     default: 0,
   },
-  description: String,
+  publisher: {
+    type: String,
+    required: true,
+  },
+  pubDate: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+  },
+  genre: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  description: {
+    type: String,
+    required: true,
+  },
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
 });
 

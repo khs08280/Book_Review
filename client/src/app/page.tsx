@@ -1,8 +1,25 @@
+"use client";
+import axios from "axios";
 import { BookList } from "../components/book-list";
 import { Header } from "../components/header";
 import { SideBar } from "../components/sideBar";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/books");
+        console.log(response.data);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <Header />

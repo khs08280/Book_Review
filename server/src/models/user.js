@@ -36,9 +36,6 @@ const userSchema = mongoose.Schema({
   token: {
     type: String,
   },
-  tokenExp: {
-    type: Number,
-  },
   introduce: String,
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   communityArticles: [
