@@ -57,7 +57,7 @@ export const join = async (req, res) => {
     console.error(error);
     return res
       .status(500)
-      .json({ success: false, error: "회원가입 중 에러 발생" });
+      .json({ success: false, error: "회원가입 중 에러가 발생했습니다" });
   }
 };
 
@@ -102,11 +102,13 @@ export const login = async (req, res) => {
       loginSuccess: true,
       userId: user._id,
       token,
-      message: "로그인 성공",
+      message: "로그인에 성공했습니다",
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ loginSuccess: false, error: "서버 에러" });
+    return res
+      .status(500)
+      .json({ loginSuccess: false, error: "서버 에러가 발생했습니다" });
   }
 };
 
@@ -128,6 +130,6 @@ export const logout = async (req, res) => {
     console.error(error);
     return res
       .status(500)
-      .json({ success: false, error: "로그아웃 도중 에러 발생" });
+      .json({ success: false, error: "로그아웃 도중 에러가 발생했습니다" });
   }
 };
