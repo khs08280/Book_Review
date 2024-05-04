@@ -15,6 +15,16 @@ const communityCommentSchema = mongoose.Schema({
     ref: "CommunityArticle",
     required: true,
   },
+  parentComment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "CommunityComment",
+  },
+  children: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CommunityComment",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

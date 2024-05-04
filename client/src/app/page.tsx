@@ -9,7 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 
 const fetchData = async () => {
   const response = await axios.get("http://localhost:5000/api/books");
-  return response.data;
+  console.log(response);
+  return response.data.data;
 };
 
 export default function Home() {

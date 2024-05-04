@@ -19,7 +19,32 @@ const reviewSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  rating: Number,
+  likes: {
+    type: Number,
+    default: 0,
+  },
+  dislikes: {
+    type: Number,
+    default: 0,
+  },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
+  isRecommended: {
+    type: Boolean,
+    default: false,
+  },
+  modifiedAt: {
+    type: Date,
+    default: null,
+  },
+  rating: {
+    type: Number,
+    default: null,
+  },
 });
 
 const Review = mongoose.model("Review", reviewSchema, "reviews");

@@ -4,9 +4,28 @@ import User from "../models/user.js";
 export const CReview = async (req, res) => {
   try {
     const { content, authorId, bookId, rating } = req.body;
+    if (content.trim() == "") {
+      return res
+        .status(422)
+        .json({ error: "아이디를 입력해주세요", success: false });
+    }
+    if (!content || !authorId || !bookId) {
+      return res.status(422).json({
+        error: "요청에 필요한 데이터가 올바르지 않습니다",
+        success: false,
+      });
+    }
     const isAuthor = await User.findById(authorId);
     if (!isAuthor) {
-      return res.status(400).json({ error: "User not found", success: false });
+      return res
+        .status(400)
+        .json({ error: "유저를 찾을 수 없습니다", success: false });
+    }
+    const isBookExists = await Book.findById(bookId);
+    if (!isBookExists) {
+      return res
+        .status(404)
+        .json({ error: "책을 찾을 수 없습니다", success: false });
     }
 
     const reviewData = {
@@ -23,11 +42,9 @@ export const CReview = async (req, res) => {
 
     await review.save();
 
-    res
-      .status(201)
-      .json({ data: review, success: true, message: "리뷰 등록 성공" });
+    res.status(201).json({ data: review, success: true });
   } catch (error) {
-    console.error("Error creating review:", error);
+    console.error("Error creating review: ", error);
     res.status(500).json({ error: "Failed to create review", success: false });
   }
 };
@@ -39,7 +56,6 @@ export const RReview = async (req, res) => {
     res.status(200).json({
       data: reviews,
       success: true,
-      message: "모든 리뷰 가져오기 성공",
     });
   } catch (error) {
     console.log(error);
@@ -48,21 +64,26 @@ export const RReview = async (req, res) => {
       .json({ error: "리뷰를 가져오는 중 에러 발생", success: false });
   }
 };
+
 export const UReview = async (req, res) => {
   const { content, reviewId } = req.body;
+  if (!content.trim() || !reviewId) {
+    return res.status(422).json({
+      error: "요청에 필요한 content 혹은 reviewId가 없습니다",
+      success: false,
+    });
+  }
 
   try {
     const updateReview = await Review.findByIdAndUpdate(
       reviewId,
-      { content },
+      { content, modifiedAt: new Date() },
       { new: true }
     )
       .populate("author")
       .populate("book");
 
-    res
-      .status(201)
-      .json({ data: updateReview, message: "리뷰 수정 성공", success: true });
+    res.status(200).json({ data: updateReview, success: true });
   } catch (error) {
     console.log(error);
     res
@@ -72,9 +93,15 @@ export const UReview = async (req, res) => {
 };
 export const DReview = async (req, res) => {
   const { reviewId } = req.body;
+  if (!reviewId) {
+    return res.status(422).json({
+      error: "요청에 필요한 reviewId가 없습니다",
+      success: false,
+    });
+  }
   try {
     await Review.findByIdAndDelete(reviewId);
-    res.status(200).json({ message: "리뷰 삭제 성공", success: true });
+    res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "리뷰 삭제 중 에러 발생", success: false });

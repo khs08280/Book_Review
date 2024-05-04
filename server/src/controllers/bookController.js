@@ -3,10 +3,12 @@ import Book from "../models/book.js";
 export const bookList = async (req, res, next) => {
   try {
     const books = await Book.find();
-    res.send(books);
+    return res.status(200).json({ data: books, success: true });
   } catch (error) {
     console.error("Error fetching books:", error);
-    res.status(500).json({ error: "Failed to fetch books" });
+    return res
+      .status(500)
+      .json({ error: "책 리스트를 불러오는 중 에러 발생", success: false });
   }
 };
 export const hotBooks = (req, res) => {};

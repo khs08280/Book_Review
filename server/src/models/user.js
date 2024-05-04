@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema({
   nickname: {
     type: String,
     unique: 1,
-    maxlength: 16,
+    maxlength: 8,
     required: true,
   },
   role: {
