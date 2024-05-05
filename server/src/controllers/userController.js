@@ -155,3 +155,46 @@ export const myInfo = async (req, res) => {
         .json({ error: "유저 데이터를 불러오는 중 에러가 발생했습니다" });
     });
 };
+
+export const deleteAccount = async (req, res) => {
+  const { userId, password, ...otherData } = req.body;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+  try {
+    if (!userId || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "사용자 ID와 비밀번호를 입력해주세요.",
+      });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "해당 사용자를 찾을 수 없습니다." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ success: false, message: "비밀번호가 일치하지 않습니다." });
+    }
+
+    await user.deleteOne();
+
+    res
+      .status(200)
+      .json({ success: true, message: "계정이 성공적으로 삭제되었습니다." });
+  } catch (error) {
+    console.error("계정 삭제 중 오류:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};

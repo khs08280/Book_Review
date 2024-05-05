@@ -7,15 +7,17 @@ import {
   webFictions,
   handleRecommend,
 } from "../controllers/bookController.js";
+import auth from "../middleware/auth.js";
 
 const bookRouter = express.Router();
 
 bookRouter.get("/", bookList);
+
 bookRouter.get("/hot-books", hotBooks);
 bookRouter.get("/new-books", newBooks);
 bookRouter.get("/web-fictions", webFictions);
 
 bookRouter.post("/", createBook);
-bookRouter.post("/recommend", handleRecommend);
+bookRouter.post("/recommend", auth, handleRecommend);
 
 export default bookRouter;

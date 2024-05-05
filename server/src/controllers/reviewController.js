@@ -172,6 +172,13 @@ export const handleLike = async (req, res) => {
   }
 
   try {
+    if (!userId || !reviewId) {
+      return res.status(400).json({
+        success: false,
+        error: "사용자 ID와 리뷰 ID를 모두 제공해야 합니다.",
+      });
+    }
+
     const review = await Review.findById(reviewId);
 
     if (!review) {
