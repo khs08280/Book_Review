@@ -1,23 +1,20 @@
 import Book from "../models/book.js";
+import User from "../models/user.js";
 
 export const bookList = async (req, res, next) => {
   try {
     const books = await Book.find();
-    return res
-      .status(200)
-      .json({
-        data: books,
-        success: true,
-        message: "모든 책 리스트를 불러왔습니다",
-      });
+    return res.status(200).json({
+      data: books,
+      success: true,
+      message: "모든 책 리스트를 불러왔습니다",
+    });
   } catch (error) {
     console.error("Error fetching books:", error);
-    return res
-      .status(500)
-      .json({
-        error: "책 리스트를 불러오는 중 에러가 발생했습니다",
-        success: false,
-      });
+    return res.status(500).json({
+      error: "책 리스트를 불러오는 중 에러가 발생했습니다",
+      success: false,
+    });
   }
 };
 export const hotBooks = (req, res) => {};
@@ -60,26 +57,64 @@ export const createBook = async (req, res, next) => {
   }
 };
 
-// async function scrapeWebPage(url) {
-//   try {
-//     const response = await axios.get(url);
-//     const $ = cheerio.load(response.data);
-//     // 원하는 정보가 있는 CSS 선택자를 사용하여 요소를 선택합니다.
-//     const title = $("h2").text(); // 예시: 웹페이지의 제목을 가져옵니다.
-//     console.log(title);
-//     return title;
-//   } catch (error) {
-//     console.error("Error fetching web page:", error);
-//   }
-// }
+export const handleRecommend = async (req, res) => {
+  const { userId, bookId, action, ...otherData } = req.body;
 
-// export async function saveScrapedData() {
-//   const url =
-//     "https://search.shopping.naver.com/book/catalog/32455965639?query=%EC%A7%80%EC%A0%81%EB%8C%80%ED%99%94%EB%A5%BC&NaPm=ct%3Dlvoz6hmo%7Cci%3Db5d5e62fd6557cc60e6e162bcb256d4d41a1a102%7Ctr%3Dboksl%7Csn%3D95694%7Chk%3D267a6513cfbcce8da3681ec17de8eadff8fbd7b0"; // 스크래핑할 웹페이지의 URL
-//   const title = await scrapeWebPage(url);
-//   // 스크래핑한 제목을 Book 모델에 저장합니다.
-//   // const book = new Book({
-//   //   title: title,
-//   // });
-//   // await book.save(); // 스크래핑한 제목을 데이터베이스에 저장합니다.
-// }
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "사용자를 찾을 수 없습니다." });
+    }
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res
+        .status(404)
+        .json({ success: false, message: "책을 찾을 수 없습니다." });
+    }
+
+    if (!book.recommendations) {
+      book.recommendations = [];
+    }
+
+    const userIndex = user.recommendedBooks.indexOf(bookId);
+    const bookIndex = book.recommendations.indexOf(userId);
+
+    if (bookIndex !== -1) {
+      user.recommendedBooks.splice(userIndex, 1);
+      book.recommendations.splice(bookIndex, 1);
+      await user.save();
+      await book.save();
+      const recommendations = book.recommendations.length;
+      res.status(200).json({
+        success: true,
+        recommendations,
+        message: "책 추천을 취소했습니다.",
+      });
+    } else {
+      user.recommendedBooks.push(bookId);
+      book.recommendations.push(userId);
+      await user.save();
+      await book.save();
+      const recommendations = book.recommendations.length;
+      res.status(200).json({
+        success: true,
+        recommendations,
+        message: "책을 성공적으로 추천했습니다.",
+      });
+    }
+  } catch (error) {
+    console.error("책 추천 처리 중 오류:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};

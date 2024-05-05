@@ -19,20 +19,6 @@ const reviewSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  likes: {
-    type: Number,
-    default: 0,
-  },
-  dislikes: {
-    type: Number,
-    default: 0,
-  },
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Review",
-    },
-  ],
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,

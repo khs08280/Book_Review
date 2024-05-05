@@ -5,6 +5,7 @@ import {
   hotBooks,
   newBooks,
   webFictions,
+  handleRecommend,
 } from "../controllers/bookController.js";
 
 const bookRouter = express.Router();
@@ -15,5 +16,6 @@ bookRouter.get("/new-books", newBooks);
 bookRouter.get("/web-fictions", webFictions);
 
 bookRouter.post("/", createBook);
+bookRouter.post("/recommend", handleRecommend);
 
 export default bookRouter;

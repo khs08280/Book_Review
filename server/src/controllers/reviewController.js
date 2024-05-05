@@ -162,7 +162,14 @@ export const DReview = async (req, res) => {
 };
 
 export const handleLike = async (req, res) => {
-  const { userId, reviewId } = req.body;
+  const { userId, reviewId, ...otherData } = req.body;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
 
   try {
     const review = await Review.findById(reviewId);
