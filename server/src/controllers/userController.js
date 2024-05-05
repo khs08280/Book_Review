@@ -133,3 +133,25 @@ export const logout = async (req, res) => {
       .json({ success: false, error: "로그아웃 도중 에러가 발생했습니다" });
   }
 };
+
+export const myInfo = async (req, res) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: "올바른 요청이 아닙니다." });
+  }
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ error: "유저를 찾을 수 없습니다" });
+      }
+      res.status(200).json({ data: user });
+    })
+    .catch((err) => {
+      console.error("Error fetching user:", err);
+      res
+        .status(500)
+        .json({ error: "유저 데이터를 불러오는 중 에러가 발생했습니다" });
+    });
+};

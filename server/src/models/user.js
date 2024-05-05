@@ -44,9 +44,7 @@ const userSchema = mongoose.Schema({
   communityComments: [
     { type: mongoose.Schema.Types.ObjectId, ref: "CommunityComment" },
   ],
-  communityRecomments: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "CommunityRecomment" },
-  ],
+  recommendedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
 });
 
 userSchema.pre("save", async function (next) {

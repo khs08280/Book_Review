@@ -33,10 +33,12 @@ const reviewSchema = mongoose.Schema({
       ref: "Review",
     },
   ],
-  isRecommended: {
-    type: Boolean,
-    default: false,
-  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   modifiedAt: {
     type: Date,
     default: null,

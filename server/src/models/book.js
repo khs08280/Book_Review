@@ -39,6 +39,7 @@ const bookSchema = new mongoose.Schema({
     required: true,
   },
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+  recommendations: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 const Book = mongoose.model("Book", bookSchema, "books");

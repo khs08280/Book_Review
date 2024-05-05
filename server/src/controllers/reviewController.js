@@ -38,15 +38,15 @@ export const CReview = async (req, res) => {
         .status(404)
         .json({ error: "리뷰를 등록할 책을 찾을 수 없습니다", success: false });
     }
-    if (rating !== undefined) {
-      reviewData.rating = rating;
-    }
 
     const reviewData = {
       content,
       author: authorId,
       book: bookId,
     };
+    if (rating !== undefined) {
+      reviewData.rating = rating;
+    }
 
     const review = new Review(reviewData);
     await review.save();
@@ -67,8 +67,11 @@ export const CReview = async (req, res) => {
 };
 
 export const RReview = async (req, res) => {
+  const bookId = req.params.bookId;
   try {
-    const reviews = await Review.find().populate("author").populate("book");
+    const reviews = await Review.find({ book: bookId })
+      .select("content author rating createdAt modifiedAt")
+      .populate("author", "username nickname");
 
     res.status(200).json({
       data: reviews,
@@ -155,5 +158,43 @@ export const DReview = async (req, res) => {
     res
       .status(500)
       .json({ error: "리뷰 삭제 중 에러가 발생했습니다", success: false });
+  }
+};
+
+export const handleLike = async (req, res) => {
+  const { userId, reviewId } = req.body;
+
+  try {
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "리뷰를 찾을 수 없습니다." });
+    }
+    if (!review.likes) {
+      review.likes = [];
+    }
+
+    const userIndex = review.likes.indexOf(userId);
+
+    if (userIndex !== -1) {
+      review.likes.splice(userIndex, 1);
+    } else {
+      review.likes.push(userId);
+    }
+
+    await review.save();
+
+    const likes = review.likes.length;
+
+    res
+      .status(200)
+      .json({ success: true, likes, message: "리뷰에 좋아요를 추가했습니다." });
+  } catch (error) {
+    console.error("좋아요 추가 중 오류:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "서버 오류가 발생했습니다." });
   }
 };
