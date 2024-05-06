@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
   token: {
     type: String,
   },
-  introduce: String,
+  introduction: String,
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   communityArticles: [
     { type: mongoose.Schema.Types.ObjectId, ref: "CommunityArticle" },
@@ -61,6 +61,13 @@ userSchema.pre("save", async function (next) {
     return next(err);
   }
 });
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  const user = this;
+
+  const isMatch = await bcrypt.compare(candidatePassword, user.password);
+  return isMatch;
+};
 
 const User = mongoose.model("User", userSchema, "users");
 export default User;

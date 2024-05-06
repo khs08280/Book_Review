@@ -11,7 +11,7 @@ export default function ReactQueryProivers({
       defaultOptions: {
         queries: {
           refetchOnWindowFocus: false,
-          refetchOnMount: false,
+          refetchOnMount: true,
           retry: 1,
         },
       },

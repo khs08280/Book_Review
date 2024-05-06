@@ -19,6 +19,7 @@ export default function Home() {
     isLoading,
     error,
   } = useQuery({ queryKey: ["books"], queryFn: fetchData });
+
   return (
     <>
       <Header />

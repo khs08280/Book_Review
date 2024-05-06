@@ -179,11 +179,11 @@ export const deleteAccount = async (req, res) => {
         .json({ success: false, message: "해당 사용자를 찾을 수 없습니다." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res
-        .status(401)
-        .json({ success: false, message: "비밀번호가 일치하지 않습니다." });
+        .status(400)
+        .json({ success: false, message: "비밀번호가 잘못되었습니다." });
     }
 
     await user.deleteOne();
@@ -196,5 +196,95 @@ export const deleteAccount = async (req, res) => {
     res
       .status(500)
       .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};
+
+export const updateIntroduce = async (req, res) => {
+  const { content, userId, ...otherData } = req.body;
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, error: "사용자를 찾을 수 없습니다." });
+    }
+
+    user.introduction = content;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "자기소개가 성공적으로 수정되었습니다.",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, error: "자기소개 수정 중 오류가 발생했습니다" });
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  const { password, checkPassword, newPassword, userId, ...otherData } =
+    req.body;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  if (password !== checkPassword) {
+    return res.status(400).json({
+      success: false,
+      error: "비밀번호와 비밀번호확인이 다릅니다.",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, error: "사용자를 찾을 수 없습니다." });
+    }
+
+    const isMatch = await user.comparePassword(password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        error: "현재 비밀번호가 일치하지 않습니다.",
+      });
+    }
+    if (password === newPassword) {
+      return res.status(400).json({
+        success: false,
+        error: "새로운 비밀번호는 현재 비밀번호와 동일할 수 없습니다.",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "비밀번호가 성공적으로 수정되었습니다.",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(400)
+      .json({ success: false, error: "비밀번호 수정 중 에러가 발생했습니다." });
   }
 };
