@@ -1,14 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import { HiMenu } from "react-icons/hi";
 
 export function SideBar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
   return (
     <div className="p-5 w-52 h-screen border-r border-solid border-black fixed">
       <ul>

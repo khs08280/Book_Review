@@ -8,9 +8,17 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchData = async () => {
-  const response = await axios.get("http://localhost:5000/api/books");
-  console.log(response);
-  return response.data.data;
+  try {
+    const response = await fetch("http://localhost:5000/api/books");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
+  }
 };
 
 export default function Home() {
