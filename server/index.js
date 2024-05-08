@@ -5,13 +5,15 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import db from "./db.js";
-import compression from "compression";
 import morgan from "morgan";
 import helmet from "helmet";
+import session from "express-session";
+import passport from "passport";
+import passportConfig from "./src/passport/index.js";
 
 dotenv.config();
 const app = express();
-const port = process.env.SERVER_PORT;
+passportConfig();
 
 app.use(
   cors({
@@ -35,11 +37,23 @@ app.use(
     ].join(" ");
   })
 );
-app.use(cookieParser());
-app.use(compression());
-// saveScrapedData();
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/api", router);
 
-app.listen(port, () => {
-  console.log(`Express server is listening on port ${port}`);
+app.listen(process.env.SERVER_PORT, () => {
+  console.log(`Express server is listening on port ${process.env.SERVER_PORT}`);
 });

@@ -1,16 +1,17 @@
 "use client";
 
 import { Header } from "@/src/components/header";
-import { Loginstate } from "@/src/states/atoms";
+import { loginStateAtom, isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const setIsLoggedIn = useSetRecoilState(Loginstate);
+  const [loginstate, setLoginState] = useRecoilState(loginStateAtom);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const router = useRouter();
   const data = {
     username,
@@ -25,10 +26,13 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         mode: "cors",
       });
-      console.log(await response.json());
-      if (response.status == 200) {
+      if (response.status === 200) {
+        const responseData = await response.json();
+        setLoginState(responseData);
         setIsLoggedIn(true);
         router.push("/");
+      } else {
+        console.error("로그인 오류:", response.statusText);
       }
     } catch (error) {
       console.error("로그인 오류:", error);

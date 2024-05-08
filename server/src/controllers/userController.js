@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
+import passport from "passport";
 
 export const join = async (req, res) => {
   const { username, email, password, nickname } = req.body;
@@ -62,76 +63,32 @@ export const join = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { username, password, ...otherData } = req.body;
-  if (Object.keys(otherData).length !== 0) {
-    return res.status(400).json({
-      loginSuccess: false,
-      error: "유효하지 않은 데이터가 포함되어 있습니다.",
-    });
-  }
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ loginSuccess: false, error: "모든 정보를 입력해주세요." });
-  }
-
-  try {
-    const user = await User.findOne({ username: username });
+  passport.authenticate("local", (authError, user, info) => {
+    if (authError) {
+      console.error(authError);
+      return next(authError);
+    }
     if (!user) {
-      return res.status(400).json({
-        loginSuccess: false,
-        error: "존재하지 않는 아이디입니다",
-      });
+      return res.send(`${info.message}`);
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        loginSuccess: false,
-        error: "비밀번호가 틀렸습니다.",
-      });
-    }
-
-    const token = jwt.sign({ userId: user._id }, "secretToken", {
-      expiresIn: "1h",
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      }
+      return res.send("로그인상태");
     });
-    user.token = token;
-    await user.save();
-
-    res.cookie("x_auth", token, { httpOnly: true }).status(200).json({
-      loginSuccess: true,
-      userId: user._id,
-      token,
-      message: "로그인에 성공했습니다",
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ loginSuccess: false, error: "서버 에러가 발생했습니다" });
-  }
+  })(req, res);
 };
 
 export const logout = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, error: "로그인되지 않았습니다." });
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
     }
-
-    await User.findOneAndUpdate({ _id: req.user._id }, { token: "" });
-    res.clearCookie("x_auth");
-
-    return res
-      .status(200)
-      .json({ success: true, message: "로그아웃에 성공했습니다." });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ success: false, error: "로그아웃 도중 에러가 발생했습니다" });
-  }
+    req.session.destroy();
+    res.send("로그아웃 했어");
+  });
 };
 
 export const myInfo = async (req, res) => {
