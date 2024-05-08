@@ -11,12 +11,18 @@ import {
 } from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import { isLoggedIn, isNotLoggedIn } from "../middleware/isLoggedIn.js";
+import passport from "passport";
 
 const userRouter = express.Router();
 
 userRouter.post("/login", login);
 userRouter.post("/join", join);
-userRouter.get("/logout", isLoggedIn, logout);
+userRouter.post(
+  "/logout",
+  isLoggedIn,
+  passport.authenticate("jwt", { session: false }),
+  logout
+);
 userRouter.get("/me", auth, myInfo);
 userRouter.post("/delete-account", auth, deleteAccount);
 userRouter.patch("/updateIntroduce", auth, updateIntroduce);

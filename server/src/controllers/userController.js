@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import passport from "passport";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const join = async (req, res) => {
   const { username, email, password, nickname } = req.body;
@@ -66,17 +68,43 @@ export const login = async (req, res) => {
   passport.authenticate("local", (authError, user, info) => {
     if (authError) {
       console.error(authError);
-      return next(authError);
+      return res
+        .status(500)
+        .json({ success: false, error: "인증 중 오류가 발생했습니다." });
     }
     if (!user) {
-      return res.send(`${info.message}`);
+      return res.status(401).json({ success: false, error: info.message });
     }
-    return req.login(user, (loginError) => {
+    return req.login(user, async (loginError) => {
       if (loginError) {
         console.error(loginError);
-        return next(loginError);
+        return res
+          .status(500)
+          .json({ success: false, error: "로그인 중 오류가 발생했습니다." });
       }
-      return res.send("로그인상태");
+      const accessToken = jwt.sign(
+        {
+          username: user.username,
+          userId: user._id,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30m",
+        }
+      );
+      const refreshToken = jwt.sign({}, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
+      user.token = refreshToken;
+      await user.save();
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      return res.status(200).json({
+        success: true,
+        accessToken,
+      });
     });
   })(req, res);
 };
@@ -84,10 +112,10 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   req.logout(function (err) {
     if (err) {
-      return next(err);
+      return res.status(500).send("로그아웃 중에 오류가 발생했습니다.");
     }
     req.session.destroy();
-    res.send("로그아웃 했어");
+    res.status(200).send("로그아웃에 성공했습니다.");
   });
 };
 

@@ -1,6 +1,7 @@
 import passport from "passport";
 import local from "./localStrategy.js";
 import User from "../models/user.js";
+import jwtSt from "./jwtStrategy.js";
 
 const passportConfig = () => {
   passport.serializeUser((user, done) => {
@@ -17,5 +18,6 @@ const passportConfig = () => {
       .catch((err) => done(err));
   });
   local();
+  jwtSt();
 };
 export default passportConfig;
