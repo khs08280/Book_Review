@@ -8,6 +8,7 @@ import {
   logout,
   myInfo,
   updatePassword,
+  reAccessToken,
 } from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import { isLoggedIn, isNotLoggedIn } from "../middleware/isLoggedIn.js";
@@ -27,5 +28,6 @@ userRouter.get("/me", auth, myInfo);
 userRouter.post("/delete-account", auth, deleteAccount);
 userRouter.patch("/updateIntroduce", auth, updateIntroduce);
 userRouter.patch("/updatePassword", auth, updatePassword);
+userRouter.get("/refresh", reAccessToken);
 
 export default userRouter;

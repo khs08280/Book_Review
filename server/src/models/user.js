@@ -33,7 +33,7 @@ const userSchema = mongoose.Schema({
     default: 0, // 0은 일반 유저, 1은 관리자
   },
   image: String,
-  token: {
+  refreshToken: {
     type: String,
   },
   introduction: String,

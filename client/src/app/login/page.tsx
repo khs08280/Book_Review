@@ -10,7 +10,6 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loginstate, setLoginState] = useRecoilState(loginStateAtom);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const router = useRouter();
   const data = {
@@ -25,10 +24,11 @@ export default function Login() {
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" },
         mode: "cors",
+        credentials: "include",
       });
       if (response.status === 200) {
         const responseData = await response.json();
-        setLoginState(responseData);
+        localStorage.setItem("accessToken", responseData.accessToken);
         setIsLoggedIn(true);
         router.push("/");
       } else {
@@ -42,7 +42,6 @@ export default function Login() {
 
   return (
     <>
-      <Header />
       <div className="h-screen p-40 bg-light-lightest flex flex-col items-center justify-start">
         <div className="border-2 border-solid border-green-400 rounded-lg py-10 px-32 mb-5 flex flex-col items-center h-fit bg-white">
           <span className="text-3xl mb-20">로그인</span>

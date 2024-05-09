@@ -1,23 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { getCookie } from "../utils/react-cookie";
+import { isExpired } from "../hooks/isExpired";
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const router = useRouter();
+  const accessToken = localStorage.getItem("accessToken");
+  isExpired(accessToken);
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
+      if (!accessToken || (await isExpired(accessToken))) {
+        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        return;
+      }
       const response = await fetch("http://localhost:5000/api/users/logout", {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         credentials: "include",
+        method: "POST",
       });
-      if (response.status == 200) {
+      if (response.status === 200) {
         setIsLoggedIn(false);
         router.push("/");
       } else {
@@ -27,7 +39,6 @@ export function Header() {
       console.error("로그아웃 오류:", error);
     }
   };
-
   return (
     <header className="bg-light-lighter dark:bg-dark-darker flex max-w-full justify-between px-8 py-5 items-center shadow sticky top-0 ">
       <Link href={"/"}>

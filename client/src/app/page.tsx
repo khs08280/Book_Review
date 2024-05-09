@@ -1,8 +1,6 @@
 "use client";
 
-import axios from "axios";
 import { BookList } from "../components/book-list";
-import { Header } from "../components/header";
 import { SideBar } from "../components/sideBar";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +28,6 @@ export default function Home() {
 
   return (
     <>
-      <Header />
       <SideBar />
       <div className=" h-full p-5 ml-52 bg-slate-400 flex">
         <div className="w-4/6  grid gap-5 grid-cols-2 grid-rows-4 mr-5">

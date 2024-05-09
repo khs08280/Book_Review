@@ -95,11 +95,11 @@ export const login = async (req, res) => {
       const refreshToken = jwt.sign({}, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      user.token = refreshToken;
+      user.refreshToken = refreshToken;
       await user.save();
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
+        path: "/",
       });
       return res.status(200).json({
         success: true,
@@ -271,5 +271,48 @@ export const updatePassword = async (req, res) => {
     res
       .status(400)
       .json({ success: false, error: "비밀번호 수정 중 에러가 발생했습니다." });
+  }
+};
+
+export const reAccessToken = async (req, res) => {
+  try {
+    if (!req.headers.authorization) {
+      return res
+        .status(400)
+        .json({ error: "요청에 필요한 refreshToken이 없습니다." });
+    }
+
+    const refreshToken = req.headers.authorization.split("Bearer ")[1];
+
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: "요청 토큰에 일치하는 유저가 없습니다." });
+    }
+    const currentTime = new Date();
+    const tokenExpiration = new Date(user.refreshToken.expiresAt);
+
+    if (currentTime > tokenExpiration) {
+      req.logout();
+      req.session.destroy();
+      return res.status(401).json({ error: "만료된 refreshToken입니다." });
+    }
+    const newAccessToken = jwt.sign(
+      {
+        username: user.username,
+        userId: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "30m",
+      }
+    );
+    return res
+      .status(200)
+      .json({ message: "refresh 성공", success: true, newAccessToken });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "토큰 재발급 요청 중 에러가 발생했습니다." });
   }
 };
