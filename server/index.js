@@ -10,6 +10,8 @@ import helmet from "helmet";
 import session from "express-session";
 import passport from "passport";
 import passportConfig from "./src/passport/index.js";
+import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
 
 dotenv.config();
 const app = express();
@@ -43,6 +45,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
+    store: MongoStore.create({
+      mongoUrl: `mongodb+srv://alsdnr122014:${process.env.MONGO_PASSWORD}@cluster0.pgdn31n.mongodb.net/project`,
+    }),
     cookie: {
       httpOnly: true,
       secure: false,

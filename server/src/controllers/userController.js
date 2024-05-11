@@ -120,7 +120,7 @@ export const logout = async (req, res) => {
 };
 
 export const myInfo = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   if (!userId) {
     return res.status(400).json({ error: "올바른 요청이 아닙니다." });
