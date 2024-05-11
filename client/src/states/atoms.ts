@@ -1,13 +1,13 @@
 import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
 
-const sessionStorage =
-  typeof window !== "undefined" ? window.sessionStorage : undefined;
-
-export const loginStateAtom = atom({
-  key: "LoginState",
-  default: {},
+const { persistAtom } = recoilPersist({
+  key: "isLoggedIn",
+  storage: typeof window !== "undefined" ? localStorage : undefined,
 });
+
 export const isLoggedInAtom = atom({
   key: "isLoggedIn",
   default: false,
+  effects_UNSTABLE: [persistAtom],
 });

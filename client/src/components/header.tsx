@@ -4,20 +4,27 @@ import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isExpired } from "../hooks/isExpired";
+import LocalStorage from "../hooks/localStorage";
 
 export function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [isLoggedIn, setClientExampleState] = useState("");
+  const [exampleState, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const router = useRouter();
-  const accessToken = localStorage.getItem("accessToken");
-  isExpired(accessToken);
+  useEffect(() => {
+    setClientExampleState(exampleState);
+  }, [exampleState]);
+
+  const accessToken = LocalStorage.getItem("accessToken");
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    const expired = await isExpired(accessToken);
+
     try {
-      if (!accessToken || (await isExpired(accessToken))) {
+      if (!accessToken || expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
         return;
       }
@@ -56,9 +63,9 @@ export function Header() {
           </button>
         ) : (
           <Link href={"/login"}>
-            <div className="py-2 p-4 transition-colors rounded text-white bg-green-500 hover:bg-green-600 text-lg ml-10">
+            <button className="py-2 p-4 transition-colors rounded text-white bg-green-500 hover:bg-green-600 text-lg ml-10">
               로그인
-            </div>
+            </button>
           </Link>
         )}
       </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { Header } from "@/src/components/header";
-import { loginStateAtom, isLoggedInAtom } from "@/src/states/atoms";
+import LocalStorage from "@/src/hooks/localStorage";
+import { isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -28,7 +29,7 @@ export default function Login() {
       });
       if (response.status === 200) {
         const responseData = await response.json();
-        localStorage.setItem("accessToken", responseData.accessToken);
+        LocalStorage.setItem("accessToken", responseData.accessToken);
         setIsLoggedIn(true);
         router.push("/");
       } else {
