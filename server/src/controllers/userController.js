@@ -40,7 +40,7 @@ export const join = async (req, res) => {
       });
     }
     if (existingEmail) {
-      return res.status(400).json({
+      return res.status(400).send({
         success: false,
         error: "이미 존재하는 이메일입니다.",
       });

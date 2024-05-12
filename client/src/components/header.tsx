@@ -10,9 +10,10 @@ import { isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
 
 export function Header() {
-  const [isLoggedIn, setClientExampleState] = useState("");
+  const [isLoggedIn, setClientExampleState] = useState(false);
   const [exampleState, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const router = useRouter();
+
   useEffect(() => {
     setClientExampleState(exampleState);
   }, [exampleState]);
@@ -47,7 +48,7 @@ export function Header() {
     }
   };
   return (
-    <header className="bg-light-lighter dark:bg-dark-darker flex max-w-full justify-between px-8 py-5 items-center shadow sticky top-0 ">
+    <header className="bg-light-lighter dark:bg-dark-darker flex max-w-full justify-between px-8 py-5 items-center shadow sticky top-0 z-10">
       <Link href={"/"}>
         <h1 className=" text-3xl ">BOOX</h1>
       </Link>

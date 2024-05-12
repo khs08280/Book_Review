@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/src/components/header";
 import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
@@ -12,6 +11,8 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [error, setError] = useState("");
+
   const router = useRouter();
   const data = {
     username,
@@ -33,7 +34,12 @@ export default function Login() {
         setIsLoggedIn(true);
         router.push("/");
       } else {
-        console.error("로그인 오류:", response.statusText);
+        const errorResponse = await response.json();
+        setError(errorResponse.error);
+        console.error("회원가입 오류:", response.statusText);
+        setTimeout(() => {
+          setError("");
+        }, 3000);
       }
     } catch (error) {
       console.error("로그인 오류:", error);
@@ -60,6 +66,7 @@ export default function Login() {
               className="p-4 h-10 cursor-pointer rounded-lg focus:outline-none rounded-t-none border-2 border-solid border-black border-opacity-20"
             />
           </div>
+          <span>{error}</span>
           <button
             onClick={handleLogin}
             className="w-full h-12 rounded-lg bg-green-400"
@@ -68,7 +75,7 @@ export default function Login() {
           </button>
         </div>
         <Link href={"/join"}>
-          <span>회원가입</span>
+          <span className=" hover:underline">회원가입</span>
         </Link>
       </div>
     </>
