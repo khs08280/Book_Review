@@ -17,6 +17,25 @@ export const bookList = async (req, res, next) => {
     });
   }
 };
+export const selectedBook = async (req, res) => {
+  const { bookId } = req.params;
+
+  try {
+    const book = await Book.findById(bookId).populate("review");
+
+    if (!book) {
+      return res.status(404).json({ error: "해당하는 책을 찾을 수 없습니다." });
+    }
+
+    return res.status(200).json({ data: book, success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "책 불러오는 중 에러가 발생했습니다.",
+    });
+  }
+};
+
 export const hotBooks = (req, res) => {};
 export const newBooks = (req, res) => {};
 export const webFictions = (req, res) => {};
