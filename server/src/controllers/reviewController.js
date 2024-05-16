@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const CReview = async (req, res) => {
   try {
-    const { content, authorId, bookId, rating, ...otherData } = req.body;
+    const { content, userId, bookId, rating, ...otherData } = req.body;
 
     if (Object.keys(otherData).length !== 0) {
       return res.status(400).json({
@@ -18,14 +18,14 @@ export const CReview = async (req, res) => {
         .status(422)
         .json({ error: "아이디를 입력해주세요", success: false });
     }
-    if (!content || !authorId || !bookId) {
+    if (!content || !userId || !bookId) {
       return res.status(422).json({
         error: "요청에 필요한 데이터가 올바르지 않습니다",
         success: false,
       });
     }
 
-    const isAuthor = await User.findById(authorId);
+    const isAuthor = await User.findById(userId);
     const isBookExists = await Book.findById(bookId);
 
     if (!isAuthor) {
@@ -42,7 +42,7 @@ export const CReview = async (req, res) => {
 
     const reviewData = {
       content,
-      author: authorId,
+      author: userId,
       book: bookId,
     };
     if (rating !== undefined) {
@@ -52,7 +52,7 @@ export const CReview = async (req, res) => {
     const review = new Review(reviewData);
     await review.save();
 
-    const user = await User.findById(authorId);
+    const user = await User.findById(userId);
     user.review.push(review._id);
     await user.save();
 

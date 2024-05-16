@@ -1,12 +1,8 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
 
-export function BookList({ books = [], onBookClick }: IBookList) {
-  const router = useRouter();
-  const dfdf = usePathname();
-
+export function BookList({ books = [] }: IBookList) {
   return (
     <div className=" relative grid  w-full grid-cols-4 gap-4">
       <FaArrowLeft className=" absolute -left-4 top-1/2 size-8 -translate-y-1/2 transform cursor-pointer rounded-full  bg-light-light p-2" />

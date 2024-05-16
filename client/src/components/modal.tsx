@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { LiHTMLAttributes, useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaStar } from "react-icons/fa";
@@ -10,14 +10,40 @@ import { useRouter } from "next/navigation";
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
   const [reviewLikes, setReviewLikes] = useState<{ [key: string]: number }>({});
-
   const [isLikeClicked, setIsLikeClicked] = useState<{
     [key: string]: boolean;
   }>({});
   const [userId, setUserId] = useState<string | null>("");
+  const [reviewContent, setReviewContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
   let accessToken = LocalStorage.getItem("accessToken");
+  const queryClient = useQueryClient();
+
+  const data = {
+    content: reviewContent,
+    userId,
+    bookId,
+  };
+
+  const { isPending, submittedAt, variables, mutate, isError } = useMutation({
+    mutationFn: async () =>
+      await fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      }),
+    onSettled: async () => {
+      return await queryClient.invalidateQueries({
+        queryKey: ["book", bookId],
+      });
+    },
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -87,6 +113,22 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
+  useEffect(() => {
+    if (book) {
+      const initialReviewLikes: { [key: string]: number } = {};
+      const initialIsLikeClicked: { [key: string]: boolean } = {};
+
+      book.review.forEach((review: IReview) => {
+        initialReviewLikes[review._id] = review.likes.length;
+        initialIsLikeClicked[review._id] = review.likes.includes(
+          userId as never,
+        );
+      });
+
+      setReviewLikes(initialReviewLikes);
+      setIsLikeClicked(initialIsLikeClicked);
+    }
+  }, [book, userId]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -152,6 +194,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
       console.error("좋아요 오류:", error);
       throw error;
     }
+  };
+
+  const createReview = async () => {
+    mutate(variables);
   };
 
   return (
@@ -252,12 +298,21 @@ function Modal({ isOpen, onClose, bookId }: any) {
               <section>
                 <div
                   onClick={inputActiveClick}
-                  className="my-5 h-32 w-full bg-slate-600"
+                  className="relative my-5 h-32 w-full bg-slate-600"
                 >
                   <textarea
                     ref={textareaRef}
-                    className={`${isReviewActive ? "h-1/2" : "h-full"} transition-height w-full  bg-slate-300 p-2  duration-300`}
+                    onChange={(e) => setReviewContent(e.target.value)}
+                    className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-2 focus:outline-none`}
                   />
+                  {isReviewActive ? (
+                    <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">
+                      <span>0 / 300</span>
+                      <div onClick={createReview} className=" cursor-pointer">
+                        등록
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
                 {book.review.length == 0 ? (
                   <span>등록된 리뷰가 없어요</span>
@@ -277,7 +332,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                         </div>
                         <div>{review.content}</div>
                         <div className="flex items-center">
-                          {review.likes.includes(userId) ? (
+                          {isLikeClicked[review._id] ? (
                             <AiFillLike
                               onClick={() => likeClick(review._id)}
                               className="mr-2 size-5 cursor-pointer"
@@ -288,10 +343,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                               className="mr-2 size-5 cursor-pointer"
                             />
                           )}
-
-                          <span>
-                            {reviewLikes[review._id] || review.likes.length}
-                          </span>
+                          <span>{reviewLikes[review._id]}</span>
                         </div>
                       </li>
                     ))}

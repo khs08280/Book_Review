@@ -29,7 +29,7 @@ userRouter.get("/me", auth, myInfo);
 userRouter.post("/delete-account", auth, deleteAccount);
 userRouter.patch("/updateIntroduce", auth, updateIntroduce);
 userRouter.patch("/updatePassword", auth, updatePassword);
-userRouter.get("/refresh", reAccessToken);
+userRouter.get("/refresh", isLoggedIn, reAccessToken);
 userRouter.get("/refreshToLogin", refreshToLogin);
 
 export default userRouter;

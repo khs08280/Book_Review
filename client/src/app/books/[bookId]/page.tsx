@@ -8,7 +8,6 @@ import Home from "../../page";
 export default function BookDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const modalRef = useRef<HTMLDivElement>(null);
   const { bookId } = params;
 
   const [isModalOpen, setIsModalOpen] = useState(false);

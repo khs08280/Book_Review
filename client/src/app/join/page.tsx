@@ -1,11 +1,8 @@
 "use client";
 
-import LocalStorage from "@/src/hooks/localStorage";
-import { isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
 
 export default function Join() {
   const [username, setUsername] = useState("");

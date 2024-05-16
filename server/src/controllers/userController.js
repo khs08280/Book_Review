@@ -276,13 +276,13 @@ export const updatePassword = async (req, res) => {
 
 export const reAccessToken = async (req, res) => {
   try {
-    if (!req.headers.authorization) {
+    if (!req.cookies.refreshToken) {
       return res
         .status(400)
         .json({ error: "요청에 필요한 refreshToken이 없습니다." });
     }
 
-    const refreshToken = req.headers.authorization.split("Bearer ")[1];
+    const refreshToken = req.cookies.refreshToken;
 
     const user = await User.findOne({ refreshToken });
     if (!user) {

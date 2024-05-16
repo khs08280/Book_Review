@@ -42,24 +42,14 @@ const fetchData = async () => {
 };
 
 export default function Home() {
-  const accessToken = LocalStorage.getItem("accessToken");
-  const {
-    data: books,
-    isLoading,
-    error,
-  } = useQuery({ queryKey: ["books"], queryFn: fetchData });
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
-
+  const { data: books, isLoading } = useQuery({
+    queryKey: ["books"],
+    queryFn: fetchData,
+  });
   const router = useRouter();
 
-  const handleBookClick = (book: IBook) => {
-    setSelectedBook(book);
-    setShowModal(true);
-  };
-
   useEffect(() => {
-    const fetchNewAccessToken = async () => {
+    const refreshToLogin = async () => {
       try {
         const response = await fetch(
           "http://localhost:5000/api/users/refreshToLogin",
@@ -73,14 +63,15 @@ export default function Home() {
         if (response.ok) {
           console.log("refreshToLogin");
         } else {
-          console.error("Failed to refresh token");
+          LocalStorage.removeItem("isLoggedIn");
+          console.error("passport 재로그인에 실패");
         }
       } catch (error) {
-        console.error("Error fetching new access token:", error);
+        console.error("passport 재로그인 시도 중 에러: ", error);
       }
     };
 
-    fetchNewAccessToken();
+    refreshToLogin();
   }, []);
 
   return (
@@ -90,7 +81,7 @@ export default function Home() {
         <div className="mr-5  grid w-4/6 grid-cols-2 grid-rows-4 gap-5">
           <div className="col-span-2">
             <div className="mb-2 text-2xl">Hot 리뷰 북스</div>
-            <BookList books={books} onBookClick={handleBookClick} />
+            <BookList books={books} />
           </div>
           {/* <div className="col-span-2">
             <div className="text-2xl mb-2">New 리뷰 북스</div>

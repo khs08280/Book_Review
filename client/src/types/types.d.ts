@@ -1,10 +1,23 @@
 interface IReview {
-  user: string;
+  _id: string;
   content: string;
+  author: {
+    _id: string;
+    username: string;
+    nickname: string;
+  };
+  book: string;
+  likes: string[];
+  dislikes: number;
+  isRecommended: boolean;
+  modifiedAt?: string;
+  rating: number;
+  createdAt: string;
+  __v: number;
 }
 
 interface IBook {
-  _id: number;
+  _id: string;
   title: string;
   description: string;
   image: string;
@@ -18,8 +31,7 @@ interface IBook {
 }
 
 interface IBookList {
-  books?: IBook[];
-  onBookClick: (book: IBook) => void;
+  books: IBook[];
 }
 
 interface IBookModal {

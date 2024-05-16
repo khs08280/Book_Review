@@ -5,7 +5,7 @@ import { isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -36,7 +36,7 @@ export default function Login() {
       } else {
         const errorResponse = await response.json();
         setError(errorResponse.error);
-        console.error("회원가입 오류:", response.statusText);
+        console.error("로그인 오류:", response.statusText);
         setTimeout(() => {
           setError("");
         }, 3000);
