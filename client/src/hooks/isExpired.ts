@@ -23,10 +23,11 @@ export const isExpired = async (accessToken: string | null) => {
               Authorization: `Bearer ${refreshToken}`,
             },
             credentials: "include",
-          }
+          },
         );
         const responseData = await response.json();
         localStorage.setItem("accessToken", responseData.newAccessToken);
+        console.log("토큰 새로 발급함");
         return false;
       }
     } else {
@@ -37,4 +38,16 @@ export const isExpired = async (accessToken: string | null) => {
     console.log("accessToken이 이상해요");
     return true;
   }
+};
+
+export const getUserId = async (
+  accessToken: string | null,
+): Promise<string | null> => {
+  if (accessToken !== null) {
+    const decoded = jwt.decode(accessToken) as JwtPayload;
+
+    return decoded.userId;
+  }
+
+  return null;
 };

@@ -1,6 +1,7 @@
 import Book from "../models/book.js";
 import Review from "../models/review.js";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
 
 export const CReview = async (req, res) => {
   try {
@@ -162,7 +163,9 @@ export const DReview = async (req, res) => {
 };
 
 export const handleLike = async (req, res) => {
-  const { userId, reviewId, ...otherData } = req.body;
+  const userId = req.user._id;
+
+  const { reviewId, ...otherData } = req.body;
 
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({

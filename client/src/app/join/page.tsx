@@ -48,39 +48,39 @@ export default function Join() {
 
   return (
     <>
-      <div className="h-screen p-40 bg-light-lightest flex flex-col items-center justify-start">
-        <div className="border-2 border-solid border-green-400 rounded-lg py-10 px-32 mb-5 flex flex-col items-center h-fit bg-white">
-          <span className="text-3xl mb-20">회원가입</span>
-          <div className="flex flex-col w-96 mb-20 border-collapse">
+      <div className="flex h-screen flex-col items-center justify-start bg-light-lightest p-40">
+        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-32 py-10">
+          <span className="mb-20 text-3xl">회원가입</span>
+          <div className="mb-20 flex w-96 border-collapse flex-col">
             <input
               placeholder="아이디"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="p-4 h-10 mb-3 cursor-pointer focus:outline-none rounded-lg border-2 border-solid border-black border-opacity-20"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none"
             />
             <input
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="p-4 h-10 mb-3 cursor-pointer rounded-lg  focus:outline-none border-2 border-solid border-black border-opacity-20"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2  border-solid border-black border-opacity-20 p-4 focus:outline-none"
             />
             <input
               placeholder="이메일"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="p-4 h-10 mb-3 cursor-pointer rounded-lg focus:outline-none border-2 border-solid border-black border-opacity-20"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none"
             />
             <input
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="p-4 h-10 mb-3 cursor-pointer rounded-lg focus:outline-none  border-2 border-solid border-black border-opacity-20"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid  border-black border-opacity-20 p-4 focus:outline-none"
             />
           </div>
           <span className="text-lg text-red-600">{error}</span>
           <button
             onClick={handleLogin}
-            className="w-full h-12 rounded-lg bg-green-400"
+            className="h-12 w-full rounded-lg bg-green-400"
           >
             회원가입
           </button>

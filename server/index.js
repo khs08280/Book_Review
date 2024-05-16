@@ -12,6 +12,7 @@ import passport from "passport";
 import passportConfig from "./src/passport/index.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 const app = express();

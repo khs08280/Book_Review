@@ -112,7 +112,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   req.logout(function (err) {
     if (err) {
-      return res.status(500).send("로그아웃 중에 오류가 발생했습니다.");
+      return res.status(500).send(err);
     }
     req.session.destroy();
     res.status(200).send("로그아웃에 성공했습니다.");
@@ -308,9 +308,50 @@ export const reAccessToken = async (req, res) => {
         expiresIn: "30m",
       }
     );
+
     return res
       .status(200)
       .json({ message: "refresh 성공", success: true, newAccessToken });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "토큰 재발급 요청 중 에러가 발생했습니다." });
+  }
+};
+
+export const refreshToLogin = async (req, res) => {
+  try {
+    if (!req.cookies.refreshToken) {
+      return res
+        .status(400)
+        .json({ error: "요청에 필요한 refreshToken이 없습니다." });
+    }
+
+    const refreshToken = req.cookies.refreshToken;
+
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: "요청 토큰에 일치하는 유저가 없습니다." });
+    }
+    const currentTime = new Date();
+    const tokenExpiration = new Date(user.refreshToken.expiresAt);
+
+    if (currentTime > tokenExpiration) {
+      req.logout();
+      req.session.destroy();
+      return res.status(401).json({ error: "만료된 refreshToken입니다." });
+    }
+    req.login(user, (err) => {
+      if (err) {
+        return res
+          .status(403)
+          .json({ error: "세션 갱신 중 에러가 발생했습니다." });
+      }
+      return res
+        .status(200)
+        .json({ message: "refresh로 passport 로그인 성공", success: true });
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "토큰 재발급 요청 중 에러가 발생했습니다." });

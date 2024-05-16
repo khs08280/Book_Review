@@ -21,7 +21,14 @@ export const selectedBook = async (req, res) => {
   const { bookId } = req.params;
 
   try {
-    const book = await Book.findById(bookId).populate("review");
+    const book = await Book.findById(bookId).populate({
+      path: "review",
+      populate: {
+        path: "author",
+        model: "User",
+        select: "nickname username",
+      },
+    });
 
     if (!book) {
       return res.status(404).json({ error: "해당하는 책을 찾을 수 없습니다." });

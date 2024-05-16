@@ -8,26 +8,26 @@ export function BookList({ books = [], onBookClick }: IBookList) {
   const dfdf = usePathname();
 
   return (
-    <div className=" w-full grid grid-cols-4 gap-4 relative">
-      <FaArrowLeft className=" size-8 p-2 rounded-full cursor-pointer bg-light-light absolute top-1/2 -left-4  transform -translate-y-1/2" />
+    <div className=" relative grid  w-full grid-cols-4 gap-4">
+      <FaArrowLeft className=" absolute -left-4 top-1/2 size-8 -translate-y-1/2 transform cursor-pointer rounded-full  bg-light-light p-2" />
       {books.slice(0, 4).map((book) => (
-        <Link href={`/books/${book._id}`}>
+        <Link key={book._id} href={`/books/${book._id}`}>
           <motion.div
             key={book._id}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.5 }}
-            className="w-full h-120 flex flex-col items-center border-solid border-2 border-gray-300 p-5 rounded-lg cursor-pointer"
+            className="h-120 flex w-full cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-gray-300 p-5"
             layoutId={book._id.toString()}
           >
-            <img src={book.image} alt={book.title} className="w-40 h-60 mb-3" />
-            <div className="w-full rounded-lg h-20 bg-light-lighter p-2">
+            <img src={book.image} alt={book.title} className="mb-3 h-60 w-40" />
+            <div className="h-20 w-full rounded-lg bg-light-lighter p-2">
               <span>{book.review[0]?.content}</span>
             </div>
           </motion.div>
         </Link>
       ))}
-      <FaArrowRight className="size-8 p-2 rounded-full cursor-pointer bg-light-light  -right-4 absolute top-1/2   transform -translate-y-1/2" />
+      <FaArrowRight className="absolute -right-4 top-1/2 size-8 -translate-y-1/2  transform cursor-pointer rounded-full   bg-light-light p-2" />
     </div>
   );
 }

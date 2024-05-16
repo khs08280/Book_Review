@@ -18,7 +18,7 @@ export function Header() {
     setClientExampleState(exampleState);
   }, [exampleState]);
 
-  const accessToken = LocalStorage.getItem("accessToken");
+  let accessToken = LocalStorage.getItem("accessToken");
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -29,6 +29,8 @@ export function Header() {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
         return;
       }
+      accessToken = LocalStorage.getItem("accessToken");
+
       const response = await fetch("http://localhost:5000/api/users/logout", {
         headers: {
           "Content-Type": "application/json",
@@ -41,6 +43,7 @@ export function Header() {
         setIsLoggedIn(false);
         router.push("/");
       } else {
+        console.log(response.json());
         console.error("로그아웃 실패:", response.statusText);
       }
     } catch (error) {
@@ -48,7 +51,7 @@ export function Header() {
     }
   };
   return (
-    <header className="bg-light-lighter dark:bg-dark-darker flex max-w-full justify-between px-8 py-5 items-center shadow sticky top-0 z-10">
+    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker">
       <Link href={"/"}>
         <h1 className=" text-3xl ">BOOX</h1>
       </Link>
@@ -57,14 +60,14 @@ export function Header() {
 
         {isLoggedIn ? (
           <button
-            className="py-2 p-4 transition-colors rounded text-white bg-green-500 hover:bg-green-600 text-lg ml-10"
+            className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600"
             onClick={handleLogout}
           >
             로그아웃
           </button>
         ) : (
           <Link href={"/login"}>
-            <button className="py-2 p-4 transition-colors rounded text-white bg-green-500 hover:bg-green-600 text-lg ml-10">
+            <button className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600">
               로그인
             </button>
           </Link>

@@ -4,9 +4,9 @@ import { BookList } from "../components/book-list";
 import { SideBar } from "../components/sideBar";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import BookModal from "./books/[bookId]/page";
+import LocalStorage from "../hooks/localStorage";
+import { getCookie } from "../utils/react-cookie";
 
 interface IReview {
   user: string;
@@ -42,6 +42,7 @@ const fetchData = async () => {
 };
 
 export default function Home() {
+  const accessToken = LocalStorage.getItem("accessToken");
   const {
     data: books,
     isLoading,
@@ -53,21 +54,42 @@ export default function Home() {
   const router = useRouter();
 
   const handleBookClick = (book: IBook) => {
-    setSelectedBook(book); // 클릭된 북 설정
-    setShowModal(true); // 모달 열기
+    setSelectedBook(book);
+    setShowModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false); // 모달 닫기
-  };
+  useEffect(() => {
+    const fetchNewAccessToken = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/users/refreshToLogin",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          },
+        );
+        if (response.ok) {
+          console.log("refreshToLogin");
+        } else {
+          console.error("Failed to refresh token");
+        }
+      } catch (error) {
+        console.error("Error fetching new access token:", error);
+      }
+    };
+
+    fetchNewAccessToken();
+  }, []);
 
   return (
     <>
       <SideBar />
-      <div className=" h-full p-5 ml-52 bg-slate-400 flex">
-        <div className="w-4/6  grid gap-5 grid-cols-2 grid-rows-4 mr-5">
+      <div className=" ml-52 flex h-full bg-slate-400 p-5">
+        <div className="mr-5  grid w-4/6 grid-cols-2 grid-rows-4 gap-5">
           <div className="col-span-2">
-            <div className="text-2xl mb-2">Hot 리뷰 북스</div>
+            <div className="mb-2 text-2xl">Hot 리뷰 북스</div>
             <BookList books={books} onBookClick={handleBookClick} />
           </div>
           {/* <div className="col-span-2">
@@ -84,11 +106,11 @@ export default function Home() {
           </div> */}
         </div>
         <div className="flex flex-col">
-          <div className="h-1/2 mb-3">
-            <div className="text-2xl mb-2">지금 커뮤니티는?</div>
+          <div className="mb-3 h-1/2">
+            <div className="mb-2 text-2xl">지금 커뮤니티는?</div>
           </div>
           <div className="">
-            <div className="text-2xl mb-2">한 줄 책 추천</div>
+            <div className="mb-2 text-2xl">한 줄 책 추천</div>
           </div>
         </div>
       </div>
