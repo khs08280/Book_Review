@@ -20,6 +20,9 @@ const config: Config = {
           darkest: "#0a0a0a",
         },
       },
+      width: {
+        modal_width: "72rem",
+      },
     },
   },
   plugins: [],

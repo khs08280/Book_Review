@@ -1,7 +1,6 @@
 import Book from "../models/book.js";
 import Review from "../models/review.js";
 import User from "../models/user.js";
-import jwt from "jsonwebtoken";
 
 export const CReview = async (req, res) => {
   try {
@@ -21,6 +20,19 @@ export const CReview = async (req, res) => {
     if (!content || !userId || !bookId) {
       return res.status(422).json({
         error: "요청에 필요한 데이터가 올바르지 않습니다",
+        success: false,
+      });
+    }
+
+    const user = await User.findById(userId).populate("review");
+
+    const existingReview = user.review.find(
+      (review) => review.book._id === bookId
+    );
+
+    if (existingReview) {
+      return res.status(400).json({
+        error: "이미 리뷰를 작성한 책입니다",
         success: false,
       });
     }
@@ -52,7 +64,6 @@ export const CReview = async (req, res) => {
     const review = new Review(reviewData);
     await review.save();
 
-    const user = await User.findById(userId);
     user.review.push(review._id);
     await user.save();
 
@@ -89,13 +100,14 @@ export const RReview = async (req, res) => {
 
 export const UReview = async (req, res) => {
   const { content, reviewId, ...otherData } = req.body;
+  const userId = req.user._id;
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
       success: false,
       error: "유효하지 않은 데이터가 포함되어 있습니다.",
     });
   }
-  if (!content.trim() || !reviewId) {
+  if (!content.trim() || !reviewId || !userId) {
     return res.status(422).json({
       error: "요청에 필요한 content 혹은 reviewId가 없습니다",
       success: false,

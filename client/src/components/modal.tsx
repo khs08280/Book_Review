@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { LiHTMLAttributes, useEffect, useRef, useState } from "react";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import React, { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import LocalStorage from "../hooks/localStorage";
 import { getUserId, isExpired } from "../hooks/isExpired";
 import { useRouter } from "next/navigation";
+import ReviewItem from "./reviewItem";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -15,9 +15,15 @@ function Modal({ isOpen, onClose, bookId }: any) {
   }>({});
   const [userId, setUserId] = useState<string | null>("");
   const [reviewContent, setReviewContent] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const router = useRouter();
+  const [isExistReview, setIsExistReview] = useState(false);
+  const [sortedReviews, setSortedReviews] = useState<IReview[]>([]);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
+
+  const textareaRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
+
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const data = {
@@ -25,10 +31,9 @@ function Modal({ isOpen, onClose, bookId }: any) {
     userId,
     bookId,
   };
-
-  const { isPending, submittedAt, variables, mutate, isError } = useMutation({
-    mutationFn: async () =>
-      await fetch("http://localhost:5000/api/reviews", {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("http://localhost:5000/api/reviews", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -37,53 +42,70 @@ function Modal({ isOpen, onClose, bookId }: any) {
         },
         mode: "cors",
         credentials: "include",
-      }),
-    onSettled: async () => {
-      return await queryClient.invalidateQueries({
-        queryKey: ["book", bookId],
       });
+      if (!response.ok) {
+        console.log(response.json());
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    onError: (error) => {
+      console.error("Review creation error:", error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["book", bookId] });
     },
   });
+  const updateData = {
+    content: reviewContent,
+    reviewId: selectedReview?._id,
+  };
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("http://localhost:5000/api/reviews", {
+        method: "PATCH",
+        body: JSON.stringify(updateData),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      });
+      console.log(response);
+    },
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMillis = now.getTime() - date.getTime();
+    onError: (error) => {
+      console.error("Review creation error:", error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["book", bookId] });
+      setIsUpdateMode(false);
+      setReviewContent("");
+    },
+  });
+  const updateReview = async () => {
+    const expired = await isExpired(accessToken);
 
-    const millisInSecond = 1000;
-    const millisInMinute = millisInSecond * 60;
-    const millisInHour = millisInMinute * 60;
-    const millisInDay = millisInHour * 24;
-    const millisInMonth = millisInDay * 30; // 간단한 계산으로 사용하며 정확하지 않을 수 있습니다.
-    const millisInYear = millisInDay * 365; // 간단한 계산으로 사용하며 정확하지 않을 수 있습니다.
-
-    if (diffMillis < millisInMinute) {
-      return "방금 전";
-    } else if (diffMillis < millisInHour) {
-      const minutes = Math.floor(diffMillis / millisInMinute);
-      return `${minutes}분 전`;
-    } else if (diffMillis < millisInDay) {
-      const hours = Math.floor(diffMillis / millisInHour);
-      return `${hours}시간 전`;
-    } else if (diffMillis < millisInMonth) {
-      const days = Math.floor(diffMillis / millisInDay);
-      return `${days}일 전`;
-    } else if (diffMillis < millisInYear) {
-      const months = Math.floor(diffMillis / millisInMonth);
-      return `${months}개월 전`;
-    } else {
-      const years = Math.floor(diffMillis / millisInYear);
-      return `${years}년 전`;
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      return;
+    }
+    accessToken = LocalStorage.getItem("accessToken");
+    updateMutation.mutate();
+  };
+  const handleUpdateReview = (review: IReview) => {
+    setSelectedReview(review);
+    setReviewContent(review.content);
+    setIsUpdateMode(true);
+    if (textareaRef.current) {
+      textareaRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  const maskUsername = (username: string) => {
-    if (!username) return "";
-    const visiblePart = username.substring(0, 3);
-    const maskedPart = "*".repeat(username.length - 3);
-    return visiblePart + maskedPart;
+  const createReview = async () => {
+    await mutation.mutateAsync();
+    setReviewContent("");
   };
-
   const fetchData = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/books/${bookId}`);
@@ -92,6 +114,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
       }
       const data = await response.json();
       console.log(data.data);
+
       return data.data;
     } catch (error) {
       console.error("Fetch error:", error);
@@ -109,10 +132,35 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const falseActiveClick = () => {
     setIsReviewActive(false);
   };
-
   const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        textareaRef.current &&
+        !textareaRef.current.contains(event.target as Node)
+      ) {
+        setIsReviewActive(false);
+        setIsUpdateMode(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const useId = await getUserId(accessToken);
+      setUserId(useId);
+    };
+    fetchData();
+  }, [accessToken]);
+
   useEffect(() => {
     if (book) {
       const initialReviewLikes: { [key: string]: number } = {};
@@ -124,33 +172,25 @@ function Modal({ isOpen, onClose, bookId }: any) {
           userId as never,
         );
       });
-
       setReviewLikes(initialReviewLikes);
       setIsLikeClicked(initialIsLikeClicked);
     }
+    if (userId) {
+      const isExist = book?.review?.some(
+        (review: IReview) => review.author._id === userId,
+      );
+      setIsExistReview(isExist);
+    }
+    if (book?.review && userId) {
+      const userReview = book.review.find(
+        (review: IReview) => review.author._id === userId,
+      );
+      const otherReviews = book.review.filter(
+        (review: IReview) => review.author._id !== userId,
+      );
+      setSortedReviews([userReview, ...otherReviews]);
+    }
   }, [book, userId]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        textareaRef.current &&
-        !textareaRef.current.contains(event.target as Node)
-      ) {
-        setIsReviewActive(false);
-      }
-    };
-    const fetchData = async () => {
-      const useId = await getUserId(accessToken);
-      setUserId(useId);
-    };
-    fetchData();
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   if (!isOpen || isLoading || !book) {
     return null;
   }
@@ -196,10 +236,6 @@ function Modal({ isOpen, onClose, bookId }: any) {
     }
   };
 
-  const createReview = async () => {
-    mutate(variables);
-  };
-
   return (
     <div
       onClick={falseActiveClick}
@@ -208,7 +244,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
       <div className="flex h-screen items-center justify-center">
         <div
           onClick={handleModalClick}
-          className=" relative h-4/5 w-7/12 overflow-y-auto rounded-lg bg-white p-10 shadow-lg"
+          className=" w-modal_width relative h-4/5 overflow-y-auto rounded-lg bg-white p-10 shadow-lg"
         >
           <div className="absolute right-3 top-3 ">
             <button onClick={onClose}>
@@ -216,7 +252,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
             </button>
           </div>
           <div
-            className={`mb-7 h-2/3 place-content-center bg-cover bg-center`}
+            className={`mb-7 h-2/3 place-content-center bg-cover bg-center text-light-light`}
             style={{ backgroundImage: `url(${book.image})` }}
           >
             <div className="z-30 flex items-center justify-between ">
@@ -237,7 +273,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               </div>
               <div className="flex flex-col">
                 <img
-                  className="h-80 w-72"
+                  className="h-80 w-60"
                   alt="Book Cover"
                   src={`${book.image}`}
                 />
@@ -267,7 +303,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                   </div>
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
-                  <h3 className="">내 별점</h3>
+                  <h3 className="">평균 별점</h3>
                   <div className="flex h-full flex-col items-center justify-center">
                     <span>별점점수</span>
                     <span>일단 이거</span>
@@ -281,73 +317,95 @@ function Modal({ isOpen, onClose, bookId }: any) {
                   </div>
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
-                  <h3 className="">내 별점</h3>
                   <div className="flex h-full flex-col items-center justify-center">
-                    <span>별점점수</span>
-                    <span>일단 이거</span>
-                    <div className="flex">
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                    </div>
+                    <span>여기 차트 들어갈 것</span>
                   </div>
                 </div>
               </section>
               <section>
-                <div
-                  onClick={inputActiveClick}
-                  className="relative my-5 h-32 w-full bg-slate-600"
-                >
-                  <textarea
+                {isExistReview ? null : (
+                  <div
+                    onClick={inputActiveClick}
                     ref={textareaRef}
-                    onChange={(e) => setReviewContent(e.target.value)}
-                    className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-2 focus:outline-none`}
-                  />
-                  {isReviewActive ? (
-                    <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">
-                      <span>0 / 300</span>
-                      <div onClick={createReview} className=" cursor-pointer">
-                        등록
+                    className="relative my-5 h-32 w-full bg-slate-600"
+                  >
+                    <textarea
+                      maxLength={300}
+                      onChange={(e) => setReviewContent(e.target.value)}
+                      value={reviewContent}
+                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-2 focus:outline-none`}
+                    />
+                    {isReviewActive ? (
+                      <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">
+                        <span>{reviewContent.length} / 300</span>
+                        <div
+                          onClick={createReview}
+                          className="cursor-pointer rounded-md  px-2 py-3 text-sky-600 transition-all hover:bg-slate-200"
+                        >
+                          등록
+                        </div>
                       </div>
-                    </div>
-                  ) : null}
-                </div>
-                {book.review.length == 0 ? (
-                  <span>등록된 리뷰가 없어요</span>
-                ) : (
-                  <ul className="mt-7 flex flex-col">
-                    {book.review.map((review: any) => (
-                      <li
-                        key={review._id}
-                        className="mb-5 flex h-28 flex-col justify-between border-b border-solid border-slate-400  pb-4"
-                      >
-                        <div className="flex w-full justify-between">
-                          <span>{formatDate(review.createdAt)}</span>
-                          <div>
-                            {review.author.nickname}(
-                            {maskUsername(review.author.username)})
+                    ) : null}
+                  </div>
+                )}
+                {isUpdateMode ? (
+                  <div
+                    onClick={inputActiveClick}
+                    ref={textareaRef}
+                    className="relative my-5 h-32 w-full bg-slate-600"
+                  >
+                    <textarea
+                      maxLength={300}
+                      onChange={(e) => setReviewContent(e.target.value)}
+                      value={reviewContent}
+                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-2 focus:outline-none`}
+                    />
+                    {isReviewActive ? (
+                      <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">
+                        <span>{reviewContent.length} / 300</span>
+                        <div className="flex">
+                          <span className=" cursor-pointer rounded-md  px-2 py-3 text-dark-dark transition-all hover:bg-green-200">
+                            취소
+                          </span>
+
+                          <div
+                            onClick={updateReview}
+                            className="cursor-pointer rounded-md  px-2 py-3 text-sky-600 transition-all hover:bg-slate-200"
+                          >
+                            수정
                           </div>
                         </div>
-                        <div>{review.content}</div>
-                        <div className="flex items-center">
-                          {isLikeClicked[review._id] ? (
-                            <AiFillLike
-                              onClick={() => likeClick(review._id)}
-                              className="mr-2 size-5 cursor-pointer"
-                            />
-                          ) : (
-                            <AiOutlineLike
-                              onClick={() => likeClick(review._id)}
-                              className="mr-2 size-5 cursor-pointer"
-                            />
-                          )}
-                          <span>{reviewLikes[review._id]}</span>
-                        </div>
-                      </li>
-                    ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {book.review && book.review.length > 0 ? (
+                  <ul className="mt-7 flex flex-col">
+                    {sortedReviews.map((review: IReview, index: number) =>
+                      review ? (
+                        <ReviewItem
+                          key={review._id}
+                          bookId={bookId}
+                          accessToken={accessToken}
+                          userId={userId}
+                          review={review}
+                          likeClick={likeClick}
+                          isLikeClicked={isLikeClicked}
+                          reviewLikes={reviewLikes}
+                          setIsUpdateMode={setIsUpdateMode}
+                          handleUpdateReview={handleUpdateReview}
+                          isUserReview={
+                            review &&
+                            index === 0 &&
+                            review.author._id === userId
+                          }
+                        />
+                      ) : null,
+                    )}
                   </ul>
+                ) : (
+                  <span>등록된 리뷰가 없습니다.</span>
                 )}
               </section>
             </div>

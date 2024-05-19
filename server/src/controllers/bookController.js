@@ -34,6 +34,9 @@ export const selectedBook = async (req, res) => {
       return res.status(404).json({ error: "해당하는 책을 찾을 수 없습니다." });
     }
 
+    book.review.sort((a, b) => b.likes.length - a.likes.length);
+    console.log(book.review);
+
     return res.status(200).json({ data: book, success: true });
   } catch (error) {
     console.log(error);
