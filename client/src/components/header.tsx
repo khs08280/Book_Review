@@ -40,6 +40,7 @@ export function Header() {
         method: "POST",
       });
       if (response.status === 200) {
+        LocalStorage.removeItem("accessToken");
         setIsLoggedIn(false);
         router.push("/");
       } else {

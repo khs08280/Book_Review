@@ -1,4 +1,5 @@
 import Book from "../models/book.js";
+import Rating from "../models/rating.js";
 import Review from "../models/review.js";
 import User from "../models/user.js";
 
@@ -225,5 +226,62 @@ export const handleLike = async (req, res) => {
     res
       .status(500)
       .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};
+
+export const handleRating = async (req, res) => {
+  const { bookId, rating, ...otherData } = req.body;
+  const userId = req.user._id;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  if (!userId || !bookId || typeof rating !== "number") {
+    return res.status(400).send("Invalid input");
+  }
+
+  try {
+    const existingRating = await Rating.findOne({
+      author: userId,
+      book: bookId,
+    });
+
+    if (existingRating) {
+      const oldRating = existingRating.rating;
+      existingRating.rating = rating;
+      await existingRating.save();
+
+      const book = await Book.findById(bookId);
+      if (book) {
+        book.averageRating =
+          (book.averageRating * book.ratingCount - oldRating + rating) /
+          book.ratingCount;
+        await book.save();
+      }
+    } else {
+      const newRating = new Rating({
+        author: userId,
+        book: bookId,
+        rating,
+      });
+      await newRating.save();
+
+      const book = await Book.findById(bookId);
+      if (book) {
+        book.averageRating =
+          (book.averageRating * book.ratingCount + rating) /
+          (book.ratingCount + 1);
+        book.ratingCount += 1;
+        await book.save();
+      }
+    }
+
+    res.send("정상적으로 별점이 등록되었습니다.");
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };

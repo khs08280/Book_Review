@@ -13,10 +13,6 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rating: {
-    type: Number,
-    default: 0,
-  },
   publisher: {
     type: String,
     required: true,
@@ -27,6 +23,14 @@ const bookSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
+  },
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+  ratingCount: {
+    type: Number,
+    default: 0,
   },
   genre: [
     {

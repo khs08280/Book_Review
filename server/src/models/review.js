@@ -29,10 +29,6 @@ const reviewSchema = mongoose.Schema({
     type: Date,
     default: null,
   },
-  rating: {
-    type: Number,
-    default: null,
-  },
 });
 
 const Review = mongoose.model("Review", reviewSchema, "reviews");

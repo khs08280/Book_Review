@@ -38,3 +38,7 @@ interface IBookModal {
   selectedBook?: IBook | null;
   onClose: () => void;
 }
+interface StarsProps {
+  myRating: number | null;
+  handleRating: (rating: number) => void;
+}

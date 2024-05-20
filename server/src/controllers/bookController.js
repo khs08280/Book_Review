@@ -1,4 +1,5 @@
 import Book from "../models/book.js";
+import Rating from "../models/rating.js";
 import User from "../models/user.js";
 
 export const bookList = async (req, res, next) => {
@@ -35,7 +36,6 @@ export const selectedBook = async (req, res) => {
     }
 
     book.review.sort((a, b) => b.likes.length - a.likes.length);
-    console.log(book.review);
 
     return res.status(200).json({ data: book, success: true });
   } catch (error) {
@@ -73,7 +73,6 @@ export const createBook = async (req, res, next) => {
   });
   try {
     await newBook.save();
-    console.log("Created", newBook);
     res.status(201).json({
       message: "Book created successfully",
       book: newBook,
@@ -145,5 +144,31 @@ export const handleRecommend = async (req, res) => {
     res
       .status(500)
       .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};
+
+export const getUserRatingForBook = async (req, res) => {
+  console.log(req);
+  const { bookId } = req.params;
+  const userId = req.user._id;
+
+  if (!userId || !bookId) {
+    return res.status(400).send("Invalid input");
+  }
+
+  try {
+    const rating = await Rating.findOne({
+      author: userId,
+      book: bookId,
+    });
+
+    if (rating) {
+      res.status(200).json({ rating: rating.rating });
+    } else {
+      res.status(200).json({ rating: null });
+    }
+  } catch (error) {
+    console.error("Error fetching rating:", error);
+    res.status(500).send(error.message);
   }
 };

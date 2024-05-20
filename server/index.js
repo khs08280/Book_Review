@@ -47,9 +47,10 @@ app.use(
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
     store: MongoStore.create({
-      mongoUrl: `mongodb+srv://alsdnr122014:${process.env.MONGO_PASSWORD}@cluster0.pgdn31n.mongodb.net/project`,
+      client: mongoose.connection.getClient(),
     }),
     cookie: {
+      maxAge: 3600000 * 24,
       httpOnly: true,
       secure: false,
     },

@@ -6,6 +6,7 @@ import LocalStorage from "../hooks/localStorage";
 import { getUserId, isExpired } from "../hooks/isExpired";
 import { useRouter } from "next/navigation";
 import ReviewItem from "./reviewItem";
+import Stars from "./stars";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -19,9 +20,11 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const [sortedReviews, setSortedReviews] = useState<IReview[]>([]);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
+  const [myRating, setMyRating] = useState<number | null>(null);
 
   const textareaRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
+  let isLoggedIn = LocalStorage.getItem("isLoggedIn");
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -135,6 +138,34 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
+  const handleRating = async (rating: number) => {
+    const ratingData = {
+      bookId,
+      rating,
+    };
+    const expired = await isExpired(accessToken);
+
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      return;
+    }
+    accessToken = LocalStorage.getItem("accessToken");
+
+    const response = await fetch(
+      "http://localhost:5000/api/reviews/handleRating",
+      {
+        method: "PUT",
+        body: JSON.stringify(ratingData),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      },
+    );
+    console.log(response);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -152,6 +183,47 @@ function Modal({ isOpen, onClose, bookId }: any) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const expired = await isExpired(accessToken);
+
+        if (!accessToken || expired) {
+          console.log("만료되었거나 유효하지 않은 토큰입니다.");
+          return;
+        }
+        accessToken = LocalStorage.getItem("accessToken");
+
+        const response = await fetch(
+          `http://localhost:5000/api/books/${bookId}/rating`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+            method: "GET",
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        if (data.rating !== null) {
+          setMyRating(data.rating);
+        } else {
+          setMyRating(null);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        // 오류 처리를 수행하거나 사용자에게 알림을 보여줄 수 있음
+      }
+    };
+    if (isLoggedIn) {
+      fetchRating();
+    }
+  }, [bookId, isLoggedIn]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -244,7 +316,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
       <div className="flex h-screen items-center justify-center">
         <div
           onClick={handleModalClick}
-          className=" w-modal_width relative h-4/5 overflow-y-auto rounded-lg bg-white p-10 shadow-lg"
+          className=" relative h-4/5 w-modal_width overflow-y-auto rounded-lg bg-white p-10 shadow-lg"
         >
           <div className="absolute right-3 top-3 ">
             <button onClick={onClose}>
@@ -259,7 +331,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               <div className="flex flex-col ">
                 <div className="mb-1 flex w-fit items-center rounded-md bg-slate-500 px-1 text-lg font-semibold">
                   <FaStar className="mr-2 " style={{ flexShrink: 0 }} />
-                  <span>{book.rating}</span>
+                  <span>{book.averageRating}</span>
                 </div>
                 <span className="mb-2 text-3xl font-semibold">
                   {book.title}
@@ -290,17 +362,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               <section className="mt-5 flex h-40 w-full justify-center">
                 <div className="flex h-full w-1/3 flex-col">
                   <h3 className="">내 별점</h3>
-                  <div className="flex h-full flex-col items-center justify-center">
-                    <span>별점점수</span>
-                    <span>일단 이거</span>
-                    <div className="flex">
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                    </div>
-                  </div>
+                  <Stars handleRating={handleRating} myRating={myRating} />
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
                   <h3 className="">평균 별점</h3>
@@ -318,7 +380,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
                   <div className="flex h-full flex-col items-center justify-center">
-                    <span>여기 차트 들어갈 것</span>
+                    <span>여기 차트 들어갈 것{myRating}</span>
                   </div>
                 </div>
               </section>
