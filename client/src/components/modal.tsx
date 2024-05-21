@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import ReviewItem from "./reviewItem";
 import Stars from "./stars";
 import AverageStars from "./averageStars";
+import { motion, AnimatePresence } from "framer-motion";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -320,9 +321,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
   };
 
   return (
-    <div
+    <motion.div
       onClick={falseActiveClick}
       className="fixed inset-0 z-10  bg-black bg-opacity-30"
+      layoutId={bookId}
     >
       <div className="flex h-screen items-center justify-center">
         <div
@@ -479,7 +481,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

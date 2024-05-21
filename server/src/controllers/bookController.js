@@ -171,3 +171,49 @@ export const getUserRatingForBook = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+export const searchBook = async (req, res) => {
+  const { searchText } = req.query;
+
+  if (!searchText) {
+    return res
+      .status(400)
+      .json({ error: "searchText query parameter is required" });
+  }
+  if (searchText.length < 2) {
+    return res.status(400).json({ error: "검색어는 2글자 이상이어야 합니다" });
+  }
+  const removeSpaces = (text) => text.replace(/\s+/g, "");
+  try {
+    const searchTextNoSpaces = removeSpaces(searchText);
+    const titleRegex = new RegExp(searchTextNoSpaces, "i");
+    const authorRegex = new RegExp("^" + searchText, "i");
+
+    const books = await Book.aggregate([
+      {
+        $project: {
+          title: 1,
+          author: 1,
+          publishedDate: 1,
+          image: 1,
+          titleNoSpaces: {
+            $replaceAll: { input: "$title", find: " ", replacement: "" },
+          },
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { titleNoSpaces: { $regex: titleRegex } },
+            { author: { $regex: authorRegex } },
+          ],
+        },
+      },
+    ]);
+
+    res.json(books);
+  } catch (error) {
+    console.error("Error searching books:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

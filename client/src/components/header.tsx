@@ -12,6 +12,7 @@ import LocalStorage from "../hooks/localStorage";
 export function Header() {
   const [isLoggedIn, setClientExampleState] = useState(false);
   const [exampleState, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -51,14 +52,19 @@ export function Header() {
       console.error("로그아웃 오류:", error);
     }
   };
+  const searchClick = () => {
+    setIsSearchOpen((prev) => !prev);
+  };
   return (
     <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker">
       <Link href={"/"}>
         <h1 className=" text-3xl ">BOOX</h1>
       </Link>
       <div className="flex max-w-fit items-center ">
-        <IoSearch className=" size-6" />
-
+        <IoSearch onClick={searchClick} className=" size-6 cursor-pointer" />
+        {isSearchOpen ? (
+          <input className="border border-solid border-y-black" />
+        ) : null}
         {isLoggedIn ? (
           <button
             className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600"

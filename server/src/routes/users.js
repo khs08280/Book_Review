@@ -11,7 +11,6 @@ import {
   reAccessToken,
   refreshToLogin,
 } from "../controllers/userController.js";
-import auth from "../middleware/auth.js";
 import { isLoggedIn, isNotLoggedIn } from "../middleware/isLoggedIn.js";
 import passport from "passport";
 
@@ -25,10 +24,30 @@ userRouter.post(
   passport.authenticate("jwt", { session: false }),
   logout
 );
-userRouter.get("/me", auth, myInfo);
-userRouter.post("/delete-account", auth, deleteAccount);
-userRouter.patch("/updateIntroduce", auth, updateIntroduce);
-userRouter.patch("/updatePassword", auth, updatePassword);
+userRouter.get(
+  "/me",
+  isLoggedIn,
+  passport.authenticate("jwt", { session: false }),
+  myInfo
+);
+userRouter.post(
+  "/delete-account",
+  isLoggedIn,
+  passport.authenticate("jwt", { session: false }),
+  deleteAccount
+);
+userRouter.patch(
+  "/updateIntroduce",
+  isLoggedIn,
+  passport.authenticate("jwt", { session: false }),
+  updateIntroduce
+);
+userRouter.patch(
+  "/updatePassword",
+  isLoggedIn,
+  passport.authenticate("jwt", { session: false }),
+  updatePassword
+);
 userRouter.get("/refresh", isLoggedIn, reAccessToken);
 userRouter.get("/refreshToLogin", refreshToLogin);
 
