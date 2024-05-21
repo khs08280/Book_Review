@@ -260,6 +260,7 @@ export const handleRating = async (req, res) => {
         book.averageRating =
           (book.averageRating * book.ratingCount - oldRating + rating) /
           book.ratingCount;
+
         await book.save();
       }
     } else {
@@ -280,8 +281,8 @@ export const handleRating = async (req, res) => {
       }
     }
 
-    res.send("정상적으로 별점이 등록되었습니다.");
+    res.status(200).json(rating);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json(error.message);
   }
 };

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ReactQueryProivers from "../utils/react-query-provider";
+import ReactQueryProviders from "../utils/react-query-provider";
 import RecoilRootProvider from "../utils/recoilRoot-provider";
 import { Header } from "../components/header";
 import React from "react";
@@ -24,11 +24,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <RecoilRootProvider>
-          <ReactQueryProivers>
+          <ReactQueryProviders>
             <Header />
             {children}
             {modal}
-          </ReactQueryProivers>
+          </ReactQueryProviders>
         </RecoilRootProvider>
       </body>
     </html>

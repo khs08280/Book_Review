@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
-export default function ReactQueryProivers({
+export default function ReactQueryProviders({
   children,
 }: React.PropsWithChildren) {
   const [client] = useState(
@@ -15,7 +15,7 @@ export default function ReactQueryProivers({
           retry: 1,
         },
       },
-    })
+    }),
   );
   return (
     <QueryClientProvider client={client}>

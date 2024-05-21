@@ -7,6 +7,7 @@ import { getUserId, isExpired } from "../hooks/isExpired";
 import { useRouter } from "next/navigation";
 import ReviewItem from "./reviewItem";
 import Stars from "./stars";
+import AverageStars from "./averageStars";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -147,6 +148,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
 
     if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");
@@ -164,7 +166,8 @@ function Modal({ isOpen, onClose, bookId }: any) {
         credentials: "include",
       },
     );
-    console.log(response);
+    const data = await response.json();
+    setMyRating(data);
   };
 
   useEffect(() => {
@@ -227,6 +230,14 @@ function Modal({ isOpen, onClose, bookId }: any) {
 
   useEffect(() => {
     const fetchData = async () => {
+      const expired = await isExpired(accessToken);
+
+      if (!accessToken || expired) {
+        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        return;
+      }
+      accessToken = LocalStorage.getItem("accessToken");
+
       const useId = await getUserId(accessToken);
       setUserId(useId);
     };
@@ -331,7 +342,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               <div className="flex flex-col ">
                 <div className="mb-1 flex w-fit items-center rounded-md bg-slate-500 px-1 text-lg font-semibold">
                   <FaStar className="mr-2 " style={{ flexShrink: 0 }} />
-                  <span>{book.averageRating}</span>
+                  <span>{Math.ceil(book.averageRating * 10) / 10}</span>
                 </div>
                 <span className="mb-2 text-3xl font-semibold">
                   {book.title}
@@ -366,17 +377,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
                   <h3 className="">평균 별점</h3>
-                  <div className="flex h-full flex-col items-center justify-center">
-                    <span>별점점수</span>
-                    <span>일단 이거</span>
-                    <div className="flex">
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                    </div>
-                  </div>
+                  <AverageStars
+                    averageRating={book.averageRating}
+                    ratingCount={book.ratingCount}
+                  />
                 </div>
                 <div className="flex h-full w-1/3 flex-col">
                   <div className="flex h-full flex-col items-center justify-center">
@@ -457,6 +461,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                           reviewLikes={reviewLikes}
                           setIsUpdateMode={setIsUpdateMode}
                           handleUpdateReview={handleUpdateReview}
+                          myRating={myRating}
                           isUserReview={
                             review &&
                             index === 0 &&

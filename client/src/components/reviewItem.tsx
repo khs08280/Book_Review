@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { CiMenuKebab } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
 
 function ReviewItem({
   review,
@@ -14,8 +15,8 @@ function ReviewItem({
   accessToken,
   bookId,
   isUserReview,
-  setIsUpdateMode,
   handleUpdateReview,
+  myRating,
 }: any) {
   const queryClient = useQueryClient();
 
@@ -107,6 +108,40 @@ function ReviewItem({
 
   return (
     <li className="mb-5 flex h-28 flex-col justify-between border-b border-solid border-slate-400 pb-4">
+      {isUserReview ? (
+        <div className="flex">
+          {myRating !== null &&
+            [...Array(10)].map((_, index) => {
+              const value = (index + 1.0) * 0.5;
+              return (
+                <React.Fragment key={index}>
+                  {Number.isInteger(value) ? (
+                    <button
+                      style={{ transform: "rotateY(-180deg)" }}
+                      className="w-2 cursor-auto overflow-hidden border-none bg-none"
+                    >
+                      <FaStar
+                        className="size-4 border-none transition-all duration-0"
+                        color={value <= myRating ? "#ffc107" : "#e4e5e9"}
+                      />
+                    </button>
+                  ) : (
+                    <button
+                      key={index}
+                      className="w-2 cursor-auto overflow-hidden border-none bg-none"
+                    >
+                      <FaStar
+                        className="size-4 border-none transition-all duration-0"
+                        color={value <= myRating ? "#ffc107" : "#e4e5e9"}
+                      />
+                    </button>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          <span className="ml-2">{myRating}</span>
+        </div>
+      ) : null}
       <div className="flex w-full justify-between">
         <div>
           <span className="mr-5">{formatDate(review.createdAt)}</span>

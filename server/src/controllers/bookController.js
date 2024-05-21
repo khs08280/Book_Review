@@ -148,7 +148,6 @@ export const handleRecommend = async (req, res) => {
 };
 
 export const getUserRatingForBook = async (req, res) => {
-  console.log(req);
   const { bookId } = req.params;
   const userId = req.user._id;
 

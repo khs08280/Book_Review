@@ -42,3 +42,7 @@ interface StarsProps {
   myRating: number | null;
   handleRating: (rating: number) => void;
 }
+interface AverageStarsProps {
+  averageRating: number | null;
+  ratingCount?: number;
+}

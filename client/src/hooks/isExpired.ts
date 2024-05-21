@@ -25,6 +25,9 @@ export const isExpired = async (accessToken: string | null) => {
             credentials: "include",
           },
         );
+        if (!response.ok) {
+          return true;
+        }
         const responseData = await response.json();
         localStorage.setItem("accessToken", responseData.newAccessToken);
         console.log("토큰 새로 발급함");
