@@ -23,7 +23,7 @@ export default function AverageStars({
         {[...Array(10)].map((_, index) => {
           const value = (index + 1.0) * 0.5;
           return (
-            <>
+            <div key={index}>
               {Number.isInteger(value) ? (
                 <button
                   style={{ transform: "rotateY(-180deg)" }}
@@ -42,7 +42,7 @@ export default function AverageStars({
                   />
                 </button>
               )}
-            </>
+            </div>
           );
         })}
       </div>

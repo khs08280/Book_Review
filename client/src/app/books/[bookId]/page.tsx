@@ -1,16 +1,19 @@
 "use client";
 
 import Modal from "@/src/components/modal";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Home from "../../page";
+import Search from "../../search/page";
 
 export default function BookDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
   const { bookId } = params;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previousPath, setPreviousPath] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -18,7 +21,7 @@ export default function BookDetailPage() {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    router.push("/");
+    router.back();
   };
   const modalClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -36,10 +39,37 @@ export default function BookDetailPage() {
       document.body.style.overflow = "auto";
     };
   }, []);
+  // useEffect(() => {
+  // const handleRouteChange = (url: string) => {
+  //   setPreviousPath(url);
+  // };
+
+  // // 이전 경로를 설정합니다.
+  // handleRouteChange(router.asPath);
+
+  // // 라우터 이벤트 리스너 설정
+  // router.events.on('routeChangeStart', handleRouteChange);
+
+  // // 모달 열리면 스크롤 막기
+  // document.body.style.overflow = "hidden";
+
+  // return () => {
+  //   document.body.style.overflow = "auto";
+  //   router.events.off('routeChangeStart', handleRouteChange);
+  //   // };
+  // }, []);
+
+  // const RenderComponent = () => {
+  //   if (previousPath.startsWith("/search")) {
+  //     return <Search />;
+  //   }
+  //   return <Home />;
+  // };
 
   return (
     <>
       <Home />
+      {/* <Search /> */}
       {isModalOpen && (
         <div onClick={closeModal}>
           <Modal

@@ -14,7 +14,9 @@ export default function Stars({ myRating, handleRating }: StarsProps) {
   }, [myRating]);
 
   const updateText = (value: number) => {
-    if (value <= 0.5) {
+    if (value == 0) {
+      setText("별점을 남겨주세요!");
+    } else if (value == 0.5) {
       setText("읽은 시간이 아까워요..");
     } else if (value == 1) {
       setText("다시는 읽고 싶지 않아요");

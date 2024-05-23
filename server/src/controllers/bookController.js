@@ -152,7 +152,7 @@ export const getUserRatingForBook = async (req, res) => {
   const userId = req.user._id;
 
   if (!userId || !bookId) {
-    return res.status(400).send("Invalid input");
+    return res.status(400).json("잘못된 요청입니다");
   }
 
   try {
@@ -193,7 +193,7 @@ export const searchBook = async (req, res) => {
       {
         $project: {
           title: 1,
-          author: 1,
+          writer: 1,
           publishedDate: 1,
           image: 1,
           titleNoSpaces: {
@@ -205,13 +205,13 @@ export const searchBook = async (req, res) => {
         $match: {
           $or: [
             { titleNoSpaces: { $regex: titleRegex } },
-            { author: { $regex: authorRegex } },
+            { writer: { $regex: authorRegex } },
           ],
         },
       },
     ]);
 
-    res.json(books);
+    res.status(200).json(books);
   } catch (error) {
     console.error("Error searching books:", error);
     res.status(500).json({ error: "Internal server error" });

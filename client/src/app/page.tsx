@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import LocalStorage from "../hooks/localStorage";
 import { getCookie } from "../utils/react-cookie";
+import { useRecoilValue } from "recoil";
+import { isLoggedInAtom } from "../states/atoms";
 
 interface IReview {
   user: string;
@@ -42,6 +44,7 @@ const fetchData = async () => {
 };
 
 export default function Home() {
+  const isLoggedIn = useRecoilValue(isLoggedInAtom);
   const { data: books, isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: fetchData,
@@ -71,7 +74,9 @@ export default function Home() {
       }
     };
 
-    refreshToLogin();
+    if (isLoggedIn) {
+      refreshToLogin();
+    }
   }, []);
 
   return (
@@ -84,15 +89,15 @@ export default function Home() {
             <BookList books={books} />
           </div>
           {/* <div className="col-span-2">
-            <div className="text-2xl mb-2">New 리뷰 북스</div>
+            <div className="mb-2 text-2xl">New 리뷰 북스</div>
             <BookList books={books} />
           </div>
           <div className="col-span-2">
-            <div className="text-2xl mb-2">웹소설도 북스야~</div>
+            <div className="mb-2 text-2xl">웹소설도 북스야~</div>
             <BookList books={books} />
           </div>
           <div className="col-span-2">
-            <div className="text-2xl mb-2">이것도 읽어봐~</div>
+            <div className="mb-2 text-2xl">이것도 읽어봐~</div>
             <BookList books={books} />
           </div> */}
         </div>

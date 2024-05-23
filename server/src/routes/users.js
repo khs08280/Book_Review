@@ -37,7 +37,7 @@ userRouter.post(
   deleteAccount
 );
 userRouter.patch(
-  "/updateIntroduce",
+  "/updateIntroduction",
   isLoggedIn,
   passport.authenticate("jwt", { session: false }),
   updateIntroduce

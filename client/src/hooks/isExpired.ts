@@ -11,6 +11,7 @@ export const isExpired = async (accessToken: string | null) => {
       const currentTime = currentTimeDate.getTime();
 
       if (expirationTime > currentTime) {
+        console.log("만료 안됨");
         return false;
       } else {
         const refreshToken = getCookie("refreshToken");
@@ -26,6 +27,8 @@ export const isExpired = async (accessToken: string | null) => {
           },
         );
         if (!response.ok) {
+          console.log("토큰 재발급 실패");
+
           return true;
         }
         const responseData = await response.json();

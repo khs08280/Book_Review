@@ -1,8 +1,10 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import passport from "passport";
 import dotenv from "dotenv";
+import Rating from "../models/rating.js";
+import Review from "../models/review.js";
+
 dotenv.config();
 
 export const join = async (req, res) => {
@@ -120,40 +122,47 @@ export const logout = async (req, res) => {
 };
 
 export const myInfo = async (req, res) => {
-  const userId = req.user._id;
+  try {
+    const userId = req.user._id;
 
-  if (!userId) {
-    return res.status(400).json({ error: "올바른 요청이 아닙니다." });
+    if (!userId) {
+      return res.status(400).json({ error: "올바른 요청이 아닙니다." });
+    }
+
+    const user = await User.findById(userId)
+      .select("-token -refreshToken -password -_id")
+      .populate({
+        path: "review",
+        populate: {
+          path: "book",
+          select: "title",
+        },
+      });
+    if (!user) {
+      return res.status(404).json({ error: "유저를 찾을 수 없습니다" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res
+      .status(500)
+      .json({ error: "유저 데이터를 불러오는 중 에러가 발생했습니다" });
   }
-
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ error: "유저를 찾을 수 없습니다" });
-      }
-      res.status(200).json({ data: user });
-    })
-    .catch((err) => {
-      console.error("Error fetching user:", err);
-      res
-        .status(500)
-        .json({ error: "유저 데이터를 불러오는 중 에러가 발생했습니다" });
-    });
 };
 
 export const deleteAccount = async (req, res) => {
-  const { userId, password, ...otherData } = req.body;
+  const { password, ...otherData } = req.body;
+  const userId = req.user._id;
 
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
-      success: false,
-      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+      message: "유효하지 않은 데이터가 포함되어 있습니다.",
     });
   }
   try {
     if (!userId || !password) {
       return res.status(400).json({
-        success: false,
         message: "사용자 ID와 비밀번호를 입력해주세요.",
       });
     }
@@ -161,31 +170,28 @@ export const deleteAccount = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: "해당 사용자를 찾을 수 없습니다." });
+        .json({ message: "해당 사용자를 찾을 수 없습니다." });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "비밀번호가 잘못되었습니다." });
+      return res.status(400).json({ message: "비밀번호가 잘못되었습니다." });
     }
 
-    await user.deleteOne();
+    await User.findByIdAndDelete(userId);
+    await Rating.deleteMany({ author: userId });
+    await Review.deleteMany({ author: userId });
 
-    res
-      .status(200)
-      .json({ success: true, message: "계정이 성공적으로 삭제되었습니다." });
+    res.status(200).json({ message: "계정이 성공적으로 삭제되었습니다." });
   } catch (error) {
     console.error("계정 삭제 중 오류:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "서버 오류가 발생했습니다." });
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
 };
 
 export const updateIntroduce = async (req, res) => {
-  const { content, userId, ...otherData } = req.body;
+  const { content, ...otherData } = req.body;
+  const userId = req.user._id;
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
       success: false,
@@ -218,20 +224,18 @@ export const updateIntroduce = async (req, res) => {
 };
 
 export const updatePassword = async (req, res) => {
-  const { password, checkPassword, newPassword, userId, ...otherData } =
-    req.body;
+  const { password, checkPassword, newPassword, ...otherData } = req.body;
+  const userId = req.user._id;
 
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
-      success: false,
-      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+      message: "유효하지 않은 데이터가 포함되어 있습니다.",
     });
   }
 
   if (password !== checkPassword) {
     return res.status(400).json({
-      success: false,
-      error: "비밀번호와 비밀번호확인이 다릅니다.",
+      message: "비밀번호와 비밀번호확인이 다릅니다.",
     });
   }
 
@@ -239,23 +243,19 @@ export const updatePassword = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, error: "사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
     }
 
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
       return res.status(400).json({
-        success: false,
-        error: "현재 비밀번호가 일치하지 않습니다.",
+        message: "현재 비밀번호가 일치하지 않습니다.",
       });
     }
     if (password === newPassword) {
       return res.status(400).json({
-        success: false,
-        error: "새로운 비밀번호는 현재 비밀번호와 동일할 수 없습니다.",
+        message: "새로운 비밀번호는 현재 비밀번호와 동일할 수 없습니다.",
       });
     }
 
@@ -263,14 +263,11 @@ export const updatePassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      success: true,
       message: "비밀번호가 성공적으로 수정되었습니다.",
     });
   } catch (error) {
     console.log(error);
-    res
-      .status(400)
-      .json({ success: false, error: "비밀번호 수정 중 에러가 발생했습니다." });
+    res.status(400).json({ message: "비밀번호 수정 중 에러가 발생했습니다." });
   }
 };
 

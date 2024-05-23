@@ -94,6 +94,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
 
     if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");
@@ -108,6 +109,15 @@ function Modal({ isOpen, onClose, bookId }: any) {
     }
   };
   const createReview = async () => {
+    const expired = await isExpired(accessToken);
+
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      router.push("/login");
+      return;
+    }
+    accessToken = LocalStorage.getItem("accessToken");
+
     await mutation.mutateAsync();
     setReviewContent("");
   };
@@ -210,10 +220,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
             method: "GET",
           },
         );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
         const data = await response.json();
+        if (response.status !== 200) {
+          console.log(data);
+        }
         if (data.rating !== null) {
           setMyRating(data.rating);
         } else {
@@ -259,8 +269,8 @@ function Modal({ isOpen, onClose, bookId }: any) {
       setReviewLikes(initialReviewLikes);
       setIsLikeClicked(initialIsLikeClicked);
     }
-    if (userId) {
-      const isExist = book?.review?.some(
+    if (book && book.review && userId) {
+      const isExist = book.review.some(
         (review: IReview) => review.author._id === userId,
       );
       setIsExistReview(isExist);
@@ -273,6 +283,8 @@ function Modal({ isOpen, onClose, bookId }: any) {
         (review: IReview) => review.author._id !== userId,
       );
       setSortedReviews([userReview, ...otherReviews]);
+    } else {
+      setSortedReviews(book?.review);
     }
   }, [book, userId]);
   if (!isOpen || isLoading || !book) {
@@ -282,6 +294,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
     const expired = await isExpired(accessToken);
     if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");
@@ -450,28 +463,29 @@ function Modal({ isOpen, onClose, bookId }: any) {
 
                 {book.review && book.review.length > 0 ? (
                   <ul className="mt-7 flex flex-col">
-                    {sortedReviews.map((review: IReview, index: number) =>
-                      review ? (
-                        <ReviewItem
-                          key={review._id}
-                          bookId={bookId}
-                          accessToken={accessToken}
-                          userId={userId}
-                          review={review}
-                          likeClick={likeClick}
-                          isLikeClicked={isLikeClicked}
-                          reviewLikes={reviewLikes}
-                          setIsUpdateMode={setIsUpdateMode}
-                          handleUpdateReview={handleUpdateReview}
-                          myRating={myRating}
-                          isUserReview={
-                            review &&
-                            index === 0 &&
-                            review.author._id === userId
-                          }
-                        />
-                      ) : null,
-                    )}
+                    {sortedReviews &&
+                      sortedReviews.map((review: IReview, index: number) =>
+                        review ? (
+                          <ReviewItem
+                            key={review._id}
+                            bookId={bookId}
+                            accessToken={accessToken}
+                            userId={userId}
+                            review={review}
+                            likeClick={likeClick}
+                            isLikeClicked={isLikeClicked}
+                            reviewLikes={reviewLikes}
+                            setIsUpdateMode={setIsUpdateMode}
+                            handleUpdateReview={handleUpdateReview}
+                            myRating={myRating}
+                            isUserReview={
+                              review &&
+                              index === 0 &&
+                              review.author._id === userId
+                            }
+                          />
+                        ) : null,
+                      )}
                   </ul>
                 ) : (
                   <span>등록된 리뷰가 없습니다.</span>

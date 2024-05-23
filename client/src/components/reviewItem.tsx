@@ -150,7 +150,7 @@ function ReviewItem({
           ) : null}
         </div>
         <div>
-          {review.author.nickname}({maskUsername(review.author.username)})
+          {review?.author.nickname}({maskUsername(review?.author.username)})
         </div>
       </div>
       <div>{review.content}</div>
