@@ -6,7 +6,10 @@ interface IReview {
     username: string;
     nickname: string;
   };
-  book: string;
+  book: {
+    _id: string;
+    title: string;
+  };
   likes: string[];
   dislikes: number;
   isRecommended: boolean;

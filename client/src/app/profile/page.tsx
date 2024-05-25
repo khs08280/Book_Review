@@ -18,8 +18,12 @@ export default function Profile() {
 
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
-
+  const [selectedIndex, setSelectedIndex] = useState(0);
   let accessToken = LocalStorage.getItem("accessToken");
+
+  const handleMenuClick = (index: number) => {
+    setSelectedIndex(index);
+  };
 
   const queryClient = useQueryClient();
 
@@ -38,6 +42,7 @@ export default function Profile() {
 
     checkToken();
   }, [accessToken, router]);
+
   const fetchData = async () => {
     try {
       const expired = await isExpired(accessToken);
@@ -112,6 +117,7 @@ export default function Profile() {
       return;
     }
   };
+
   const handleUpdatePw = async (e: any) => {
     e.preventDefault();
     const isReal = confirm("정말 비밀번호를 변경하시겠습니까?");
@@ -158,6 +164,7 @@ export default function Profile() {
       return;
     }
   };
+
   const handleUpdateIntroduction = async () => {
     const isReal = confirm("정말 자기소개를 변경하시겠습니까?");
     if (isReal) {
@@ -197,6 +204,7 @@ export default function Profile() {
       return;
     }
   };
+
   const updateMutation = useMutation({
     mutationFn: handleUpdateIntroduction,
     onError: (error) => {
@@ -207,6 +215,7 @@ export default function Profile() {
       setIntroduction("");
     },
   });
+
   const updateReview = async () => {
     const expired = await isExpired(accessToken);
 
@@ -222,52 +231,132 @@ export default function Profile() {
   return (
     <>
       <SideBar />
-      <main className="ml-52  flex h-screen flex-col pl-20 pt-20">
-        <section>
-          <h3 className="text-2xl">내가 리뷰를 남긴 책</h3>
+      <main
+        className="ml-52 flex items-center pl-80"
+        style={{ height: "calc(100vh - 20vh)" }}
+      >
+        <nav className="mr-80">
           <ul>
-            {myInfo.review.map((review: IReview) => (
-              <li key={review._id}></li>
-            ))}
+            <li
+              className=" mb-4 cursor-pointer text-xl text-blue-200"
+              onClick={() => handleMenuClick(0)}
+            >
+              내가 추천한 책
+            </li>
+            <li
+              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              onClick={() => handleMenuClick(1)}
+            >
+              내가 리뷰를 남긴 책
+            </li>
+            <li
+              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              onClick={() => handleMenuClick(2)}
+            >
+              자기소개 변경
+            </li>
+            <li
+              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              onClick={() => handleMenuClick(3)}
+            >
+              비밀번호 변경
+            </li>
+            <li
+              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              onClick={() => handleMenuClick(4)}
+            >
+              회원탈퇴
+            </li>
           </ul>
+        </nav>
+        <section className="flex flex-col">
+          {selectedIndex === 1 && (
+            <div>
+              <h3 className="mb-5 text-2xl">내가 리뷰를 남긴 책</h3>
+              <ul>
+                {myInfo?.review?.length > 0 ? (
+                  myInfo.review.map((review: IReview) => (
+                    <li
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      key={review._id}
+                    >
+                      <span className="truncate text-2xl font-medium">
+                        {review.book.title}
+                      </span>
+                      <span className="text-lg">{review.content}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li>리뷰가 없습니다.</li>
+                )}
+              </ul>
+            </div>
+          )}
+          {selectedIndex === 2 && (
+            <div className="flex  flex-col">
+              <h3 className="mb-5 text-2xl">자기소개 변경</h3>
+              <span className="rounded-md border-2 border-solid border-blue-200 p-5 text-lg">
+                {myInfo?.introduction}
+              </span>
+              <textarea
+                className="my-5 h-16 w-96 resize-none rounded-md bg-green-400 px-3 py-2 text-light-light placeholder:text-light-light focus:outline-none"
+                placeholder="변경할 자기소개를 입력해주세요"
+                value={introduction}
+                onChange={(e) => setIntroduction(e.target.value)}
+              />
+              <button
+                className=" w-fit self-end rounded-lg bg-blue-200 px-3 py-2 text-dark-dark transition-all duration-75 hover:bg-slate-200"
+                onClick={updateReview}
+              >
+                자기소개 변경
+              </button>
+            </div>
+          )}
+          {selectedIndex === 3 && (
+            <div className="flex  flex-col">
+              <h3 className="mb-5 text-2xl">비밀번호 변경</h3>
+              <textarea
+                className="my-5 h-16 w-96 resize-none rounded-md bg-green-400 px-3 py-2 text-light-light placeholder:text-light-light focus:outline-none"
+                placeholder="기존 비밀번호"
+                value={rePw}
+                onChange={(e) => setRePw(e.target.value)}
+              />
+              <textarea
+                className="my-5 h-16 w-96 resize-none rounded-md bg-green-400 px-3 py-2 text-light-light placeholder:text-light-light focus:outline-none"
+                placeholder="기존 비밀번호 확인"
+                value={reCheckPw}
+                onChange={(e) => setReCheckPw(e.target.value)}
+              />
+              <textarea
+                className="my-5 h-16 w-96 resize-none rounded-md bg-green-400 px-3 py-2 text-light-light placeholder:text-light-light focus:outline-none"
+                placeholder="새 비밀번호"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+              />
+              <button className="w-fit self-center" onClick={handleUpdatePw}>
+                비밀번호 변경
+              </button>
+            </div>
+          )}
+          {selectedIndex === 4 && (
+            <div className="flex  flex-col">
+              <h3 className="mb-5 text-2xl">회원탈퇴</h3>
+              <textarea
+                className="my-5 h-16 w-96 resize-none rounded-md bg-green-400 px-3 py-2 text-light-light placeholder:text-light-light focus:outline-none"
+                placeholder="본인 확인을 위해 비밀번호를 입력해주세요"
+                value={deletePw}
+                onChange={(e) => setDeletePw(e.target.value)}
+              />
+              {error}
+              <button
+                className="w-fit self-center"
+                onClick={handleDeleteAccount}
+              >
+                회원 탈퇴
+              </button>
+            </div>
+          )}
         </section>
-        <div className="flex w-1/3 flex-col">
-          <input
-            className="bg-green-500 text-white"
-            value={rePw}
-            onChange={(e) => setRePw(e.target.value)}
-          />
-          <input
-            className="bg-red-500 text-white"
-            value={reCheckPw}
-            onChange={(e) => setReCheckPw(e.target.value)}
-          />
-          <input
-            className="bg-yellow-500 text-white"
-            value={newPw}
-            onChange={(e) => setNewPw(e.target.value)}
-          />
-          <button onClick={(e) => handleUpdatePw(e)}>비밀번호 변경</button>
-        </div>
-        <div className="flex w-1/3 flex-col">
-          <input
-            className="bg-black text-white"
-            value={deletePw}
-            onChange={(e) => setDeletePw(e.target.value)}
-          />
-          {error}
-          <button onClick={(e) => handleDeleteAccount(e)}>회원 탈퇴</button>
-        </div>
-        <div className="flex w-1/3 flex-col">
-          <input
-            className="bg-blue-200"
-            value={introduction}
-            onChange={(e) => setIntroduction(e.target.value)}
-          />
-          <button onClick={updateReview}>자기소개 변경</button>
-
-          {myInfo?.introduction}
-        </div>
       </main>
     </>
   );
