@@ -18,7 +18,7 @@ export default function Profile() {
 
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(1);
   let accessToken = LocalStorage.getItem("accessToken");
 
   const handleMenuClick = (index: number) => {

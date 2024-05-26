@@ -19,6 +19,12 @@ const communityCommentSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "CommunityComment",
   },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +34,10 @@ const communityCommentSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  modifiedAt: {
+    type: Date,
+    default: null,
   },
 });
 

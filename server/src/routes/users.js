@@ -11,13 +11,13 @@ import {
   reAccessToken,
   refreshToLogin,
 } from "../controllers/userController.js";
-import { isLoggedIn, isNotLoggedIn } from "../middleware/isLoggedIn.js";
+import { isLoggedIn, isNotLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", login);
-userRouter.post("/join", join);
+userRouter.post("/login", isNotLoggedIn, login);
+userRouter.post("/join", isNotLoggedIn, join);
 userRouter.post(
   "/logout",
   isLoggedIn,

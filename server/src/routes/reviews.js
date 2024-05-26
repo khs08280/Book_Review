@@ -7,7 +7,7 @@ import {
   handleLike,
   handleRating,
 } from "../controllers/reviewController.js";
-import { isLoggedIn } from "../middleware/isLoggedIn.js";
+import { isLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
 
 const reviewRouter = express.Router();

@@ -45,6 +45,7 @@ const userSchema = mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, ref: "CommunityComment" },
   ],
   recommendedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+  oneLineRecommends: [{ type: mongoose.Schema.Types.ObjectId, ref: "OneLine" }],
 });
 
 userSchema.pre("save", async function (next) {

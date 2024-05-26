@@ -10,7 +10,7 @@ import {
   getUserRatingForBook,
   searchBook,
 } from "../controllers/bookController.js";
-import { isLoggedIn } from "../middleware/isLoggedIn.js";
+import { isLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
 
 const bookRouter = express.Router();

@@ -9,19 +9,15 @@ export const CReview = async (req, res) => {
 
     if (Object.keys(otherData).length !== 0) {
       return res.status(400).json({
-        success: false,
-        error: "유효하지 않은 데이터가 포함되어 있습니다.",
+        message: "유효하지 않은 데이터가 포함되어 있습니다.",
       });
     }
     if (content.trim() == "") {
-      return res
-        .status(422)
-        .json({ error: "아이디를 입력해주세요", success: false });
+      return res.status(422).json({ message: "아이디를 입력해주세요" });
     }
     if (!content || !userId || !bookId) {
       return res.status(422).json({
-        error: "요청에 필요한 데이터가 올바르지 않습니다",
-        success: false,
+        message: "요청에 필요한 데이터가 올바르지 않습니다",
       });
     }
 
@@ -33,24 +29,20 @@ export const CReview = async (req, res) => {
 
     if (existingReview) {
       return res.status(400).json({
-        error: "이미 리뷰를 작성한 책입니다",
-        success: false,
+        message: "이미 리뷰를 작성한 책입니다",
       });
     }
-
-    const isAuthor = await User.findById(userId);
     const isBookExists = await Book.findById(bookId);
 
-    if (!isAuthor) {
-      return res.status(400).json({
-        error: "리뷰를 등록할 유저를 찾을 수 없습니다",
-        success: false,
+    if (!user) {
+      return res.status(404).json({
+        message: "리뷰를 등록할 유저를 찾을 수 없습니다",
       });
     }
     if (!isBookExists) {
       return res
         .status(404)
-        .json({ error: "리뷰를 등록할 책을 찾을 수 없습니다", success: false });
+        .json({ message: "리뷰를 등록할 책을 찾을 수 없습니다" });
     }
 
     const reviewData = {
@@ -72,10 +64,10 @@ export const CReview = async (req, res) => {
     book.review.push(review._id);
     await book.save();
 
-    res.status(201).json({ data: review, success: true });
+    res.status(201).json({ data: reviewData });
   } catch (error) {
     console.error("Error creating review: ", error);
-    res.status(500).json({ error: "리뷰 등록에 실패했습니다", success: false });
+    res.status(500).json({ message: "리뷰 등록에 실패했습니다" });
   }
 };
 

@@ -9,14 +9,30 @@ const communityArticleSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+  },
+  tags: [
+    {
+      type: String,
+    },
+  ],
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
+  view: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  modifiedAt: {
+    type: Date,
+    default: null,
   },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "CommunityComment" }],
 });
