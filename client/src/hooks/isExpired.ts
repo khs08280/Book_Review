@@ -14,21 +14,17 @@ export const isExpired = async (accessToken: string | null) => {
         console.log("만료 안됨");
         return false;
       } else {
-        const refreshToken = getCookie("refreshToken");
-
         const response = await fetch(
           "http://localhost:5000/api/users/refresh",
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${refreshToken}`,
             },
             credentials: "include",
           },
         );
         if (!response.ok) {
-          console.log("토큰 재발급 실패");
-
+          console.log("refreshToken이 만료되거나 해서 재발급 실패");
           return true;
         }
         const responseData = await response.json();

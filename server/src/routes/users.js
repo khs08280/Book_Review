@@ -16,8 +16,8 @@ import passport from "passport";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", isNotLoggedIn, login);
-userRouter.post("/join", isNotLoggedIn, join);
+userRouter.post("/login", login);
+userRouter.post("/join", join);
 userRouter.post(
   "/logout",
   isLoggedIn,

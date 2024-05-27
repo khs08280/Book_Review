@@ -9,6 +9,6 @@ export const isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {
-    res.status(403).send("로그아웃을 해주세요(/isLoggedIn)");
+    res.status(400).send("로그아웃을 해주세요(/isLoggedIn)");
   }
 };

@@ -9,6 +9,8 @@ import ReviewItem from "./reviewItem";
 import Stars from "./stars";
 import AverageStars from "./averageStars";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "../states/atoms";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -23,6 +25,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
   const [myRating, setMyRating] = useState<number | null>(null);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   const textareaRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
@@ -91,10 +94,13 @@ function Modal({ isOpen, onClose, bookId }: any) {
   });
   const updateReview = async () => {
     const expired = await isExpired(accessToken);
-
-    if (!accessToken || expired) {
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       router.push("/login");
+      setIsLoggedIn(false);
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");

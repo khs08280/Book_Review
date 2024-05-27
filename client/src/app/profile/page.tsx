@@ -232,43 +232,44 @@ export default function Profile() {
     <>
       <SideBar />
       <main
-        className="ml-52 flex items-center pl-80"
+        className="ml-52 flex items-center justify-center"
         style={{ height: "calc(100vh - 20vh)" }}
       >
-        <nav className="mr-80">
+        <nav className="text-blue-400">
           <ul>
             <li
-              className=" mb-4 cursor-pointer text-xl text-blue-200"
+              className=" mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(0)}
             >
               내가 추천한 책
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              className="  mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(1)}
             >
               내가 리뷰를 남긴 책
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              className="  mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(2)}
             >
               자기소개 변경
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              className="  mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(3)}
             >
               비밀번호 변경
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl text-blue-200"
+              className="  mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(4)}
             >
               회원탈퇴
             </li>
           </ul>
         </nav>
+        <div className="w-40" />
         <section className="flex flex-col">
           {selectedIndex === 1 && (
             <div>

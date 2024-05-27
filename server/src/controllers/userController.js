@@ -272,14 +272,14 @@ export const updatePassword = async (req, res) => {
 };
 
 export const reAccessToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
   try {
-    if (!req.cookies.refreshToken) {
+    if (!refreshToken) {
       return res
         .status(400)
         .json({ error: "요청에 필요한 refreshToken이 없습니다." });
     }
-
-    const refreshToken = req.cookies.refreshToken;
 
     const user = await User.findOne({ refreshToken });
     if (!user) {
