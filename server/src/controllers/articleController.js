@@ -62,9 +62,15 @@ export const readArticle = async (req, res) => {
 };
 export const selectedArticle = async (req, res) => {
   try {
-    const article = await CommunityArticle.findById(
-      req.params.articleId
-    ).populate("author", "username nickname");
+    const article = await CommunityArticle.findById(req.params.articleId)
+      .populate("author", "username nickname")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username nickname",
+        },
+      });
     if (!article) {
       return res
         .status(404)

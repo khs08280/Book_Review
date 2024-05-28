@@ -53,6 +53,9 @@ export const createComment = async (req, res) => {
 
     await newComment.save();
 
+    article.comments.push(newComment._id);
+    await article.save();
+
     user.communityComments.push(newComment._id);
     await user.save();
 

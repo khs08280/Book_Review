@@ -66,3 +66,19 @@ interface IArticle {
   view: number;
   likes: string[];
 }
+
+interface IComment {
+  _id: string;
+  content: string;
+  author: {
+    _id: string;
+    username: string;
+    nickname: string;
+  };
+  article: string;
+  parentComment: string;
+  likes: string[];
+  children: string[];
+  modifiedAt: null;
+  createdAt: string;
+}
