@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css"; // 스타일 임포트
 
 const Editor = dynamic(
@@ -9,8 +9,16 @@ const Editor = dynamic(
   { ssr: false },
 );
 
-export default function DraftEditor({ setContent }: any) {
+export default function DraftEditor({ setContent, alreadyEditorState }: any) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  useEffect(() => {
+    if (alreadyEditorState) {
+      const contentState = convertFromRaw(JSON.parse(alreadyEditorState));
+      const newEditorState = EditorState.createWithContent(contentState);
+      setEditorState(newEditorState);
+    }
+  }, [alreadyEditorState]);
 
   const handleEditorChange = (state: EditorState) => {
     setEditorState(state);

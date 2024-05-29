@@ -39,26 +39,35 @@ export const createComment = async (req, res) => {
       }
     }
 
-    const newComment = new CommunityComment({
-      content,
-      author: userId,
-      article: articleId,
-      parentComment: parentCommentId || null,
-    });
+    let newComment;
+    if (!parentCommentId) {
+      newComment = new CommunityComment({
+        content,
+        author: userId,
+        article: articleId,
+      });
 
-    if (parentComment) {
-      parentComment.children.push(newComment._id);
+      await newComment.save();
+
+      article.comments.push(newComment._id);
+      await article.save();
+
+      user.communityComments.push(newComment._id);
+      await user.save();
+    } else {
+      newComment = new CommunityComment({
+        content,
+        author: userId,
+        article: articleId,
+        parentComment: parentCommentId,
+      });
+
+      user.communityComments.push(newComment._id);
+      await user.save();
+
+      parentComment.children.push(newComment);
       await parentComment.save();
     }
-
-    await newComment.save();
-
-    article.comments.push(newComment._id);
-    await article.save();
-
-    user.communityComments.push(newComment._id);
-    await user.save();
-
     res
       .status(201)
       .json({ data: newComment, message: "댓글이 정상적으로 작성되었습니다." });
@@ -120,6 +129,21 @@ export const updateComment = async (req, res) => {
     res.status(500).json({ message: "댓글 업데이트 중 에러가 발생했습니다." });
   }
 };
+
+const deleteChildComments = async (commentIds) => {
+  for (const commentId of commentIds) {
+    const comment = await CommunityComment.findById(commentId);
+    if (comment.children.length > 0) {
+      await deleteChildComments(comment.children);
+    }
+    await User.updateOne(
+      { _id: comment.author },
+      { $pull: { communityComments: commentId } }
+    );
+    await CommunityComment.findByIdAndDelete(commentId);
+  }
+};
+
 export const deleteComment = async (req, res) => {
   const { commentId, ...otherData } = req.body;
 
@@ -136,6 +160,17 @@ export const deleteComment = async (req, res) => {
       return res.status(404).json({
         message: "해당 댓글을 찾을 수 없습니다",
       });
+    }
+    if (comment.children.length > 0) {
+      await deleteChildComments(comment.children);
+    }
+
+    if (comment.parentComment) {
+      const parentComment = await CommunityComment.findById(
+        comment.parentComment
+      );
+      parentComment.children.pull(commentId);
+      await parentComment.save();
     }
 
     await User.updateOne(

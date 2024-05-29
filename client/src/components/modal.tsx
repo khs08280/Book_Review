@@ -11,6 +11,7 @@ import AverageStars from "./averageStars";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
+import useClickOutside from "../hooks/outsideClick";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -187,22 +188,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
     setMyRating(data);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        textareaRef.current &&
-        !textareaRef.current.contains(event.target as Node)
-      ) {
-        setIsReviewActive(false);
-        setIsUpdateMode(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useClickOutside(textareaRef, () => {
+    setIsReviewActive(false);
+    setIsUpdateMode(false);
+  });
 
   useEffect(() => {
     const fetchRating = async () => {

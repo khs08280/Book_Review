@@ -45,6 +45,7 @@ export const isExpired = async (accessToken: string | null) => {
 export const getUserId = async (
   accessToken: string | null,
 ): Promise<string | null> => {
+  isExpired(accessToken);
   if (accessToken !== null) {
     const decoded = jwt.decode(accessToken) as JwtPayload;
 

@@ -1,4 +1,5 @@
 import CommunityArticle from "../models/communityArticle.js";
+import CommunityComment from "../models/communityComment.js";
 import User from "../models/user.js";
 
 export const createArticle = async (req, res) => {
@@ -63,13 +64,28 @@ export const readArticle = async (req, res) => {
 export const selectedArticle = async (req, res) => {
   try {
     const article = await CommunityArticle.findById(req.params.articleId)
-      .populate("author", "username nickname")
+      .populate({
+        path: "author",
+        select: "username nickname",
+      })
       .populate({
         path: "comments",
-        populate: {
-          path: "author",
-          select: "username nickname",
-        },
+        populate: [
+          {
+            path: "author",
+            select: "username nickname",
+          },
+          {
+            path: "children",
+            select: "content author",
+            populate: [
+              {
+                path: "author",
+                select: "username nickname",
+              },
+            ],
+          },
+        ],
       });
     if (!article) {
       return res
@@ -156,6 +172,8 @@ export const deleteArticle = async (req, res) => {
       { _id: article.author },
       { $pull: { communityArticles: articleId } }
     );
+
+    await CommunityComment.deleteMany({ article: articleId });
 
     await CommunityArticle.findByIdAndDelete(articleId);
 
