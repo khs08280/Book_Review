@@ -40,7 +40,6 @@ export default function ArticlePage() {
       },
     );
     const data = await response.json();
-    console.log(data.data);
 
     data.data.content = convertJsonToText(data.data.content);
     return data.data;

@@ -23,6 +23,8 @@ export const isExpired = async (accessToken: string | null) => {
             credentials: "include",
           },
         );
+        const data = await response.json();
+        console.log(data);
         if (!response.ok) {
           console.log("refreshToken이 만료되거나 해서 재발급 실패");
           return true;

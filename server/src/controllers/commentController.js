@@ -6,12 +6,14 @@ export const createComment = async (req, res) => {
   const { content, articleId, parentCommentId, ...otherData } = req.body;
   const userId = req.user._id;
 
+  // 유효하지 않은 데이터 체크
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
       message: "유효하지 않은 데이터가 포함되어 있습니다.",
     });
   }
 
+  // 필수 데이터 체크
   if (!content) {
     return res
       .status(422)
@@ -19,16 +21,19 @@ export const createComment = async (req, res) => {
   }
 
   try {
+    // 유저 체크
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "유저를 찾을 수 없습니다." });
     }
 
+    // 게시글 체크
     const article = await CommunityArticle.findById(articleId);
     if (!article) {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
     }
 
+    // 부모 댓글 체크
     let parentComment;
     if (parentCommentId) {
       parentComment = await CommunityComment.findById(parentCommentId);
@@ -39,38 +44,30 @@ export const createComment = async (req, res) => {
       }
     }
 
-    let newComment;
+    // 새로운 댓글 생성
+    const newComment = new CommunityComment({
+      content,
+      author: userId,
+      article: articleId,
+      parentComment: parentCommentId || null,
+    });
+
+    await newComment.save();
+
+    // 부모 댓글이 없는 경우 게시글에 댓글 추가
     if (!parentCommentId) {
-      newComment = new CommunityComment({
-        content,
-        author: userId,
-        article: articleId,
-      });
-
-      await newComment.save();
-
       article.comments.push(newComment._id);
       await article.save();
-
-      user.communityComments.push(newComment._id);
-      await user.save();
-    } else {
-      newComment = new CommunityComment({
-        content,
-        author: userId,
-        article: articleId,
-        parentComment: parentCommentId,
-      });
-
-      user.communityComments.push(newComment._id);
-      await user.save();
-
-      parentComment.children.push(newComment);
-      await parentComment.save();
     }
-    res
-      .status(201)
-      .json({ data: newComment, message: "댓글이 정상적으로 작성되었습니다." });
+
+    // 유저 댓글 목록에 추가
+    user.communityComments.push(newComment._id);
+    await user.save();
+
+    res.status(201).json({
+      data: newComment,
+      message: "댓글이 정상적으로 작성되었습니다.",
+    });
   } catch (error) {
     console.error("Error creating comment: ", error);
     res.status(500).json({ message: "댓글 작성 중 에러가 발생했습니다." });

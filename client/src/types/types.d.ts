@@ -59,7 +59,7 @@ interface IArticle {
     nickname: string;
     username: string;
   };
-  modifiedAt: string;
+  modifiedAt: null | string;
   comments: [];
   createdAt: string;
   tags: string[];
@@ -78,7 +78,30 @@ interface IComment {
   article: string;
   parentComment: string;
   likes: string[];
+  children: [];
+  modifiedAt: null | string;
+  createdAt: string;
+}
+interface IReComment {
+  _id: string;
+  createdAt: string;
+  content: string;
+  author: {
+    _id: string;
+    username: string;
+    nickname: string;
+  };
   children: string[];
-  modifiedAt: null;
+}
+
+interface IOneLine {
+  _id: string;
+  content: string;
+  author: {
+    _id: string;
+    username: string;
+    nickname: string;
+  };
+  modifiedAt: null | string;
   createdAt: string;
 }

@@ -91,7 +91,7 @@ export const login = async (req, res) => {
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30m",
+          expiresIn: "5m",
         }
       );
       const refreshToken = jwt.sign({}, process.env.JWT_SECRET, {
@@ -302,7 +302,7 @@ export const reAccessToken = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "30m",
+        expiresIn: "5m",
       }
     );
 

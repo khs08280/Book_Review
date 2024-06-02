@@ -18,7 +18,7 @@ export default function Community() {
       credentials: "include",
     });
     const data = await response.json();
-    console.log(data.data);
+
     return data.data;
   };
 

@@ -1,6 +1,7 @@
 import CommunityArticle from "../models/communityArticle.js";
 import CommunityComment from "../models/communityComment.js";
 import User from "../models/user.js";
+import mongoose from "mongoose";
 
 export const createArticle = async (req, res) => {
   const { title, content, tags, ...otherData } = req.body;
@@ -63,42 +64,69 @@ export const readArticle = async (req, res) => {
 };
 export const selectedArticle = async (req, res) => {
   try {
-    const article = await CommunityArticle.findById(req.params.articleId)
-      .populate({
-        path: "author",
-        select: "username nickname",
-      })
-      .populate({
-        path: "comments",
-        populate: [
-          {
-            path: "author",
-            select: "username nickname",
-          },
-          {
-            path: "children",
-            select: "content author",
-            populate: [
-              {
-                path: "author",
-                select: "username nickname",
-              },
-            ],
-          },
-        ],
-      });
+    const articleId = req.params.articleId;
+
+    // 게시글을 찾아서 작성자 정보를 populate
+    const article = await CommunityArticle.findById(articleId)
+      .populate("author", "username nickname")
+      .lean(); // .lean()을 사용하여 Mongoose Document를 평범한 JavaScript 객체로 변환
+
     if (!article) {
       return res
         .status(404)
         .json({ message: "해당 게시글이 존재하지 않습니다" });
     }
-    article.view += 1;
-    await article.save();
+
+    // 모든 댓글을 가져옴
+    const comments = await CommunityComment.find({ article: articleId })
+      .populate({
+        path: "author",
+        select: "username nickname",
+      })
+      .lean(); // .lean()을 사용하여 Mongoose Document를 평범한 JavaScript 객체로 변환
+
+    // 댓글을 계층 구조로 변환
+    const commentMap = {};
+    comments.forEach((comment) => {
+      commentMap[comment._id] = {
+        author: comment.author,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        _id: comment._id,
+        children: [],
+      };
+    });
+
+    const rootComments = [];
+    comments.forEach((comment) => {
+      if (comment.parentComment) {
+        commentMap[comment.parentComment].children.push(
+          commentMap[comment._id]
+        );
+      } else {
+        rootComments.push(commentMap[comment._id]);
+      }
+    });
+
+    // 조회수 증가
+    await CommunityArticle.findByIdAndUpdate(articleId, { $inc: { view: 1 } });
+
+    // rootComments를 article.comments로 할당
+    article.comments = rootComments.map((comment) => ({
+      author: comment.author,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      children: comment.children,
+      _id: comment._id,
+    }));
+
     res.status(200).json({ data: article });
   } catch (error) {
+    console.error("Error fetching article: ", error);
     res.status(500).json({ message: "에러가 발생했습니다." });
   }
 };
+
 export const updateArticle = async (req, res) => {
   const { title, content, tags, articleId, ...otherData } = req.body;
   const userId = req.user._id;

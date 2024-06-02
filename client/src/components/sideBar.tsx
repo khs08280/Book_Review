@@ -44,9 +44,11 @@ export function SideBar() {
             커뮤니티
           </li>
         </Link>
-        <li className="mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-stone-400">
-          한줄 책 추천
-        </li>
+        <Link href={"/oneLine"}>
+          <li className="mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-stone-400">
+            한줄 책 추천
+          </li>
+        </Link>
         {login ? (
           <Link href={"/profile"}>
             <li
