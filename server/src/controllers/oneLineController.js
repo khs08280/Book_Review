@@ -11,6 +11,7 @@ export const createOneLine = async (req, res) => {
       message: "유효하지 않은 데이터가 포함되어 있습니다.",
     });
   }
+
   if (!content || content.length > 150) {
     return res
       .status(400)

@@ -24,13 +24,12 @@ export const isExpired = async (accessToken: string | null) => {
           },
         );
         const data = await response.json();
-        console.log(data);
         if (!response.ok) {
           console.log("refreshToken이 만료되거나 해서 재발급 실패");
           return true;
         }
-        const responseData = await response.json();
-        localStorage.setItem("accessToken", responseData.newAccessToken);
+        console.log(data);
+        localStorage.setItem("accessToken", data.newAccessToken);
         console.log("토큰 새로 발급함");
         return false;
       }
