@@ -65,6 +65,7 @@ interface IArticle {
   tags: string[];
   view: number;
   likes: string[];
+  category: string;
 }
 
 interface IComment {

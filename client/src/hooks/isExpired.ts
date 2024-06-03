@@ -1,5 +1,4 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { getCookie } from "../utils/react-cookie";
 
 export const isExpired = async (accessToken: string | null) => {
   if (accessToken !== null) {
@@ -28,7 +27,6 @@ export const isExpired = async (accessToken: string | null) => {
           console.log("refreshToken이 만료되거나 해서 재발급 실패");
           return true;
         }
-        console.log(data);
         localStorage.setItem("accessToken", data.newAccessToken);
         console.log("토큰 새로 발급함");
         return false;

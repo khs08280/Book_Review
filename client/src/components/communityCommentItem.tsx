@@ -169,7 +169,10 @@ export default function CommunityReviewItem({
       </div>
       {comment.children &&
         comment.children.map((reComment: IReComment) => (
-          <div className="mb-4 ml-7 border-b-2 border-solid border-black border-opacity-5 pb-2">
+          <div
+            key={reComment._id}
+            className="mb-4 ml-7 border-b-2 border-solid border-black border-opacity-5 pb-2"
+          >
             <div className="flex w-full items-center justify-between">
               <div className="mb-4">
                 <span className="mr-2">

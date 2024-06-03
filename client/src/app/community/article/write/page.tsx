@@ -10,6 +10,7 @@ import { useState } from "react";
 export default function CommunityWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("자유");
   let accessToken = LocalStorage.getItem("accessToken");
   const router = useRouter();
 
@@ -17,6 +18,7 @@ export default function CommunityWrite() {
     const fetchData = {
       title,
       content,
+      category,
     };
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
@@ -51,10 +53,18 @@ export default function CommunityWrite() {
       <div className="ml-52 flex justify-center p-10">
         <main className="flex h-screen w-7/12 flex-col space-y-4 bg-slate-500 p-5">
           <span className="mb-4 text-2xl text-white">글 쓰기</span>
-          <input
-            placeholder="카테고리"
-            className="rounded border border-gray-300 p-2"
-          />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value={"자유"}>자유</option>
+            <option value={"인문"}>인문</option>
+            <option value={"자기계발"}>자기계발</option>
+            <option value={"소설"}>소설</option>
+            <option value={"웹툰"}>웹툰</option>
+            <option value={"웹소설"}>웹소설</option>
+            <option value={"자유"}>자유</option>
+          </select>
           <input
             onChange={(e) => setTitle(e.target.value)}
             value={title}

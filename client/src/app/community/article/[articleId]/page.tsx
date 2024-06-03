@@ -245,9 +245,16 @@ export default function ArticlePage() {
             <section className=" border-b-2 border-solid border-black border-opacity-5 pb-10">
               <div className="flex  justify-between">
                 <div className="mb-4 flex items-center">
-                  <span className=" mr-2 rounded-lg bg-green-400 p-2 text-base">
-                    카테고리
-                  </span>
+                  {article.category ? (
+                    <span className=" mr-2 rounded-lg bg-green-400 p-2 text-base">
+                      {article.category}
+                    </span>
+                  ) : (
+                    <span className=" mr-2 rounded-lg bg-green-400 p-2 text-base">
+                      자유
+                    </span>
+                  )}
+
                   <span className="text-2xl font-medium">{article.title}</span>
                 </div>
                 {userId == article.author._id && (
@@ -261,7 +268,7 @@ export default function ArticlePage() {
                         ref={divRef}
                         className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center justify-center rounded-sm bg-light-light p-2 shadow-lg"
                       >
-                        <Link href={`/community/${article._id}/update`}>
+                        <Link href={`/community/article/${article._id}/update`}>
                           <span className="mb-2 cursor-pointer text-center text-blue-500">
                             수정
                           </span>

@@ -4,6 +4,7 @@ import {
   deleteArticle,
   readArticle,
   selectedArticle,
+  selectedCategoryArticle,
   updateArticle,
 } from "../controllers/articleController.js";
 import { isLoggedIn } from "../middleware/loginCheck.js";
@@ -32,4 +33,5 @@ articleRouter.delete(
 );
 
 articleRouter.get("/:articleId", selectedArticle);
+articleRouter.get("/category/:category", selectedCategoryArticle);
 export default articleRouter;

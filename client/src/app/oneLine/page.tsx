@@ -125,14 +125,12 @@ export default function OneLine() {
   const updateComment = async (oneLineId: string, oneLineContent: string) => {
     const expired = await isExpired(accessToken);
 
-    if (expired) {
-      accessToken = LocalStorage.getItem("accessToken");
-    }
-
     if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       return;
     }
+
+    accessToken = LocalStorage.getItem("accessToken");
 
     updateMutation.mutate({ oneLineId, content: oneLineContent });
   };

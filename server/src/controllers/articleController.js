@@ -4,8 +4,10 @@ import User from "../models/user.js";
 import mongoose from "mongoose";
 
 export const createArticle = async (req, res) => {
-  const { title, content, tags, ...otherData } = req.body;
+  const { title, content, category, tags, ...otherData } = req.body;
   const userId = req.user._id;
+
+  console.log(title, content, category, tags);
 
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
@@ -29,6 +31,7 @@ export const createArticle = async (req, res) => {
       title,
       content,
       author: userId,
+      category,
       tags,
     });
     await article.save();
@@ -41,7 +44,7 @@ export const createArticle = async (req, res) => {
       .json({ data: article, message: "게시글을 정상적으로 작성했습니다." });
   } catch (error) {
     console.error("Error creating review: ", error);
-    res.status(500).json({ message: "리뷰 등록에 실패했습니다" });
+    res.status(500).json({ message: "글 생성에 실패했습니다" });
   }
 };
 
@@ -64,7 +67,7 @@ export const readArticle = async (req, res) => {
 };
 export const selectedArticle = async (req, res) => {
   try {
-    const articleId = req.params.articleId;
+    const { articleId } = req.params;
 
     // 게시글을 찾아서 작성자 정보를 populate
     const article = await CommunityArticle.findById(articleId)
@@ -124,6 +127,24 @@ export const selectedArticle = async (req, res) => {
   } catch (error) {
     console.error("Error fetching article: ", error);
     res.status(500).json({ message: "에러가 발생했습니다." });
+  }
+};
+
+export const selectedCategoryArticle = async (req, res) => {
+  const { category } = req.params;
+  try {
+    const articles = await CommunityArticle.find({
+      category: category,
+    });
+    if (!articles.length) {
+      return res
+        .status(404)
+        .json({ message: "No articles found for this category." });
+    }
+
+    res.status(200).json({ data: articles });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
