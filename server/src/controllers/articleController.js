@@ -1,3 +1,4 @@
+import ActivityLog from "../models/activityLog.js";
 import CommunityArticle from "../models/communityArticle.js";
 import CommunityComment from "../models/communityComment.js";
 import User from "../models/user.js";
@@ -35,6 +36,14 @@ export const createArticle = async (req, res) => {
       tags,
     });
     await article.save();
+
+    const newActivity = new ActivityLog({
+      user: userId,
+      type: "POST",
+      referenceId: article._id,
+      createdAt: new Date(),
+    });
+    await newActivity.save();
 
     user.communityArticles.push(article._id);
     await user.save();

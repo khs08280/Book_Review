@@ -10,6 +10,8 @@ import {
   updatePassword,
   reAccessToken,
   refreshToLogin,
+  followUser,
+  unfollowUser,
 } from "../controllers/userController.js";
 import { isLoggedIn, isNotLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
@@ -48,7 +50,11 @@ userRouter.patch(
   passport.authenticate("jwt", { session: false }),
   updatePassword
 );
+
 userRouter.get("/refresh", isLoggedIn, reAccessToken);
 userRouter.get("/refreshToLogin", refreshToLogin);
+
+userRouter.post("/follow/:targetUserId", followUser);
+userRouter.post("/unfollow/:targetUserId", unfollowUser);
 
 export default userRouter;

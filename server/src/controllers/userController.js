@@ -354,3 +354,57 @@ export const refreshToLogin = async (req, res) => {
     res.status(400).json({ error: "토큰 재발급 요청 중 에러가 발생했습니다." });
   }
 };
+
+export const followUser = async (req, res) => {
+  const { targetUserId } = req.params;
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId);
+    const targetUser = await User.findById(targetUserId);
+
+    if (!user || !targetUser) {
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+    }
+    if (user.followings.includes(targetUserId)) {
+      return res.status(404).json({ message: "이미 팔로우 중 입니다" });
+    }
+
+    user.followings.push(targetUserId);
+    targetUser.followers.push(userId);
+
+    await user.save();
+    await targetUser.save();
+
+    res.status(200).json({ message: "팔로우 성공", user, targetUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const unfollowUser = async (req, res) => {
+  const { userId, targetUserId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    const targetUser = await User.findById(targetUserId);
+
+    if (!user || !targetUser) {
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+    }
+
+    user.following = user.following.filter(
+      (id) => id.toString() !== targetUserId
+    );
+    targetUser.followers = targetUser.followers.filter(
+      (id) => id.toString() !== userId
+    );
+
+    await user.save();
+    await targetUser.save();
+
+    res.status(200).json({ message: "언팔로우 성공", user, targetUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

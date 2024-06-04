@@ -331,7 +331,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   return (
     <motion.div
       onClick={falseActiveClick}
-      className="fixed inset-0 z-10  bg-black bg-opacity-30"
+      className="fixed inset-0 z-30  bg-black bg-opacity-30"
       layoutId={bookId}
     >
       <div className="flex h-screen items-center justify-center">

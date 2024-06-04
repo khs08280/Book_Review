@@ -1,3 +1,4 @@
+import ActivityLog from "../models/activityLog.js";
 import Book from "../models/book.js";
 import Rating from "../models/rating.js";
 import Review from "../models/review.js";
@@ -56,6 +57,14 @@ export const CReview = async (req, res) => {
 
     const review = new Review(reviewData);
     await review.save();
+
+    const newActivity = new ActivityLog({
+      user: userId,
+      type: "REVIEW",
+      referenceId: review._id,
+      createdAt: new Date(),
+    });
+    await newActivity.save();
 
     user.review.push(review._id);
     await user.save();

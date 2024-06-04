@@ -36,6 +36,8 @@ const userSchema = mongoose.Schema({
   refreshToken: {
     type: String,
   },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   introduction: String,
   review: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   communityArticles: [

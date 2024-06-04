@@ -1,6 +1,7 @@
 import OneLine from "../models/oneLineRecommend.js";
 import User from "../models/user.js";
 import Book from "../models/book.js";
+import ActivityLog from "../models/activityLog.js";
 
 export const createOneLine = async (req, res) => {
   const { content, bookId, ...otherData } = req.body;
@@ -47,6 +48,17 @@ export const createOneLine = async (req, res) => {
     };
     const newOneLine = new OneLine(oneLineData);
     await newOneLine.save();
+
+    const newActivity = new ActivityLog({
+      author: userId,
+      type: "ONE_LINE",
+      referenceId: newOneLine._id,
+      createdAt: new Date(),
+      description: `${user.nickname}님이 한줄 책 추천을 작성하셨습니다`,
+      metadata: { content: newOneLine.content },
+    });
+    console.log(newActivity);
+    await newActivity.save();
 
     user.oneLineRecommends.push(newOneLine._id);
     await user.save();

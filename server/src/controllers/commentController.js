@@ -1,3 +1,4 @@
+import ActivityLog from "../models/activityLog.js";
 import CommunityArticle from "../models/communityArticle.js";
 import CommunityComment from "../models/communityComment.js";
 import User from "../models/user.js";
@@ -63,6 +64,14 @@ export const createComment = async (req, res) => {
     // 유저 댓글 목록에 추가
     user.communityComments.push(newComment._id);
     await user.save();
+
+    const newActivity = new ActivityLog({
+      user: userId,
+      type: "COMMENT",
+      referenceId: newComment._id,
+      createdAt: new Date(),
+    });
+    await newActivity.save();
 
     res.status(201).json({
       data: newComment,
