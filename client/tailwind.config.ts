@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      minWidth: {
+        main_box: "40rem",
+      },
       colors: {
         light: {
           light: "#f3f3f3",

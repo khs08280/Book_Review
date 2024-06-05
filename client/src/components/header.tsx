@@ -44,14 +44,14 @@ export function Header() {
         credentials: "include",
         method: "POST",
       });
-      if (response.status === 200) {
-        LocalStorage.removeItem("accessToken");
-        setIsLoggedIn(false);
-        router.push("/");
-      } else {
+      if (!response.ok) {
         console.log(response.json());
         console.error("로그아웃 실패:", response.statusText);
       }
+      LocalStorage.removeItem("accessToken");
+      LocalStorage.removeItem("loggedUserData");
+      setIsLoggedIn(false);
+      router.push("/");
     } catch (error) {
       console.error("로그아웃 오류:", error);
     }

@@ -66,11 +66,14 @@ export const createComment = async (req, res) => {
     await user.save();
 
     const newActivity = new ActivityLog({
-      user: userId,
+      author: userId,
       type: "COMMENT",
       referenceId: newComment._id,
       createdAt: new Date(),
+      description: `${user.nickname}님이 게시글에 댓글을 작성하셨습니다`,
+      metadata: { content: newComment.content, article: articleId },
     });
+    console.log(newActivity);
     await newActivity.save();
 
     res.status(201).json({

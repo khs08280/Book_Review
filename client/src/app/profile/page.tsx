@@ -271,6 +271,27 @@ export default function Profile() {
         </nav>
         <div className="w-40" />
         <section className="flex flex-col">
+          {selectedIndex === 0 && (
+            <div>
+              <h3 className="mb-5 text-2xl">내가 추천한 책</h3>
+              <ul>
+                {myInfo?.recommendedBooks?.length > 0 ? (
+                  myInfo.recommendedBooks.map((book: IBook) => (
+                    <li
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      key={book._id}
+                    >
+                      <span className="truncate text-2xl font-medium">
+                        {book.title}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>리뷰가 없습니다.</li>
+                )}
+              </ul>
+            </div>
+          )}
           {selectedIndex === 1 && (
             <div>
               <h3 className="mb-5 text-2xl">내가 리뷰를 남긴 책</h3>

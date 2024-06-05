@@ -106,3 +106,20 @@ interface IOneLine {
   modifiedAt: null | string;
   createdAt: string;
 }
+interface IActivityLog {
+  _id: string;
+  description: string;
+  author: {
+    _id: string;
+    username: string;
+    nickname: string;
+  };
+  isDelete: boolean;
+  createdAt: string;
+  referenceId: string;
+  type: string;
+  metadata: {
+    content: string;
+    title?: string;
+  };
+}

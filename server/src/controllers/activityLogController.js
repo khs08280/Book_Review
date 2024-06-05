@@ -18,7 +18,7 @@ export const getActivityLogs = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate("author");
 
-    res.status(200).json({ activityLogs });
+    res.status(200).json({ data: activityLogs });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

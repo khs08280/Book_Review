@@ -106,6 +106,11 @@ export const login = async (req, res) => {
       return res.status(200).json({
         success: true,
         accessToken,
+        user: {
+          _id: user._id,
+          nickname: user.nickname,
+          username: user.username,
+        },
       });
     });
   })(req, res);
@@ -137,7 +142,9 @@ export const myInfo = async (req, res) => {
           path: "book",
           select: "title",
         },
-      });
+      })
+      .populate("recommendedBooks");
+
     if (!user) {
       return res.status(404).json({ error: "유저를 찾을 수 없습니다" });
     }

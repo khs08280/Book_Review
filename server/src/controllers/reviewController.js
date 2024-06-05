@@ -59,11 +59,14 @@ export const CReview = async (req, res) => {
     await review.save();
 
     const newActivity = new ActivityLog({
-      user: userId,
+      author: userId,
       type: "REVIEW",
       referenceId: review._id,
       createdAt: new Date(),
+      description: `${user.nickname}님이 리뷰를 작성하셨습니다`,
+      metadata: { content: review.content },
     });
+    console.log(newActivity);
     await newActivity.save();
 
     user.review.push(review._id);

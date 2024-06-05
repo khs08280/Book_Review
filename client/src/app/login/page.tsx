@@ -1,16 +1,17 @@
 "use client";
 
 import LocalStorage from "@/src/hooks/localStorage";
-import { isLoggedInAtom } from "@/src/states/atoms";
+import { isLoggedInAtom, userAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
+  const setAuth = useSetRecoilState(userAtom);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -28,12 +29,7 @@ export default function Login() {
         mode: "cors",
         credentials: "include",
       });
-      if (response.status === 200) {
-        const responseData = await response.json();
-        LocalStorage.setItem("accessToken", responseData.accessToken);
-        setIsLoggedIn(true);
-        router.push("/");
-      } else {
+      if (!response.ok) {
         const errorResponse = await response.json();
         setError(errorResponse.error);
         console.error("로그인 오류:", response.statusText);
@@ -41,6 +37,11 @@ export default function Login() {
           setError("");
         }, 3000);
       }
+      const responseData = await response.json();
+      setAuth(responseData.user);
+      LocalStorage.setItem("accessToken", responseData.accessToken);
+      setIsLoggedIn(true);
+      router.push("/");
     } catch (error) {
       console.error("로그인 오류:", error);
       throw error;

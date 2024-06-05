@@ -38,11 +38,14 @@ export const createArticle = async (req, res) => {
     await article.save();
 
     const newActivity = new ActivityLog({
-      user: userId,
+      author: userId,
       type: "POST",
       referenceId: article._id,
       createdAt: new Date(),
+      description: `${user.nickname}님이 게시글을 작성하셨습니다`,
+      metadata: { title: article.title, content: article.content },
     });
+    console.log(newActivity);
     await newActivity.save();
 
     user.communityArticles.push(article._id);
@@ -78,10 +81,9 @@ export const selectedArticle = async (req, res) => {
   try {
     const { articleId } = req.params;
 
-    // 게시글을 찾아서 작성자 정보를 populate
     const article = await CommunityArticle.findById(articleId)
       .populate("author", "username nickname")
-      .lean(); // .lean()을 사용하여 Mongoose Document를 평범한 JavaScript 객체로 변환
+      .lean();
 
     if (!article) {
       return res
@@ -89,15 +91,13 @@ export const selectedArticle = async (req, res) => {
         .json({ message: "해당 게시글이 존재하지 않습니다" });
     }
 
-    // 모든 댓글을 가져옴
     const comments = await CommunityComment.find({ article: articleId })
       .populate({
         path: "author",
         select: "username nickname",
       })
-      .lean(); // .lean()을 사용하여 Mongoose Document를 평범한 JavaScript 객체로 변환
+      .lean();
 
-    // 댓글을 계층 구조로 변환
     const commentMap = {};
     comments.forEach((comment) => {
       commentMap[comment._id] = {
@@ -120,10 +120,10 @@ export const selectedArticle = async (req, res) => {
       }
     });
 
-    // 조회수 증가
     await CommunityArticle.findByIdAndUpdate(articleId, { $inc: { view: 1 } });
 
-    // rootComments를 article.comments로 할당
+    article.likes = article.likes.length;
+
     article.comments = rootComments.map((comment) => ({
       author: comment.author,
       content: comment.content,
@@ -239,5 +239,56 @@ export const deleteArticle = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "게시글 삭제 중 에러가 발생했습니다" });
+  }
+};
+
+export const handleArticleLike = async (req, res) => {
+  const userId = req.user._id;
+
+  const { articleId, ...otherData } = req.body;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  try {
+    if (!userId || !articleId) {
+      return res.status(400).json({
+        success: false,
+        error: "사용자 ID와 리뷰 ID를 모두 제공해야 합니다.",
+      });
+    }
+
+    const article = await CommunityArticle.findById(articleId);
+
+    if (!article) {
+      return res
+        .status(404)
+        .json({ success: false, message: "리뷰를 찾을 수 없습니다." });
+    }
+
+    const userIndex = article.likes.indexOf(userId);
+
+    if (userIndex !== -1) {
+      article.likes.splice(userIndex, 1);
+    } else {
+      article.likes.push(userId);
+    }
+
+    await article.save();
+
+    const likes = article.likes.length;
+
+    res
+      .status(200)
+      .json({ success: true, likes, message: "리뷰에 좋아요를 추가했습니다." });
+  } catch (error) {
+    console.error("좋아요 추가 중 오류:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "서버 오류가 발생했습니다." });
   }
 };

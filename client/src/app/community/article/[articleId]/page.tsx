@@ -27,7 +27,10 @@ export default function ArticlePage() {
   const params = useParams();
   const queryClient = useQueryClient();
   let accessToken = LocalStorage.getItem("accessToken");
-  const { userId } = jwt.decode(accessToken || "") as JwtPayload;
+  const { userAtom } = JSON.parse(
+    LocalStorage.getItem("loggedUserData") as string,
+  );
+  const userId = userAtom._id;
 
   const fetchData = async () => {
     const response = await fetch(
@@ -40,6 +43,7 @@ export default function ArticlePage() {
       },
     );
     const data = await response.json();
+    console.log(data.data);
 
     data.data.content = convertJsonToText(data.data.content);
     return data.data;
@@ -306,6 +310,7 @@ export default function ArticlePage() {
               <div className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4">
                 <AiOutlineLike />
                 좋아요
+                <span>0</span>
               </div>
             </div>
             <section className="my-10">

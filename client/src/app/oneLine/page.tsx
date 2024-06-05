@@ -18,7 +18,10 @@ export default function OneLine() {
   const [isSelectedOneLineOpen, setIsSelectedOneLineOpen] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
-  const { userId } = jwt.decode(accessToken || "") as JwtPayload;
+  const { userAtom } = JSON.parse(
+    LocalStorage.getItem("loggedUserData") as string,
+  );
+  const userId = userAtom._id;
   const queryClient = useQueryClient();
 
   const fetchOneLines = async () => {
