@@ -8,6 +8,7 @@ import { getUserId, isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import CommunityReCommentItem from "./communityReCommentItem";
 
 interface CommentProps {
   comment: IComment;
@@ -244,95 +245,22 @@ export default function CommunityReviewItem({
       </div>
       {comment.children &&
         comment.children.map((reComment: IReComment) => (
-          <div
-            key={reComment._id}
-            className="mb-4 ml-7 border-b-2 border-solid border-black border-opacity-5 pb-2"
-          >
-            <div className="flex w-full items-center justify-between">
-              <div className="mb-4">
-                <span className="mr-2">
-                  {reComment.author.nickname} (
-                  {maskUsername(reComment.author.username)})
-                </span>
-                <span>{formatDate(reComment.createdAt)}</span>
-              </div>
-              <div className="flex items-center">
-                {isLikeClicked[comment._id] ? (
-                  <AiFillLike
-                    onClick={() => handleLike(comment._id)}
-                    className=" size-5 cursor-pointer text-white"
-                  />
-                ) : (
-                  <AiOutlineLike
-                    onClick={() => handleLike(comment._id)}
-                    className=" size-5 cursor-pointer"
-                  />
-                )}
-                <span>{reviewLikes[comment._id]}</span>
-                {userId == reComment.author._id && (
-                  <div key={reComment._id} className="relative">
-                    <CiMenuKebab
-                      onClick={() =>
-                        openReCommentMenuClick(reComment._id, reComment.content)
-                      }
-                      className="size-5 cursor-pointer"
-                    />
-                    {isMenuOpen && selectedCommentId === reComment._id && (
-                      <div
-                        ref={divRef}
-                        className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center justify-center rounded-sm bg-light-light p-2 shadow-lg"
-                      >
-                        {isSelectedReCommentOpen ? (
-                          <span
-                            onClick={() => setIsSelectedReCommentOpen(false)}
-                            className="mb-2 cursor-pointer text-center text-red-500"
-                          >
-                            취소
-                          </span>
-                        ) : (
-                          <span
-                            onClick={() => {
-                              setIsSelectedReCommentOpen(true);
-                              setIsCommentOpen(false);
-                              setIsReCommentOpen(false);
-                            }}
-                            className="mb-2 cursor-pointer text-center text-blue-500"
-                          >
-                            수정
-                          </span>
-                        )}
-                        <span
-                          onClick={() => deleteCommentClick(reComment._id)}
-                          className="cursor-pointer text-center text-red-500"
-                        >
-                          삭제
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mb-2">{reComment.content}</div>
-            {isSelectedReCommentOpen && selectedCommentId === reComment._id && (
-              <div className="ml-12 mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
-                <textarea
-                  onChange={(e) => setSelectedReCommentContent(e.target.value)}
-                  value={selectedReCommentContent}
-                  className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
-                />
-                <button
-                  onClick={() => {
-                    updateComment(reComment._id, selectedReCommentContent);
-                    setIsSelectedReCommentOpen(false);
-                  }}
-                  className=" mt-2 cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                >
-                  수정
-                </button>
-              </div>
-            )}
-          </div>
+          <CommunityReCommentItem
+            reComment={reComment}
+            userId={userId}
+            accessToken={accessToken}
+            openReCommentMenuClick={openReCommentMenuClick}
+            isMenuOpen={isMenuOpen}
+            selectedCommentId={selectedCommentId}
+            isSelectedReCommentOpen={isSelectedReCommentOpen}
+            setIsSelectedReCommentOpen={setIsSelectedReCommentOpen}
+            setIsCommentOpen={setIsCommentOpen}
+            setIsReCommentOpen={setIsReCommentOpen}
+            deleteCommentClick={deleteCommentClick}
+            setSelectedReCommentContent={setSelectedReCommentContent}
+            selectedReCommentContent={selectedReCommentContent}
+            updateComment={updateComment}
+          />
         ))}
     </div>
   );

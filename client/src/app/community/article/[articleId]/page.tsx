@@ -27,6 +27,8 @@ export default function ArticlePage() {
     [key: string]: boolean;
   }>({});
 
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   const divRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -299,6 +301,31 @@ export default function ArticlePage() {
     }
   }, [article]);
 
+  const userMenuOpen = () => {
+    setIsUserMenuOpen((prev) => !prev);
+  };
+
+  const handleFollow = async () => {
+    const response = await fetch(
+      `http://localhost:5000/api/users/follow/${article?.author._id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      },
+    );
+    if (!response.ok) {
+      console.log(response.json());
+      throw new Error("Network response was not ok");
+    }
+    const fetchData = await response.json();
+    console.log(fetchData);
+  };
+
   return (
     <>
       <SideBar />
@@ -310,7 +337,7 @@ export default function ArticlePage() {
               <div className="flex  justify-between">
                 <div className="mb-4 flex items-center">
                   {article.category ? (
-                    <span className=" mr-2 rounded-lg bg-green-400 p-2 text-base">
+                    <span className=" mr-2 rounded-lg bg-green-400 p-1 text-base">
                       {article.category}
                     </span>
                   ) : (
@@ -347,16 +374,32 @@ export default function ArticlePage() {
                   </div>
                 )}
               </div>
-              <div className="flex justify-start text-sm opacity-35">
-                <span className="mr-3">
-                  {article.author.nickname} (
-                  {maskUsername(article.author.username)})
+              <div className="flex justify-start text-sm ">
+                <div className="relative">
+                  <span
+                    onClick={userMenuOpen}
+                    className="mr-3 cursor-pointer opacity-35"
+                  >
+                    {article.author.nickname} (
+                    {maskUsername(article.author.username)})
+                  </span>
+                  {isUserMenuOpen && userId !== article.author._id && (
+                    <div
+                      onClick={handleFollow}
+                      className="absolute left-5 z-10 cursor-pointer rounded-md bg-light-light p-2 text-base opacity-100"
+                    >
+                      팔로우
+                    </div>
+                  )}
+                </div>
+
+                <span className="mr-3 opacity-35">
+                  {formatDate(article.createdAt)}
                 </span>
-                <span className="mr-3">{formatDate(article.createdAt)}</span>
-                <span className="mr-3 flex items-center">
+                <span className="mr-3 flex items-center opacity-35">
                   <FaRegEye className="mr-1" /> {article.view}
                 </span>
-                <span className="flex items-center ">
+                <span className="flex items-center opacity-35 ">
                   <AiOutlineLike className="mr-1" />
 
                   {article.likes?.length}

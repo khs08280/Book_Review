@@ -186,6 +186,7 @@ export const deleteComment = async (req, res) => {
       { _id: comment.author },
       { $pull: { communityComments: commentId } }
     );
+    await ActivityLog.deleteMany({ referenceId: commentId });
 
     await CommunityComment.findByIdAndDelete(commentId);
 

@@ -390,7 +390,8 @@ export const followUser = async (req, res) => {
 };
 
 export const unfollowUser = async (req, res) => {
-  const { userId, targetUserId } = req.params;
+  const { targetUserId } = req.params;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);

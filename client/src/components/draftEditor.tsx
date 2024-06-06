@@ -22,7 +22,7 @@ export default function DraftEditor({ setContent, alreadyEditorState }: any) {
 
   const handleEditorChange = (state: EditorState) => {
     setEditorState(state);
-    const contentState = editorState.getCurrentContent();
+    const contentState = state.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
     const rawContentStateJson = JSON.stringify(rawContentState);
     setContent(rawContentStateJson);

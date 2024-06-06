@@ -165,6 +165,7 @@ export const DReview = async (req, res) => {
     );
 
     await Book.updateOne({ _id: review.book }, { $pull: { review: reviewId } });
+    await ActivityLog.deleteMany({ referenceId: reviewId });
 
     await Review.findByIdAndDelete(reviewId);
 

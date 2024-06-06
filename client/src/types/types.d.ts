@@ -92,6 +92,7 @@ interface IReComment {
     username: string;
     nickname: string;
   };
+  likes: string[];
   children: string[];
 }
 
@@ -121,5 +122,6 @@ interface IActivityLog {
   metadata: {
     content: string;
     title?: string;
+    likes: string[];
   };
 }

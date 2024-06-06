@@ -148,6 +148,8 @@ export const deleteOneLine = async (req, res) => {
       { $pull: { oneLineRecommends: oneLineId } }
     );
 
+    await ActivityLog.deleteMany({ referenceId: oneLineId });
+
     await OneLine.findByIdAndDelete(oneLineId);
 
     res.status(200).json({ message: "해당 추천 글이 삭제되었습니다" });

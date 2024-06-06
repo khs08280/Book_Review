@@ -44,7 +44,7 @@ export default function CommunityWrite() {
     if (!response.ok) {
       console.log(data);
     }
-    router.push(`/community/${data.data._id}`);
+    router.push(`/community/article/${data.data._id}`);
   };
 
   return (

@@ -235,6 +235,7 @@ export const deleteArticle = async (req, res) => {
     );
 
     await CommunityComment.deleteMany({ article: articleId });
+    await ActivityLog.deleteMany({ referenceId: articleId });
 
     await CommunityArticle.findByIdAndDelete(articleId);
 

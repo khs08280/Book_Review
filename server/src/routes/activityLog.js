@@ -1,8 +1,12 @@
 import express from "express";
-import { getActivityLogs } from "../controllers/activityLogController.js";
+import {
+  getActivityLogs,
+  handleActivityLogLike,
+} from "../controllers/activityLogController.js";
 
 const activityLogRouter = express.Router();
 
 activityLogRouter.get("/", getActivityLogs);
+activityLogRouter.post("/handleLike", handleActivityLogLike);
 
 export default activityLogRouter;
