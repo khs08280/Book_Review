@@ -2,6 +2,7 @@ import express from "express";
 import {
   createComment,
   deleteComment,
+  handleCommentLike,
   readComment,
   updateComment,
 } from "../controllers/commentController.js";
@@ -29,5 +30,6 @@ commentRouter.delete(
   passport.authenticate("jwt", { session: false }),
   deleteComment
 );
+commentRouter.post("/handleLike", handleCommentLike);
 
 export default commentRouter;

@@ -104,6 +104,7 @@ export const selectedArticle = async (req, res) => {
         author: comment.author,
         content: comment.content,
         createdAt: comment.createdAt,
+        likes: comment.likes,
         _id: comment._id,
         children: [],
       };
@@ -121,14 +122,16 @@ export const selectedArticle = async (req, res) => {
     });
 
     await CommunityArticle.findByIdAndUpdate(articleId, { $inc: { view: 1 } });
-
-    article.likes = article.likes.length;
+    if (!article.category) {
+      article.category = "자유";
+    }
 
     article.comments = rootComments.map((comment) => ({
       author: comment.author,
       content: comment.content,
       createdAt: comment.createdAt,
       children: comment.children,
+      likes: comment.likes,
       _id: comment._id,
     }));
 

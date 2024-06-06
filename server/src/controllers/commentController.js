@@ -195,3 +195,54 @@ export const deleteComment = async (req, res) => {
     res.status(500).json({ message: "댓글 삭제 중 에러가 발생했습니다" });
   }
 };
+
+export const handleCommentLike = async (req, res) => {
+  const userId = req.user._id;
+
+  const { commentId, ...otherData } = req.body;
+
+  if (Object.keys(otherData).length !== 0) {
+    return res.status(400).json({
+      success: false,
+      error: "유효하지 않은 데이터가 포함되어 있습니다.",
+    });
+  }
+
+  try {
+    if (!userId || !commentId) {
+      return res.status(400).json({
+        success: false,
+        error: "사용자 ID와 댓글 ID를 모두 제공해야 합니다.",
+      });
+    }
+
+    const comment = await CommunityComment.findById(commentId);
+
+    if (!comment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "리뷰를 찾을 수 없습니다." });
+    }
+
+    const userIndex = comment.likes.indexOf(userId);
+
+    if (userIndex !== -1) {
+      comment.likes.splice(userIndex, 1);
+    } else {
+      comment.likes.push(userId);
+    }
+
+    await comment.save();
+
+    const likes = comment.likes.length;
+
+    res
+      .status(200)
+      .json({ success: true, likes, message: "리뷰에 좋아요를 추가했습니다." });
+  } catch (error) {
+    console.error("좋아요 추가 중 오류:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};

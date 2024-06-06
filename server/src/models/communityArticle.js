@@ -11,7 +11,6 @@ const communityArticleSchema = mongoose.Schema({
   },
   category: {
     type: String,
-    required: true,
   },
   tags: [
     {

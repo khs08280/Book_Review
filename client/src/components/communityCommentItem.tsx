@@ -4,9 +4,10 @@ import { formatDate } from "../hooks/checkDate";
 import { maskUsername } from "../hooks/maskUsername";
 import React, { useEffect, useRef, useState } from "react";
 import useClickOutside from "../hooks/outsideClick";
-import { getUserId } from "../hooks/isExpired";
+import { getUserId, isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 
 interface CommentProps {
   comment: IComment;
@@ -35,12 +36,20 @@ export default function CommunityReviewItem({
   const [isSelectedReCommentOpen, setIsSelectedReCommentOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [reviewLikes, setReviewLikes] = useState<{ [key: string]: number }>({});
+  const [isLikeClicked, setIsLikeClicked] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [selectedCommentId, setSelectedCommentId] = useState("");
   const [selectedReCommentContent, setSelectedReCommentContent] = useState("");
 
   const divRef = useRef<HTMLDivElement>(null);
-  const accessToken = LocalStorage.getItem("accessToken");
-  const { userId } = jwt.decode(accessToken || "") as JwtPayload;
+  let accessToken = LocalStorage.getItem("accessToken");
+  const { userAtom } = JSON.parse(
+    LocalStorage.getItem("loggedUserData") as string,
+  );
+  const userId = userAtom._id;
 
   const openMenuClick = (commentId: string) => {
     setIsMenuOpen((prev) => !prev);
@@ -66,6 +75,60 @@ export default function CommunityReviewItem({
     if (check) deleteComment(commentId);
   };
 
+  const handleLike = async (commentId: string) => {
+    const expired = await isExpired(accessToken);
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      return;
+    }
+    accessToken = LocalStorage.getItem("accessToken");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/comments/handleLike",
+        {
+          method: "POST",
+          body: JSON.stringify({ commentId }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
+        },
+      );
+      if (!response.ok) {
+        console.error("서버 쪽에 문제가 생김");
+      }
+
+      const responseData = await response.json();
+      setIsLikeClicked((prevState) => ({
+        ...prevState,
+        [commentId]: !prevState[commentId],
+      }));
+      setReviewLikes((prevState) => ({
+        ...prevState,
+        [commentId]: responseData.likes,
+      }));
+      console.log(responseData);
+    } catch (error) {
+      console.error("좋아요 오류:", error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    if (comment) {
+      const initialReviewLikes: { [key: string]: number } = {};
+      const initialIsLikeClicked: { [key: string]: boolean } = {};
+
+      initialReviewLikes[comment._id] = comment.likes.length;
+      initialIsLikeClicked[comment._id] = comment.likes.includes(
+        userId as never,
+      );
+      setReviewLikes(initialReviewLikes);
+      setIsLikeClicked(initialIsLikeClicked);
+    }
+  }, [comment]);
+
   return (
     <div>
       <div className="mb-4 border-b-2 border-solid border-black border-opacity-5 pb-2">
@@ -87,6 +150,18 @@ export default function CommunityReviewItem({
             >
               답글
             </span>
+            {isLikeClicked[comment._id] ? (
+              <AiFillLike
+                onClick={() => handleLike(comment._id)}
+                className=" size-5 cursor-pointer text-white"
+              />
+            ) : (
+              <AiOutlineLike
+                onClick={() => handleLike(comment._id)}
+                className=" size-5 cursor-pointer"
+              />
+            )}
+            <span>{reviewLikes[comment._id]}</span>
             {userId == comment.author._id && (
               <div className="relative">
                 <CiMenuKebab
@@ -182,6 +257,18 @@ export default function CommunityReviewItem({
                 <span>{formatDate(reComment.createdAt)}</span>
               </div>
               <div className="flex items-center">
+                {isLikeClicked[comment._id] ? (
+                  <AiFillLike
+                    onClick={() => handleLike(comment._id)}
+                    className=" size-5 cursor-pointer text-white"
+                  />
+                ) : (
+                  <AiOutlineLike
+                    onClick={() => handleLike(comment._id)}
+                    className=" size-5 cursor-pointer"
+                  />
+                )}
+                <span>{reviewLikes[comment._id]}</span>
                 {userId == reComment.author._id && (
                   <div key={reComment._id} className="relative">
                     <CiMenuKebab

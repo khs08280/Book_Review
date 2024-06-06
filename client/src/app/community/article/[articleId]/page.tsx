@@ -10,17 +10,23 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { EditorState, convertFromRaw } from "draft-js";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AiOutlineLike } from "react-icons/ai";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { CiMenuKebab } from "react-icons/ci";
 import useClickOutside from "@/src/hooks/outsideClick";
 import Link from "next/link";
+import { formatDate } from "@/src/hooks/checkDate";
 
 export default function ArticlePage() {
   const [commentContent, setCommentContent] = useState("");
   const [isOpenInput, setIsOpenInput] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [reviewLikes, setReviewLikes] = useState<{ [key: string]: number }>({});
+  const [isLikeClicked, setIsLikeClicked] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const divRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -239,6 +245,60 @@ export default function ArticlePage() {
     return plainText;
   };
 
+  const handleLike = async (articleId: string) => {
+    const expired = await isExpired(accessToken);
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      return;
+    }
+    accessToken = LocalStorage.getItem("accessToken");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/articles/handleLike",
+        {
+          method: "POST",
+          body: JSON.stringify({ articleId }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
+        },
+      );
+      if (!response.ok) {
+        console.error("서버 쪽에 문제가 생김");
+      }
+
+      const responseData = await response.json();
+      setIsLikeClicked((prevState) => ({
+        ...prevState,
+        [articleId]: !prevState[articleId],
+      }));
+      setReviewLikes((prevState) => ({
+        ...prevState,
+        [articleId]: responseData.likes,
+      }));
+      console.log(responseData);
+    } catch (error) {
+      console.error("좋아요 오류:", error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    if (article) {
+      const initialReviewLikes: { [key: string]: number } = {};
+      const initialIsLikeClicked: { [key: string]: boolean } = {};
+
+      initialReviewLikes[article._id] = article.likes.length;
+      initialIsLikeClicked[article._id] = article.likes.includes(
+        userId as never,
+      );
+      setReviewLikes(initialReviewLikes);
+      setIsLikeClicked(initialIsLikeClicked);
+    }
+  }, [article]);
+
   return (
     <>
       <SideBar />
@@ -258,7 +318,6 @@ export default function ArticlePage() {
                       자유
                     </span>
                   )}
-
                   <span className="text-2xl font-medium">{article.title}</span>
                 </div>
                 {userId == article.author._id && (
@@ -293,12 +352,13 @@ export default function ArticlePage() {
                   {article.author.nickname} (
                   {maskUsername(article.author.username)})
                 </span>
-                <span className="mr-3">{article.content}</span>
+                <span className="mr-3">{formatDate(article.createdAt)}</span>
                 <span className="mr-3 flex items-center">
                   <FaRegEye className="mr-1" /> {article.view}
                 </span>
                 <span className="flex items-center ">
                   <AiOutlineLike className="mr-1" />
+
                   {article.likes?.length}
                 </span>
               </div>
@@ -307,10 +367,17 @@ export default function ArticlePage() {
               <span>{article.content}</span>
             </section>
             <div className="mt-32 flex w-full flex-col items-center ">
-              <div className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4">
-                <AiOutlineLike />
-                좋아요
-                <span>0</span>
+              <div
+                onClick={() => handleLike(article._id)}
+                className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4 px-6"
+              >
+                {isLikeClicked[article._id] ? (
+                  <AiFillLike className=" size-5 cursor-pointer text-white" />
+                ) : (
+                  <AiOutlineLike className=" size-5 cursor-pointer" />
+                )}
+                <span className="my-1">좋아요</span>
+                <span>{reviewLikes[article._id]}</span>
               </div>
             </div>
             <section className="my-10">

@@ -91,7 +91,7 @@ export const login = async (req, res) => {
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "5m",
+          expiresIn: "60m",
         }
       );
       const refreshToken = jwt.sign({}, process.env.JWT_SECRET, {

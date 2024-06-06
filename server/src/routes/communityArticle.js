@@ -2,6 +2,7 @@ import express from "express";
 import {
   createArticle,
   deleteArticle,
+  handleArticleLike,
   readArticle,
   selectedArticle,
   selectedCategoryArticle,
@@ -31,6 +32,7 @@ articleRouter.delete(
   passport.authenticate("jwt", { session: false }),
   deleteArticle
 );
+articleRouter.post("/handleLike", handleArticleLike);
 
 articleRouter.get("/:articleId", selectedArticle);
 articleRouter.get("/category/:category", selectedCategoryArticle);

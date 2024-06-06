@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import useClickOutside from "@/src/hooks/outsideClick";
+import { formatDate } from "@/src/hooks/checkDate";
 
 export default function OneLine() {
   const [content, setContent] = useState("");
@@ -218,10 +219,17 @@ export default function OneLine() {
                   <li className="mb-3 py-2" key={index}>
                     <div className="flex flex-col ">
                       <div className="flex items-center justify-between">
-                        <span className="mb-2 text-sm opacity-35">
-                          {oneLine.author.nickname} (
-                          {maskUsername(oneLine.author.username)})
-                        </span>
+                        <div className="mb-2 text-sm opacity-35">
+                          <span className="mr-2">
+                            {oneLine.author.nickname} (
+                            {maskUsername(oneLine.author.username)})
+                          </span>
+                          <span>
+                            {oneLine.modifiedAt
+                              ? formatDate(oneLine.modifiedAt)
+                              : formatDate(oneLine.createdAt)}
+                          </span>
+                        </div>
                         <div className="flex items-center">
                           {userId == oneLine.author._id && (
                             <div key={oneLine._id} className="relative">
