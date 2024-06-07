@@ -9,6 +9,7 @@ import LocalStorage from "../hooks/localStorage";
 import { getCookie } from "../utils/react-cookie";
 import { useRecoilValue } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
+import Footer from "../components/footer";
 
 interface IReview {
   user: string;
@@ -110,6 +111,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

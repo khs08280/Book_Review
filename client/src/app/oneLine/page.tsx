@@ -5,11 +5,13 @@ import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { maskUsername } from "@/src/hooks/maskUsername";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import useClickOutside from "@/src/hooks/outsideClick";
 import { formatDate } from "@/src/hooks/checkDate";
+import { useRouter } from "next/navigation";
+import debounce from "lodash.debounce";
 
 export default function OneLine() {
   const [content, setContent] = useState("");
@@ -17,12 +19,21 @@ export default function OneLine() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedOneLineId, setSelectedOneLineId] = useState("");
   const [isSelectedOneLineOpen, setIsSelectedOneLineOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const [searchedBooks, setSearchedBook] = useState([]);
   const divRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
-  const { userAtom } = JSON.parse(
-    LocalStorage.getItem("loggedUserData") as string,
-  );
-  const userId = userAtom._id;
+  let userId: string;
+
+  useEffect(() => {
+    const loggedUserData = LocalStorage.getItem("loggedUserData");
+    if (loggedUserData) {
+      const { userAtom } = JSON.parse(loggedUserData);
+      userId = userAtom._id;
+    }
+  }, []);
+
   const queryClient = useQueryClient();
 
   const fetchOneLines = async () => {
@@ -33,7 +44,7 @@ export default function OneLine() {
       credentials: "include",
     });
     const data = await response.json();
-
+    console.log(data.data);
     return data.data;
   };
   const { data: oneLines, isLoading } = useQuery({
@@ -195,6 +206,30 @@ export default function OneLine() {
   useClickOutside(divRef, () => {
     setIsMenuOpen(false);
   });
+  const handleSearch = async (searchText: string) => {
+    const response = await fetch(
+      `http://localhost:5000/api/oneLines/${searchText}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        credentials: "include",
+      },
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log(data);
+      return;
+    }
+    console.log(data.data);
+  };
+  const delayedSearch = debounce(handleSearch, 300);
+  const handleSearchChange = (e: any) => {
+    setSearchText(e.target.value);
+    delayedSearch(e.target.value);
+  };
 
   return (
     <div>
@@ -203,6 +238,13 @@ export default function OneLine() {
         <main className="flex w-1/2 flex-col bg-slate-400 p-10">
           <section className="mb-6">
             <h3 className="text-2xl">한줄 책 추천</h3>
+            <form className="ml-2">
+              <input
+                onChange={handleSearchChange}
+                value={searchText}
+                className="h-7 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400"
+              />
+            </form>
             <div>
               <textarea
                 onChange={(e) => setContent(e.target.value)}

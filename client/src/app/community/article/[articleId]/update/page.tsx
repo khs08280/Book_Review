@@ -1,6 +1,7 @@
 "use client";
 
 import DraftEditor from "@/src/components/draftEditor";
+import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
@@ -111,6 +112,7 @@ export default function ArticleUpdate() {
           <div onClick={updateArticle}>수정</div>
         </main>
       </div>
+      <Footer />
     </>
   );
 }

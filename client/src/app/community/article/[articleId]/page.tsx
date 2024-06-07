@@ -17,6 +17,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import useClickOutside from "@/src/hooks/outsideClick";
 import Link from "next/link";
 import { formatDate } from "@/src/hooks/checkDate";
+import Footer from "@/src/components/footer";
 
 export default function ArticlePage() {
   const [commentContent, setCommentContent] = useState("");
@@ -456,6 +457,7 @@ export default function ArticlePage() {
           </main>
         )}
       </div>
+      <Footer />
     </>
   );
 }

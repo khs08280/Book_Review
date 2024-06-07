@@ -86,7 +86,9 @@ export const createBook = async (req, res, next) => {
 };
 
 export const handleRecommend = async (req, res) => {
-  const { userId, bookId, action, ...otherData } = req.body;
+  const userId = req.user._id;
+
+  const { bookId, ...otherData } = req.body;
 
   if (Object.keys(otherData).length !== 0) {
     return res.status(400).json({
@@ -96,51 +98,40 @@ export const handleRecommend = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "사용자를 찾을 수 없습니다." });
+    if (!userId || !bookId) {
+      return res.status(400).json({
+        success: false,
+        error: "사용자 ID와 리뷰 ID를 모두 제공해야 합니다.",
+      });
     }
+
     const book = await Book.findById(bookId);
+
     if (!book) {
       return res
         .status(404)
-        .json({ success: false, message: "책을 찾을 수 없습니다." });
+        .json({ success: false, message: "리뷰를 찾을 수 없습니다." });
     }
 
-    if (!book.recommendations) {
-      book.recommendations = [];
-    }
+    const userIndex = book.recommendations.indexOf(userId);
 
-    const userIndex = user.recommendedBooks.indexOf(bookId);
-    const bookIndex = book.recommendations.indexOf(userId);
-
-    if (bookIndex !== -1) {
-      user.recommendedBooks.splice(userIndex, 1);
-      book.recommendations.splice(bookIndex, 1);
-      await user.save();
-      await book.save();
-      const recommendations = book.recommendations.length;
-      res.status(200).json({
-        success: true,
-        recommendations,
-        message: "책 추천을 취소했습니다.",
-      });
+    if (userIndex !== -1) {
+      book.recommendations.splice(userIndex, 1);
     } else {
-      user.recommendedBooks.push(bookId);
       book.recommendations.push(userId);
-      await user.save();
-      await book.save();
-      const recommendations = book.recommendations.length;
-      res.status(200).json({
-        success: true,
-        recommendations,
-        message: "책을 성공적으로 추천했습니다.",
-      });
     }
+
+    await book.save();
+
+    const recommendations = book.recommendations.length;
+
+    res.status(200).json({
+      success: true,
+      recommendations,
+      message: "책을 추천했습니다.",
+    });
   } catch (error) {
-    console.error("책 추천 처리 중 오류:", error);
+    console.error("책 추천 중 오류:", error);
     res
       .status(500)
       .json({ success: false, error: "서버 오류가 발생했습니다." });

@@ -1,4 +1,5 @@
 "use client";
+import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
@@ -380,6 +381,7 @@ export default function Profile() {
           )}
         </section>
       </main>
+      <Footer />
     </>
   );
 }

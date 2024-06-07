@@ -71,12 +71,12 @@ export const createOneLine = async (req, res) => {
 };
 export const readOneLine = async (req, res) => {
   try {
-    const oneLines = await OneLine.find().populate(
-      "author",
-      "username nickname"
-    );
+    const oneLines = await OneLine.find()
+      .populate("author", "username nickname")
+      .populate("book", "image title");
+
     return res.status(200).json({
-      data: oneLines,
+      data: oneLines.reverse(),
       message: "모든 한줄 책 추천 리스트를 불러왔습니다",
     });
   } catch (error) {
@@ -156,5 +156,51 @@ export const deleteOneLine = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "추천 글 삭제 중 에러가 발생했습니다" });
+  }
+};
+
+export const searchOneLineBook = async (req, res) => {
+  const { searchText } = req.params;
+
+  if (!searchText) {
+    return res
+      .status(400)
+      .json({ error: "searchText query parameter is required" });
+  }
+  if (searchText.length < 2) {
+    return res.status(400).json({ error: "검색어는 2글자 이상이어야 합니다" });
+  }
+  const removeSpaces = (text) => text.replace(/\s+/g, "");
+  try {
+    const searchTextNoSpaces = removeSpaces(searchText);
+    const titleRegex = new RegExp(searchTextNoSpaces, "i");
+    const authorRegex = new RegExp("^" + searchText, "i");
+
+    const books = await Book.aggregate([
+      {
+        $project: {
+          title: 1,
+          writer: 1,
+          publishedDate: 1,
+          image: 1,
+          titleNoSpaces: {
+            $replaceAll: { input: "$title", find: " ", replacement: "" },
+          },
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { titleNoSpaces: { $regex: titleRegex } },
+            { writer: { $regex: authorRegex } },
+          ],
+        },
+      },
+    ]);
+
+    res.status(200).json({ data: books });
+  } catch (error) {
+    console.error("Error searching books:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

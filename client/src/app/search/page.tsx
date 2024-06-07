@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import BookDetailPage from "../books/[bookId]/page";
+import Footer from "@/src/components/footer";
 
 export default function Search() {
   const query = useSearchParams();
@@ -34,17 +35,17 @@ export default function Search() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 p-5 px-10">
+      <div className="ml-52 min-h-screen p-5 px-10">
         {/* <BookDetailPage /> */}
         <span className="text-xl font-semibold">
           {searchText}에 대한 검색 결과
         </span>
-        <div className=" mt-5 w-1/6">
+        <div className=" mt-5 flex">
           {data.map((book) => (
             <Link href={`/books/${book._id}`}>
               <motion.div
                 key={book._id}
-                className="h-120 flex  cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-gray-300 p-5"
+                className="h-120 mr-10 flex  cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-gray-300 p-5"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 layoutId={book._id}
@@ -59,6 +60,7 @@ export default function Search() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

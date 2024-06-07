@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import useClickOutside from "../hooks/outsideClick";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 
 function Modal({ isOpen, onClose, bookId }: any) {
   const [isReviewActive, setIsReviewActive] = useState(false);
@@ -27,6 +28,13 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
   const [myRating, setMyRating] = useState<number | null>(null);
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+
+  const [bookRecommend, setBookRecommend] = useState<{ [key: string]: number }>(
+    {},
+  );
+  const [isRecommendClicked, setIsRecommendClicked] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const textareaRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
@@ -255,14 +263,26 @@ function Modal({ isOpen, onClose, bookId }: any) {
       const initialReviewLikes: { [key: string]: number } = {};
       const initialIsLikeClicked: { [key: string]: boolean } = {};
 
+      const initialBookRecommend: { [key: string]: number } = {};
+      const initialIsRecommendClicked: { [key: string]: boolean } = {};
+
       book.review.forEach((review: IReview) => {
         initialReviewLikes[review._id] = review.likes.length;
         initialIsLikeClicked[review._id] = review.likes.includes(
           userId as never,
         );
       });
+
+      initialBookRecommend[book._id] = book.recommendations.length;
+      initialIsRecommendClicked[book._id] = book.recommendations.includes(
+        userId as never,
+      );
+
       setReviewLikes(initialReviewLikes);
       setIsLikeClicked(initialIsLikeClicked);
+
+      setBookRecommend(initialBookRecommend);
+      setIsRecommendClicked(initialIsRecommendClicked);
     }
     if (book && book.review && userId) {
       const isExist = book.review.some(
@@ -327,6 +347,32 @@ function Modal({ isOpen, onClose, bookId }: any) {
       throw error;
     }
   };
+  const handleRecommend = async (bookId: string) => {
+    const response = await fetch("http://localhost:5000/api/books/recommend", {
+      method: "POST",
+      body: JSON.stringify({ bookId }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      mode: "cors",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      console.error("서버 쪽에 문제가 생김");
+    }
+
+    const responseData = await response.json();
+    setIsRecommendClicked((prevState) => ({
+      ...prevState,
+      [bookId]: !prevState[bookId],
+    }));
+    setBookRecommend((prevState) => ({
+      ...prevState,
+      [bookId]: responseData.recommendations,
+    }));
+    console.log(responseData);
+  };
 
   return (
     <motion.div
@@ -358,11 +404,22 @@ function Modal({ isOpen, onClose, bookId }: any) {
                   {book.title}
                 </span>
                 <span className="mb-20">
-                  {book.genre.map((g: string, index: number) => (
-                    <span key={index}>{g}</span>
+                  {book.genre.map((genre: string, index: number) => (
+                    <span key={index}>{genre}</span>
                   ))}
                 </span>
                 <span className=" w-2/3 text-base">{book.description}</span>
+                <div
+                  onClick={() => handleRecommend(book._id)}
+                  className=" z-50 flex w-fit cursor-pointer items-center rounded-md border-2 border-solid border-white bg-dark-dark p-2 px-4 text-white"
+                >
+                  {isRecommendClicked[book._id] ? (
+                    <AiFillLike className=" size-5 cursor-pointer text-white" />
+                  ) : (
+                    <AiOutlineLike className=" size-5 cursor-pointer" />
+                  )}
+                  <span className="ml-2">{bookRecommend[book._id]}</span>
+                </div>
               </div>
               <div className="flex flex-col">
                 <img

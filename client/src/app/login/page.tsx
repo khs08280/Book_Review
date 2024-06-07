@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/src/components/footer";
 import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom, userAtom } from "@/src/states/atoms";
 import Link from "next/link";

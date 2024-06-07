@@ -10,6 +10,7 @@ import { formatDate } from "../hooks/checkDate";
 import { PiArrowElbowDownRightBold } from "react-icons/pi";
 import { convertFromRaw } from "draft-js";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export default function SnsActivityLogs() {
   let accessToken = LocalStorage.getItem("accessToken");
@@ -17,10 +18,8 @@ export default function SnsActivityLogs() {
   const [isLikeClicked, setIsLikeClicked] = useState<{
     [key: string]: boolean;
   }>({});
-  const { userAtom } = JSON.parse(
-    LocalStorage.getItem("loggedUserData") as string,
-  );
-  const userId = userAtom._id;
+  let userId: string;
+  const router = useRouter();
 
   const handleLike = async (referenceId: string, type: string) => {
     const expired = await isExpired(accessToken);
@@ -64,16 +63,14 @@ export default function SnsActivityLogs() {
   };
 
   useEffect(() => {
-    const fetch = async () => {
-      const expired = await isExpired(accessToken);
-      if (expired || !accessToken) {
-        console.log("토큰이 이상합니다");
-        return;
-      }
-      accessToken = LocalStorage.getItem("accessToken");
-    };
-
-    fetch();
+    const loggedUserData = LocalStorage.getItem("loggedUserData");
+    if (loggedUserData) {
+      const { userAtom } = JSON.parse(loggedUserData);
+      userId = userAtom._id;
+    } else {
+      router.push("/login");
+      return;
+    }
   }, []);
 
   const fetchData = async () => {
@@ -140,24 +137,27 @@ export default function SnsActivityLogs() {
               </div>
             </div>
             <div className="mb-5 flex flex-col ">
-              <span>{activityLog.description}</span>
-              <div className="my-3 ml-2 flex items-center">
-                <PiArrowElbowDownRightBold className="size-5" />
+              <span className=" text-black text-opacity-35">
+                {activityLog.description}
+              </span>
+              <div className="my-3 flex items-center">
                 {activityLog.type === "ONE_LINE" && (
-                  <span className=" ml-2 w-full rounded-md border-2 border-solid border-white bg-green-400 px-3 py-2">
+                  <span className=" w-full rounded-md">
                     {activityLog.metadata.content}
                   </span>
                 )}
                 {activityLog.type === "POST" && (
-                  <span className=" ml-2 flex w-full flex-col rounded-md border-2 border-solid border-white bg-green-400 px-3 py-2">
-                    <span>{activityLog.metadata.title}</span>
-                    <span>
+                  <span className="flex w-full flex-col rounded-md">
+                    <span className="mb-3 text-2xl">
+                      {activityLog.metadata.title}
+                    </span>
+                    <span className="">
                       {convertJsonToText(activityLog.metadata.content)}
                     </span>
                   </span>
                 )}
                 {activityLog.type === "COMMENT" && (
-                  <span className=" ml-2 w-full rounded-md border-2 border-solid border-white bg-green-400 px-3 py-2">
+                  <span className=" ml-2 w-full rounded-md">
                     {activityLog.metadata.content}
                   </span>
                 )}

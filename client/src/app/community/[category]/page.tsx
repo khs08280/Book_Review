@@ -1,6 +1,7 @@
 "use client";
 
 import CommunityNav from "@/src/components/communityNav";
+import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
 import { formatDate } from "@/src/hooks/checkDate";
 import { useQuery } from "@tanstack/react-query";
@@ -78,6 +79,7 @@ export default function CommunityCategory() {
           </section>
         </main>
       </div>
+      <Footer />
     </>
   );
 }

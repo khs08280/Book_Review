@@ -5,6 +5,7 @@ import {
   createOneLine,
   deleteOneLine,
   readOneLine,
+  searchOneLineBook,
   updateOneLine,
 } from "../controllers/oneLineController.js";
 
@@ -29,5 +30,6 @@ oneLineRouter.delete(
   passport.authenticate("jwt", { session: false }),
   deleteOneLine
 );
+oneLineRouter.get("/:searchText", searchOneLineBook);
 
 export default oneLineRouter;
