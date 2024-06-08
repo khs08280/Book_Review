@@ -9,6 +9,9 @@ import LocalStorage from "../hooks/localStorage";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import CommunityReCommentItem from "./communityReCommentItem";
+import { useRouter } from "next/navigation";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "../states/atoms";
 
 interface CommentProps {
   comment: IComment;
@@ -41,6 +44,8 @@ export default function CommunityReviewItem({
   const [isLikeClicked, setIsLikeClicked] = useState<{
     [key: string]: boolean;
   }>({});
+  const router = useRouter();
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   const [selectedCommentId, setSelectedCommentId] = useState("");
   const [selectedReCommentContent, setSelectedReCommentContent] = useState("");
@@ -78,8 +83,16 @@ export default function CommunityReviewItem({
 
   const handleLike = async (commentId: string) => {
     const expired = await isExpired(accessToken);
-    if (!accessToken || expired) {
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");

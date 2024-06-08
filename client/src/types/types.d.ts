@@ -29,8 +29,16 @@ interface IBook {
   publisher: string;
   pubDate: string;
   price: number;
+  titleNoSpaces: string;
   genre: string[];
   review: IReview[];
+}
+interface ISearchedBook {
+  _id: string;
+  title: string;
+  image: string;
+  titleNoSpaces: string;
+  writer: string;
 }
 
 interface IBookList {
@@ -76,7 +84,11 @@ interface IComment {
     username: string;
     nickname: string;
   };
-  article: string;
+  article:
+    | string
+    | {
+        title: string;
+      };
   parentComment: string;
   likes: string[];
   children: [];
@@ -99,6 +111,11 @@ interface IReComment {
 interface IOneLine {
   _id: string;
   content: string;
+  book?: {
+    title: string;
+    _id: string;
+    image: string;
+  };
   author: {
     _id: string;
     username: string;

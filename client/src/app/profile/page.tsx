@@ -1,6 +1,7 @@
 "use client";
 import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
+import { convertJsonToText } from "@/src/hooks/convertToPlainText";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom } from "@/src/states/atoms";
@@ -35,9 +36,17 @@ export default function Profile() {
         router.push("/");
       }
       const expired = await isExpired(accessToken);
-      if (!accessToken || expired) {
+      accessToken = LocalStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.log("액세스 토큰이 올바르지 않습니다");
+        return;
+      }
+      if (expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
         router.push("/login");
+        return;
       }
     };
 
@@ -47,8 +56,16 @@ export default function Profile() {
   const fetchData = async () => {
     try {
       const expired = await isExpired(accessToken);
-
-      if (!accessToken || expired) {
+      accessToken = LocalStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.log("액세스 토큰이 올바르지 않습니다");
+        return;
+      }
+      if (expired) {
+        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
+        router.push("/login");
         return;
       }
       accessToken = LocalStorage.getItem("accessToken");
@@ -84,8 +101,16 @@ export default function Profile() {
     if (isReal) {
       try {
         const expired = await isExpired(accessToken);
-
-        if (!accessToken || expired) {
+        accessToken = LocalStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.log("액세스 토큰이 올바르지 않습니다");
+          return;
+        }
+        if (expired) {
+          console.log("만료되었거나 유효하지 않은 토큰입니다.");
+          setIsLoggedIn(false);
+          LocalStorage.removeItem("accessToken");
+          router.push("/login");
           return;
         }
         accessToken = LocalStorage.getItem("accessToken");
@@ -125,11 +150,18 @@ export default function Profile() {
     if (isReal) {
       try {
         const expired = await isExpired(accessToken);
-        if (!accessToken || expired) {
+        accessToken = LocalStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.log("액세스 토큰이 올바르지 않습니다");
           return;
         }
-        accessToken = LocalStorage.getItem("accessToken");
-
+        if (expired) {
+          console.log("만료되었거나 유효하지 않은 토큰입니다.");
+          setIsLoggedIn(false);
+          LocalStorage.removeItem("accessToken");
+          router.push("/login");
+          return;
+        }
         const bodyData = {
           password: rePw,
           checkPassword: reCheckPw,
@@ -171,11 +203,18 @@ export default function Profile() {
     if (isReal) {
       try {
         const expired = await isExpired(accessToken);
-        if (!accessToken || expired) {
+        accessToken = LocalStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.log("액세스 토큰이 올바르지 않습니다");
           return;
         }
-        accessToken = LocalStorage.getItem("accessToken");
-
+        if (expired) {
+          console.log("만료되었거나 유효하지 않은 토큰입니다.");
+          setIsLoggedIn(false);
+          LocalStorage.removeItem("accessToken");
+          router.push("/login");
+          return;
+        }
         const response = await fetch(
           `http://localhost:5000/api/users/updateIntroduction`,
           {
@@ -219,13 +258,18 @@ export default function Profile() {
 
   const updateReview = async () => {
     const expired = await isExpired(accessToken);
-
-    if (!accessToken || expired) {
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }
-    accessToken = LocalStorage.getItem("accessToken");
     updateMutation.mutate();
   };
 
@@ -244,6 +288,7 @@ export default function Profile() {
             >
               내가 추천한 책
             </li>
+
             <li
               className="  mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(1)}
@@ -251,20 +296,39 @@ export default function Profile() {
               내가 리뷰를 남긴 책
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl "
+              className=" mb-4 cursor-pointer text-xl "
               onClick={() => handleMenuClick(2)}
+            >
+              내가 작성한 게시글
+            </li>
+            <li
+              className=" mb-4 cursor-pointer text-xl "
+              onClick={() => handleMenuClick(3)}
+            >
+              내가 작성한 댓글
+            </li>
+            <li
+              className=" mb-4 cursor-pointer text-xl "
+              onClick={() => handleMenuClick(4)}
+            >
+              내가 작성한 한줄 책 추천
+            </li>
+
+            <li
+              className="  mb-4 cursor-pointer text-xl "
+              onClick={() => handleMenuClick(5)}
             >
               자기소개 변경
             </li>
             <li
               className="  mb-4 cursor-pointer text-xl "
-              onClick={() => handleMenuClick(3)}
+              onClick={() => handleMenuClick(6)}
             >
               비밀번호 변경
             </li>
             <li
               className="  mb-4 cursor-pointer text-xl "
-              onClick={() => handleMenuClick(4)}
+              onClick={() => handleMenuClick(7)}
             >
               회원탈퇴
             </li>
@@ -316,6 +380,73 @@ export default function Profile() {
             </div>
           )}
           {selectedIndex === 2 && (
+            <div>
+              <h3 className="mb-5 text-2xl">내가 작성한 게시글</h3>
+              <ul>
+                {myInfo?.communityArticles?.length > 0 ? (
+                  myInfo.communityArticles.map((article: IArticle) => (
+                    <li
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      key={article._id}
+                    >
+                      <span className="truncate text-2xl font-medium">
+                        {article.title}
+                      </span>
+                      <span className="text-lg">
+                        {convertJsonToText(article.content)}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>작성한 게시글이 없습니다.</li>
+                )}
+              </ul>
+            </div>
+          )}
+          {selectedIndex === 3 && (
+            <div>
+              <h3 className="mb-5 text-2xl">내가 작성한 댓글</h3>
+              <ul>
+                {myInfo?.communityComments?.length > 0 ? (
+                  myInfo.communityComments.map((comment: IComment) => (
+                    <li
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      key={comment._id}
+                    >
+                      <span className="truncate text-2xl font-medium">
+                        {typeof comment.article === "string"
+                          ? comment.article
+                          : comment.article.title}
+                      </span>
+                      <span className="text-lg">{comment.content}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li>작성한 댓글이 없습니다.</li>
+                )}
+              </ul>
+            </div>
+          )}
+          {selectedIndex === 4 && (
+            <div>
+              <h3 className="mb-5 text-2xl">내가 작성한 한줄 책 추천</h3>
+              <ul>
+                {myInfo?.oneLineRecommends?.length > 0 ? (
+                  myInfo.oneLineRecommends.map((oneLine: IOneLine) => (
+                    <li
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      key={oneLine._id}
+                    >
+                      <span className="text-lg">{oneLine.content}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li>작성한 한줄 책 추천이 없습니다.</li>
+                )}
+              </ul>
+            </div>
+          )}
+          {selectedIndex === 5 && (
             <div className="flex  flex-col">
               <h3 className="mb-5 text-2xl">자기소개 변경</h3>
               <span className="rounded-md border-2 border-solid border-blue-200 p-5 text-lg">
@@ -335,7 +466,7 @@ export default function Profile() {
               </button>
             </div>
           )}
-          {selectedIndex === 3 && (
+          {selectedIndex === 6 && (
             <div className="flex  flex-col">
               <h3 className="mb-5 text-2xl">비밀번호 변경</h3>
               <textarea
@@ -361,7 +492,7 @@ export default function Profile() {
               </button>
             </div>
           )}
-          {selectedIndex === 4 && (
+          {selectedIndex === 7 && (
             <div className="flex  flex-col">
               <h3 className="mb-5 text-2xl">회원탈퇴</h3>
               <textarea

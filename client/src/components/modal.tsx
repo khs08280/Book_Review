@@ -103,13 +103,16 @@ function Modal({ isOpen, onClose, bookId }: any) {
   });
   const updateReview = async () => {
     const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
     if (!accessToken) {
       console.log("액세스 토큰이 올바르지 않습니다");
+      return;
     }
     if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
-      router.push("/login");
       setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");
@@ -125,14 +128,18 @@ function Modal({ isOpen, onClose, bookId }: any) {
   };
   const createReview = async () => {
     const expired = await isExpired(accessToken);
-
-    if (!accessToken || expired) {
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }
-    accessToken = LocalStorage.getItem("accessToken");
-
     await mutation.mutateAsync();
     setReviewContent("");
   };
@@ -307,8 +314,15 @@ function Modal({ isOpen, onClose, bookId }: any) {
   }
   const likeClick = async (reviewId: string) => {
     const expired = await isExpired(accessToken);
-    if (!accessToken || expired) {
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }
@@ -348,6 +362,19 @@ function Modal({ isOpen, onClose, bookId }: any) {
     }
   };
   const handleRecommend = async (bookId: string) => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     const response = await fetch("http://localhost:5000/api/books/recommend", {
       method: "POST",
       body: JSON.stringify({ bookId }),

@@ -4,16 +4,12 @@ import Modal from "@/src/components/modal";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Home from "../../page";
-import Search from "../../search/page";
-
 export default function BookDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const pathname = usePathname();
   const { bookId } = params;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [previousPath, setPreviousPath] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);

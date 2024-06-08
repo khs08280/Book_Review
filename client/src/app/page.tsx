@@ -7,28 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import LocalStorage from "../hooks/localStorage";
 import { getCookie } from "../utils/react-cookie";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import Footer from "../components/footer";
-
-interface IReview {
-  user: string;
-  content: string;
-}
-
-interface IBook {
-  _id: number;
-  title: string;
-  description: string;
-  image: string;
-  writer: string;
-  rating: number;
-  publisher: string;
-  pubDate: string;
-  price: number;
-  genre: string[];
-  review: IReview[];
-}
 
 const fetchData = async () => {
   try {
@@ -51,6 +32,7 @@ export default function Home() {
     queryFn: fetchData,
   });
   const router = useRouter();
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   useEffect(() => {
     const refreshToLogin = async () => {
@@ -68,6 +50,8 @@ export default function Home() {
           console.log("refreshToLogin");
         } else {
           LocalStorage.removeItem("isLoggedIn");
+          setIsLoggedIn(false);
+          router.push("/login");
           console.error("passport 재로그인에 실패");
         }
       } catch (error) {

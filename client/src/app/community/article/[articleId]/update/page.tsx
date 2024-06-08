@@ -5,15 +5,16 @@ import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
-import { EditorState, convertFromRaw } from "draft-js";
+import { isLoggedInAtom } from "@/src/states/atoms";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 
 export default function ArticleUpdate() {
   const [article, setArticle] = useState<IArticle>();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   let accessToken = LocalStorage.getItem("accessToken");
   const params = useParams();
@@ -29,6 +30,9 @@ export default function ArticleUpdate() {
       }
       if (expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
+        router.push("/login");
         return;
       }
 
@@ -48,8 +52,8 @@ export default function ArticleUpdate() {
         const data = await response.json();
 
         setArticle(data.data);
-        setTitle(data.data.title || ""); // 데이터가 있을 때만 title 상태를 설정
-        setContent(data.data.content || ""); // 데이터가 있을 때만 content 상태를 설정
+        setTitle(data.data.title || "");
+        setContent(data.data.content || "");
       } catch (error) {
         console.error(error);
       }
@@ -69,6 +73,9 @@ export default function ArticleUpdate() {
     }
     if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
 
@@ -85,7 +92,7 @@ export default function ArticleUpdate() {
       if (!response.ok) {
         throw new Error("게시글을 불러오는데 실패했습니다.");
       }
-      router.push(`/community/${params.articleId}`);
+      router.push(`/community/article/${params.articleId}`);
     } catch (error) {
       console.error(error);
     }

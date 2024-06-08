@@ -7,7 +7,6 @@ import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { maskUsername } from "@/src/hooks/maskUsername";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { EditorState, convertFromRaw } from "draft-js";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
@@ -18,6 +17,9 @@ import useClickOutside from "@/src/hooks/outsideClick";
 import Link from "next/link";
 import { formatDate } from "@/src/hooks/checkDate";
 import Footer from "@/src/components/footer";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "@/src/states/atoms";
+import { convertJsonToText } from "@/src/hooks/convertToPlainText";
 
 export default function ArticlePage() {
   const [commentContent, setCommentContent] = useState("");
@@ -29,6 +31,7 @@ export default function ArticlePage() {
   }>({});
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   const divRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -106,9 +109,15 @@ export default function ArticlePage() {
 
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-
-    if (!accessToken || expired) {
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
 
@@ -160,9 +169,15 @@ export default function ArticlePage() {
     }
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-
-    if (!accessToken || expired) {
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     updateMutation.mutate({ commentId, content });
@@ -200,9 +215,15 @@ export default function ArticlePage() {
   const deleteComment = async (commentId: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-
-    if (!accessToken || expired) {
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     deleteCommentMutation.mutate({ commentId });
@@ -211,9 +232,15 @@ export default function ArticlePage() {
   const deleteArticle = async (articleId: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-
-    if (!accessToken || expired) {
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     const check = confirm("삭제 하시겠습니까?");
@@ -236,22 +263,18 @@ export default function ArticlePage() {
     }
   };
 
-  const convertJsonToText = (rawContentStateJson: string) => {
-    const rawContentState = JSON.parse(rawContentStateJson);
-
-    const contentState = convertFromRaw(rawContentState);
-
-    const editorState = EditorState.createWithContent(contentState);
-
-    const plainText = contentState.getPlainText();
-
-    return plainText;
-  };
-
   const handleLike = async (articleId: string) => {
     const expired = await isExpired(accessToken);
-    if (!accessToken || expired) {
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     accessToken = LocalStorage.getItem("accessToken");
@@ -307,6 +330,19 @@ export default function ArticlePage() {
   };
 
   const handleFollow = async () => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     const response = await fetch(
       `http://localhost:5000/api/users/follow/${article?.author._id}`,
       {

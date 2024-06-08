@@ -1,9 +1,10 @@
 "use client";
 
-import Footer from "@/src/components/footer";
+import { isLoggedInAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 
 export default function Join() {
   const [username, setUsername] = useState("");
@@ -11,6 +12,8 @@ export default function Join() {
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState("");
+  const isLoggedIn = useRecoilValue(isLoggedInAtom);
+
   const router = useRouter();
   const data = {
     username,
@@ -43,6 +46,14 @@ export default function Join() {
       throw error;
     }
   };
+  useEffect(() => {
+    if (isLoggedIn) {
+      alert(
+        "이미 로그인 된 사용자 입니다. 해당 페이지를 이용하시려면 로그아웃을 해주세요.",
+      );
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <>

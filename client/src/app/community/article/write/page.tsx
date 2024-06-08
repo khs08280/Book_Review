@@ -5,14 +5,18 @@ import Footer from "@/src/components/footer";
 import { SideBar } from "@/src/components/sideBar";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
+import { isLoggedInAtom } from "@/src/states/atoms";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSetRecoilState } from "recoil";
 
 export default function CommunityWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("자유");
   let accessToken = LocalStorage.getItem("accessToken");
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+
   const router = useRouter();
 
   const createArticle = async () => {
@@ -29,6 +33,9 @@ export default function CommunityWrite() {
     }
     if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
     console.log(title, content);

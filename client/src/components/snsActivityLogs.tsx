@@ -11,6 +11,9 @@ import { PiArrowElbowDownRightBold } from "react-icons/pi";
 import { convertFromRaw } from "draft-js";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "../states/atoms";
+import { convertJsonToText } from "../hooks/convertToPlainText";
 
 export default function SnsActivityLogs() {
   let accessToken = LocalStorage.getItem("accessToken");
@@ -19,15 +22,23 @@ export default function SnsActivityLogs() {
     [key: string]: boolean;
   }>({});
   let userId: string;
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
   const router = useRouter();
 
   const handleLike = async (referenceId: string, type: string) => {
     const expired = await isExpired(accessToken);
-    if (!accessToken || expired) {
-      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
       return;
     }
-    accessToken = LocalStorage.getItem("accessToken");
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     try {
       const response = await fetch(
         "http://localhost:5000/api/activityLogs/handleLike",
@@ -74,6 +85,19 @@ export default function SnsActivityLogs() {
   }, []);
 
   const fetchData = async () => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     const response = await fetch(`http://localhost:5000/api/activityLogs`, {
       headers: {
         "Content-Type": "application/json",
@@ -91,15 +115,6 @@ export default function SnsActivityLogs() {
     queryFn: fetchData,
   });
 
-  const convertJsonToText = (rawContentStateJson: string) => {
-    const rawContentState = JSON.parse(rawContentStateJson);
-
-    const contentState = convertFromRaw(rawContentState);
-
-    const plainText = contentState.getPlainText();
-
-    return plainText;
-  };
   useEffect(() => {
     if (activityLogs) {
       const initialReviewLikes: { [key: string]: number } = {};

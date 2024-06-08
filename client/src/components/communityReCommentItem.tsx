@@ -5,6 +5,9 @@ import { CiMenuKebab } from "react-icons/ci";
 import { useEffect, useRef, useState } from "react";
 import { isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
+import { useRouter } from "next/navigation";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "../states/atoms";
 
 interface ReCommentItemProps {
   reComment: IReComment;
@@ -44,6 +47,8 @@ export default function CommunityReCommentItem({
     [key: string]: boolean;
   }>({});
   const divRef = useRef<HTMLDivElement>(null);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+  const router = useRouter();
 
   useEffect(() => {
     if (reComment) {
@@ -61,11 +66,18 @@ export default function CommunityReCommentItem({
 
   const handleLike = async (commentId: string) => {
     const expired = await isExpired(accessToken);
-    if (!accessToken || expired) {
-      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
       return;
     }
-    accessToken = LocalStorage.getItem("accessToken");
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     try {
       const response = await fetch(
         "http://localhost:5000/api/comments/handleLike",

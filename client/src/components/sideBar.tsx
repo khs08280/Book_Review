@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import { useEffect, useState } from "react";
 import LocalStorage from "../hooks/localStorage";
@@ -12,16 +12,23 @@ export function SideBar() {
   const pathname = usePathname();
   const [login, setLogin] = useState(false);
   const router = useRouter();
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+  let accessToken = LocalStorage.getItem("accessToken");
 
   useEffect(() => {
     if (isLoggedIn) setLogin(true);
   }, [isLoggedIn]);
   const handleClick = async (href: string) => {
-    const accessToken = LocalStorage.getItem("accessToken");
     const expired = await isExpired(accessToken);
-
-    if (expired || !accessToken) {
-      console.log("토큰이 이상합니다");
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }

@@ -5,7 +5,7 @@ import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom, userAtom } from "@/src/states/atoms";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
 export default function Login() {
@@ -20,6 +20,15 @@ export default function Login() {
     username,
     password,
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      alert(
+        "이미 로그인 된 사용자 입니다. 해당 페이지를 이용하시려면 로그아웃을 해주세요.",
+      );
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
 
   const handleLogin = async () => {
     try {

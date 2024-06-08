@@ -7,11 +7,21 @@ import { maskUsername } from "@/src/hooks/maskUsername";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import useClickOutside from "@/src/hooks/outsideClick";
 import { formatDate } from "@/src/hooks/checkDate";
 import { useRouter } from "next/navigation";
 import debounce from "lodash.debounce";
+import { useSetRecoilState } from "recoil";
+import { isLoggedInAtom } from "@/src/states/atoms";
+import { FaXmark } from "react-icons/fa6";
+
+const initialBookData: ISearchedBook = {
+  _id: "",
+  title: "",
+  titleNoSpaces: "",
+  writer: "",
+  image: "",
+};
 
 export default function OneLine() {
   const [content, setContent] = useState("");
@@ -19,20 +29,29 @@ export default function OneLine() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedOneLineId, setSelectedOneLineId] = useState("");
   const [isSelectedOneLineOpen, setIsSelectedOneLineOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
 
   const [searchedBooks, setSearchedBook] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [searchedBookData, setSearchedBookData] =
+    useState<ISearchedBook>(initialBookData);
+
+  const [updateSearchedBooks, setUpdateSearchedBook] = useState([]);
+  const [updateSearchText, setUpdateSearchText] = useState("");
+  const [updateSearchedBookData, setUpdateSearchedBookData] =
+    useState<ISearchedBook>(initialBookData);
+
+  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+
   const divRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   let accessToken = LocalStorage.getItem("accessToken");
   let userId: string;
 
-  useEffect(() => {
-    const loggedUserData = LocalStorage.getItem("loggedUserData");
-    if (loggedUserData) {
-      const { userAtom } = JSON.parse(loggedUserData);
-      userId = userAtom._id;
-    }
-  }, []);
+  const loggedUserData = LocalStorage.getItem("loggedUserData");
+  if (loggedUserData) {
+    const { userAtom } = JSON.parse(loggedUserData);
+    userId = userAtom._id;
+  }
 
   const queryClient = useQueryClient();
 
@@ -54,10 +73,9 @@ export default function OneLine() {
 
   const createMutation = useMutation({
     mutationFn: async () => {
-      console.log(content);
       const response = await fetch("http://localhost:5000/api/oneLines", {
         method: "POST",
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, bookId: searchedBookData._id }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
@@ -90,13 +108,16 @@ export default function OneLine() {
     }
 
     const expired = await isExpired(accessToken);
-
-    if (expired) {
-      accessToken = LocalStorage.getItem("accessToken");
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
     }
-
-    if (!accessToken || expired) {
+    if (expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
       return;
     }
 
@@ -105,13 +126,18 @@ export default function OneLine() {
   type MutationVariables = {
     oneLineId: string;
     content: string;
+    bookId: string | null;
   };
 
   const updateMutation = useMutation({
-    mutationFn: async ({ oneLineId, content }: MutationVariables) => {
+    mutationFn: async ({ oneLineId, content, bookId }: MutationVariables) => {
       const response = await fetch("http://localhost:5000/api/oneLines", {
         method: "PATCH",
-        body: JSON.stringify({ oneLineId, content }),
+        body: JSON.stringify({
+          oneLineId,
+          content,
+          bookId,
+        }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
@@ -134,20 +160,29 @@ export default function OneLine() {
         queryKey: ["oneLines"],
       });
       setContent("");
+      setUpdateSearchedBookData(initialBookData);
     },
   });
 
   const updateComment = async (oneLineId: string, oneLineContent: string) => {
     const expired = await isExpired(accessToken);
-
-    if (!accessToken || expired) {
-      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
       return;
     }
-
-    accessToken = LocalStorage.getItem("accessToken");
-
-    updateMutation.mutate({ oneLineId, content: oneLineContent });
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
+    updateMutation.mutate({
+      oneLineId,
+      content: oneLineContent,
+      bookId: updateSearchedBookData._id || null,
+    });
   };
 
   const deleteMutation = useMutation({
@@ -184,13 +219,16 @@ export default function OneLine() {
     const check = confirm("정말 삭제하시겠습니까?");
     if (check) {
       const expired = await isExpired(accessToken);
-
-      if (expired) {
-        accessToken = LocalStorage.getItem("accessToken");
+      accessToken = LocalStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.log("액세스 토큰이 올바르지 않습니다");
+        return;
       }
-
-      if (!accessToken || expired) {
+      if (expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
+        router.push("/login");
         return;
       }
 
@@ -207,6 +245,19 @@ export default function OneLine() {
     setIsMenuOpen(false);
   });
   const handleSearch = async (searchText: string) => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
     const response = await fetch(
       `http://localhost:5000/api/oneLines/${searchText}`,
       {
@@ -224,35 +275,123 @@ export default function OneLine() {
       return;
     }
     console.log(data.data);
+    setSearchedBook(data.data);
   };
+  const handleUpdateSearch = async (searchText: string) => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("액세스 토큰이 올바르지 않습니다");
+      return;
+    }
+    if (expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
+    const response = await fetch(
+      `http://localhost:5000/api/oneLines/${searchText}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        credentials: "include",
+      },
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log(data);
+      return;
+    }
+    console.log(data.data);
+    setUpdateSearchedBook(data.data);
+  };
+
   const delayedSearch = debounce(handleSearch, 300);
+  const delayedUpdateSearch = debounce(handleUpdateSearch, 300);
+
   const handleSearchChange = (e: any) => {
     setSearchText(e.target.value);
     delayedSearch(e.target.value);
+  };
+  const handleUpdateSearchChange = (e: any) => {
+    setUpdateSearchText(e.target.value);
+    delayedUpdateSearch(e.target.value);
+  };
+
+  const searchedBookClick = (searchedBook: ISearchedBook) => {
+    setSearchedBookData(searchedBook);
+    setSearchText("");
+    setSearchedBook([]);
+  };
+  const updateSearchedBookClick = (searchedBook: ISearchedBook) => {
+    setUpdateSearchedBookData(searchedBook);
+    setUpdateSearchText("");
+    setUpdateSearchedBook([]);
   };
 
   return (
     <div>
       <SideBar />
-      <div className="ml-52 flex h-screen justify-center bg-blue-300 pt-20">
+      <div className="ml-52 flex justify-center bg-blue-300 pt-20">
         <main className="flex w-1/2 flex-col bg-slate-400 p-10">
           <section className="mb-6">
             <h3 className="text-2xl">한줄 책 추천</h3>
-            <form className="ml-2">
+            <form className="my-3">
               <input
                 onChange={handleSearchChange}
                 value={searchText}
-                className="h-7 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400"
+                className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none"
+                placeholder="추천 할 책을 검색해주세요"
               />
             </form>
-            <div>
+
+            {searchedBooks && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {searchedBooks.map((searchedBook: ISearchedBook) => (
+                  <div
+                    onClick={() => searchedBookClick(searchedBook)}
+                    className="flex cursor-pointer flex-col items-center rounded-lg bg-white p-2 shadow-md"
+                    key={searchedBook._id}
+                  >
+                    <img
+                      className="mb-2 h-40 w-32 rounded-lg object-cover"
+                      src={searchedBook.image}
+                      alt={searchedBook.title}
+                    />
+                    <span className="line-clamp-2 text-center text-sm font-medium text-gray-700">
+                      {searchedBook.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="my-5 flex items-center bg-white pr-3">
               <textarea
+                placeholder="책을 마음껏 추천해주세요"
                 onChange={(e) => setContent(e.target.value)}
                 value={content}
-                className="my-5 h-20 w-full resize-none rounded-md p-2 focus:outline-none"
+                className=" h-32 w-full resize-none rounded-md p-3 focus:outline-none"
               />
-              <div onClick={createComment}>등록</div>
+              {searchedBookData.image && (
+                <>
+                  <img
+                    className="mr-2 h-full w-16"
+                    src={searchedBookData.image}
+                  />
+                  <FaXmark
+                    className="cursor-pointer"
+                    onClick={() => setSearchedBookData(initialBookData)}
+                  />
+                </>
+              )}
             </div>
+            <div onClick={createComment}>등록</div>
           </section>
           <section>
             <ul>
@@ -261,7 +400,7 @@ export default function OneLine() {
                   <li className="mb-3 py-2" key={index}>
                     <div className="flex flex-col ">
                       <div className="flex items-center justify-between">
-                        <div className="mb-2 text-sm opacity-35">
+                        <div className="mb-4 text-sm opacity-35">
                           <span className="mr-2">
                             {oneLine.author.nickname} (
                             {maskUsername(oneLine.author.username)})
@@ -272,6 +411,7 @@ export default function OneLine() {
                               : formatDate(oneLine.createdAt)}
                           </span>
                         </div>
+
                         <div className="flex items-center">
                           {userId == oneLine.author._id && (
                             <div key={oneLine._id} className="relative">
@@ -318,26 +458,93 @@ export default function OneLine() {
                           )}
                         </div>
                       </div>
-                      <span>{oneLine.content}</span>
-                    </div>
-                    {isSelectedOneLineOpen && (
-                      <div className="ml-12 mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
-                        <textarea
-                          onChange={(e) => setUpdateContent(e.target.value)}
-                          value={updateContent}
-                          className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
-                        />
-                        <button
-                          onClick={() => {
-                            updateComment(oneLine._id, updateContent);
-                            setIsSelectedOneLineOpen(false);
-                          }}
-                          className=" mt-2 cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                        >
-                          수정
-                        </button>
+                      <div className="flex w-full items-center justify-between">
+                        <span>{oneLine.content}</span>
+                        {oneLine.book && (
+                          <img
+                            className="mr-7 h-full w-12"
+                            src={oneLine.book.image}
+                          />
+                        )}
                       </div>
-                    )}
+                    </div>
+                    {isSelectedOneLineOpen &&
+                      selectedOneLineId === oneLine._id && (
+                        <div className="ml-12">
+                          <form className="my-3">
+                            <input
+                              onChange={handleUpdateSearchChange}
+                              value={updateSearchText}
+                              className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none"
+                              placeholder="추천 할 책을 검색해주세요"
+                            />
+                          </form>
+
+                          {updateSearchedBooks && (
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                              {updateSearchedBooks.map(
+                                (searchedBook: ISearchedBook) => (
+                                  <div
+                                    onClick={() =>
+                                      updateSearchedBookClick(searchedBook)
+                                    }
+                                    className="flex cursor-pointer flex-col items-center rounded-lg bg-white p-2 shadow-md"
+                                    key={searchedBook._id}
+                                  >
+                                    <img
+                                      className="mb-2 h-40 w-32 rounded-lg object-cover"
+                                      src={searchedBook.image}
+                                      alt={searchedBook.title}
+                                    />
+                                    <span className="line-clamp-2 text-center text-sm font-medium text-gray-700">
+                                      {searchedBook.title}
+                                    </span>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          )}
+
+                          <div className=" mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
+                            <div className="flex w-full items-center">
+                              <textarea
+                                onChange={(e) =>
+                                  setUpdateContent(e.target.value)
+                                }
+                                value={updateContent}
+                                className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+                              />
+                              {updateSearchedBookData.image ? (
+                                <img
+                                  className="mx-2 h-full w-20"
+                                  src={updateSearchedBookData.image}
+                                />
+                              ) : (
+                                <img
+                                  className="mx-2 h-full w-20"
+                                  src={oneLine.book?.image}
+                                />
+                              )}
+
+                              <FaXmark
+                                className="cursor-pointer"
+                                onClick={() =>
+                                  setUpdateSearchedBookData(initialBookData)
+                                }
+                              />
+                            </div>
+                            <button
+                              onClick={() => {
+                                updateComment(oneLine._id, updateContent);
+                                setIsSelectedOneLineOpen(false);
+                              }}
+                              className=" mt-2 cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                            >
+                              수정
+                            </button>
+                          </div>
+                        </div>
+                      )}
                   </li>
                 ))}
             </ul>

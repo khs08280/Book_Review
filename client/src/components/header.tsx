@@ -27,14 +27,20 @@ export function Header() {
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const expired = await isExpired(accessToken);
-
     try {
-      if (!accessToken || expired) {
-        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      const expired = await isExpired(accessToken);
+      accessToken = LocalStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.log("액세스 토큰이 올바르지 않습니다");
         return;
       }
-      accessToken = LocalStorage.getItem("accessToken");
+      if (expired) {
+        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
+        router.push("/login");
+        return;
+      }
 
       const response = await fetch("http://localhost:5000/api/users/logout", {
         headers: {
