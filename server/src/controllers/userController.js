@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import passport from "passport";
-import dotenv from "dotenv";
+import dotenv, { populate } from "dotenv";
 import Rating from "../models/rating.js";
 import Review from "../models/review.js";
 
@@ -143,7 +143,13 @@ export const myInfo = async (req, res) => {
           select: "title",
         },
       })
-      .populate("recommendedBooks");
+      .populate("recommendedBooks")
+      .populate("communityArticles")
+      .populate({
+        path: "communityComments",
+        populate: { path: "article", select: "title" },
+      })
+      .populate("oneLineRecommends");
 
     if (!user) {
       return res.status(404).json({ error: "유저를 찾을 수 없습니다" });

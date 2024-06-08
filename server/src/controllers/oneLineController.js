@@ -87,7 +87,7 @@ export const readOneLine = async (req, res) => {
   }
 };
 export const updateOneLine = async (req, res) => {
-  const { content, oneLineId, ...otherData } = req.body;
+  const { content, oneLineId, bookId, ...otherData } = req.body;
   const userId = req.user._id;
 
   if (!oneLineId || !content) {
@@ -108,6 +108,10 @@ export const updateOneLine = async (req, res) => {
       return res
         .status(403)
         .json({ message: "추천 글을 수정할 권한이 없습니다." });
+    }
+
+    if (bookId) {
+      oneLine.book = bookId;
     }
 
     oneLine.content = content;
