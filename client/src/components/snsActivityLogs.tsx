@@ -21,7 +21,7 @@ export default function SnsActivityLogs() {
   const [isLikeClicked, setIsLikeClicked] = useState<{
     [key: string]: boolean;
   }>({});
-  let userId: string;
+  const [userId, setUserId] = useState("");
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
   const router = useRouter();
 
@@ -77,7 +77,7 @@ export default function SnsActivityLogs() {
     const loggedUserData = LocalStorage.getItem("loggedUserData");
     if (loggedUserData) {
       const { userAtom } = JSON.parse(loggedUserData);
-      userId = userAtom._id;
+      setUserId(userAtom._id);
     } else {
       router.push("/login");
       return;
@@ -116,9 +116,10 @@ export default function SnsActivityLogs() {
   });
 
   useEffect(() => {
-    if (activityLogs) {
+    if (activityLogs && userId) {
       const initialReviewLikes: { [key: string]: number } = {};
       const initialIsLikeClicked: { [key: string]: boolean } = {};
+
       activityLogs.forEach((activityLog: IActivityLog) => {
         const referenceId = activityLog.referenceId;
         const likes = activityLog.metadata.likes || [];
@@ -129,7 +130,7 @@ export default function SnsActivityLogs() {
       setReviewLikes(initialReviewLikes);
       setIsLikeClicked(initialIsLikeClicked);
     }
-  }, [activityLogs]);
+  }, [activityLogs, userId]);
 
   return (
     <>

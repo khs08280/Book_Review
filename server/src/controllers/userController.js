@@ -380,7 +380,17 @@ export const followUser = async (req, res) => {
       return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
     }
     if (user.followings.includes(targetUserId)) {
-      return res.status(404).json({ message: "이미 팔로우 중 입니다" });
+      user.followings = user.followings.filter(
+        (id) => id.toString() !== targetUserId
+      );
+      targetUser.followers = targetUser.followers.filter(
+        (id) => id.toString() !== userId
+      );
+
+      await user.save();
+      await targetUser.save();
+
+      return res.status(200).json({ result: false, message: "언팔로우" });
     }
 
     user.followings.push(targetUserId);
@@ -389,35 +399,25 @@ export const followUser = async (req, res) => {
     await user.save();
     await targetUser.save();
 
-    res.status(200).json({ message: "팔로우 성공", user, targetUser });
+    res.status(200).json({ result: true, message: "팔로우" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const unfollowUser = async (req, res) => {
+export const isFollowed = async (req, res) => {
   const { targetUserId } = req.params;
   const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
-    const targetUser = await User.findById(targetUserId);
 
-    if (!user || !targetUser) {
+    if (!user) {
       return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
     }
 
-    user.following = user.following.filter(
-      (id) => id.toString() !== targetUserId
-    );
-    targetUser.followers = targetUser.followers.filter(
-      (id) => id.toString() !== userId
-    );
-
-    await user.save();
-    await targetUser.save();
-
-    res.status(200).json({ message: "언팔로우 성공", user, targetUser });
+    const isFollowing = user.followings.includes(targetUserId);
+    res.status(200).json({ isFollowing });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

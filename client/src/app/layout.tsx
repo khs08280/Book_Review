@@ -4,7 +4,8 @@ import "./globals.css";
 import ReactQueryProviders from "../utils/react-query-provider";
 import RecoilRootProvider from "../utils/recoilRoot-provider";
 import { Header } from "../components/header";
-import React from "react";
+import React, { Suspense } from "react";
+import Loading from "./loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +27,7 @@ export default function RootLayout({
         <RecoilRootProvider>
           <ReactQueryProviders>
             <Header />
-            {children}
-            {modal}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
           </ReactQueryProviders>
         </RecoilRootProvider>
       </body>

@@ -11,7 +11,7 @@ import {
   reAccessToken,
   refreshToLogin,
   followUser,
-  unfollowUser,
+  isFollowed,
 } from "../controllers/userController.js";
 import { isLoggedIn, isNotLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
@@ -54,7 +54,7 @@ userRouter.patch(
 userRouter.get("/refresh", isLoggedIn, reAccessToken);
 userRouter.get("/refreshToLogin", refreshToLogin);
 
-userRouter.post("/follow/:targetUserId", followUser);
-userRouter.post("/unfollow/:targetUserId", unfollowUser);
+userRouter.post("/handlefollow/:targetUserId", followUser);
+userRouter.get("/isFollowed/:targetUserId", isFollowed);
 
 export default userRouter;

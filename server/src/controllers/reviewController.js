@@ -120,6 +120,18 @@ export const UReview = async (req, res) => {
   }
 
   try {
+    const activityLog = await ActivityLog.findOne({ referenceId: reviewId });
+
+    if (!activityLog) {
+      return res
+        .status(404)
+        .json({ message: "수정 할 추천 로그를 찾을 수 없습니다." });
+    }
+
+    activityLog.metadata.content = content;
+    activityLog.modifiedAt = Date.now();
+    await activityLog.save();
+
     const updateReview = await Review.findByIdAndUpdate(
       reviewId,
       { content, modifiedAt: new Date() },

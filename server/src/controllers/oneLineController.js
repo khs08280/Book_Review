@@ -98,10 +98,17 @@ export const updateOneLine = async (req, res) => {
 
   try {
     const oneLine = await OneLine.findById(oneLineId);
+    const activityLog = await ActivityLog.findOne({ referenceId: oneLineId });
+
     if (!oneLine) {
       return res
         .status(404)
         .json({ message: "수정 할 추천 글을 찾을 수 없습니다." });
+    }
+    if (!activityLog) {
+      return res
+        .status(404)
+        .json({ message: "수정 할 추천 로그를 찾을 수 없습니다." });
     }
 
     if (oneLine.author.toString() !== userId.toString()) {
@@ -116,7 +123,12 @@ export const updateOneLine = async (req, res) => {
 
     oneLine.content = content;
     oneLine.modifiedAt = Date.now();
+
+    activityLog.metadata.content = content;
+    activityLog.modifiedAt = Date.now();
+
     await oneLine.save();
+    await activityLog.save();
 
     res.status(200).json({
       data: oneLine,

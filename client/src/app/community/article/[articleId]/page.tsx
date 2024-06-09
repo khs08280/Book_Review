@@ -30,6 +30,8 @@ export default function ArticlePage() {
     [key: string]: boolean;
   }>({});
 
+  const [isFollowed, setIsFollowed] = useState(false);
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
@@ -344,7 +346,7 @@ export default function ArticlePage() {
       return;
     }
     const response = await fetch(
-      `http://localhost:5000/api/users/follow/${article?.author._id}`,
+      `http://localhost:5000/api/users/handlefollow/${article?.author._id}`,
       {
         method: "POST",
         headers: {
@@ -361,7 +363,34 @@ export default function ArticlePage() {
     }
     const fetchData = await response.json();
     console.log(fetchData);
+    setIsFollowed(fetchData.result);
   };
+
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/users/isFollowed/${article?.author._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+          },
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          console.log(data);
+        }
+        setIsFollowed(data.isFollowing);
+      } catch (error) {
+        console.error("팔로우 상태를 가져오는데 실패했습니다:", error);
+      }
+    };
+    if (article) {
+      fetchFollowStatus();
+    }
+  }, [article]);
 
   return (
     <>
@@ -415,18 +444,29 @@ export default function ArticlePage() {
                 <div className="relative">
                   <span
                     onClick={userMenuOpen}
-                    className="mr-3 cursor-pointer opacity-35"
+                    className={`mr-3  ${userId !== article.author._id ? " cursor-pointer" : " cursor-text"} opacity-35`}
                   >
                     {article.author.nickname} (
                     {maskUsername(article.author.username)})
                   </span>
                   {isUserMenuOpen && userId !== article.author._id && (
-                    <div
-                      onClick={handleFollow}
-                      className="absolute left-5 z-10 cursor-pointer rounded-md bg-light-light p-2 text-base opacity-100"
-                    >
-                      팔로우
-                    </div>
+                    <>
+                      {isFollowed ? (
+                        <div
+                          onClick={handleFollow}
+                          className={`absolute left-5 top-10 z-10 inline-block cursor-pointer rounded-md bg-light-light p-2 text-base opacity-100`}
+                        >
+                          팔로우해제
+                        </div>
+                      ) : (
+                        <div
+                          onClick={handleFollow}
+                          className={`absolute left-5 z-10 w-fit cursor-pointer rounded-md bg-light-light p-2 text-base opacity-100`}
+                        >
+                          팔로우
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
 

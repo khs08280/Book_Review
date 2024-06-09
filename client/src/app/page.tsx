@@ -2,11 +2,10 @@
 
 import { BookList } from "../components/book-list";
 import { SideBar } from "../components/sideBar";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Suspense, useEffect } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import LocalStorage from "../hooks/localStorage";
-import { getCookie } from "../utils/react-cookie";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import Footer from "../components/footer";
@@ -18,19 +17,28 @@ const fetchData = async () => {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
+    console.log(data.data);
     return data.data;
   } catch (error) {
     console.error("Fetch error:", error);
-    throw error;
+    return [];
   }
 };
 
 export default function Home() {
   const isLoggedIn = useRecoilValue(isLoggedInAtom);
-  const { data: books, isLoading } = useQuery({
+  const {
+    data: books,
+    error,
+    isFetching,
+  } = useSuspenseQuery({
     queryKey: ["books"],
     queryFn: fetchData,
+    networkMode: "offlineFirst",
   });
+  if (error && !isFetching) {
+    throw error;
+  }
   const router = useRouter();
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
@@ -73,18 +81,6 @@ export default function Home() {
             <div className="mb-2 text-2xl">Hot 리뷰 북스</div>
             <BookList books={books} />
           </div>
-          {/* <div className="col-span-2">
-            <div className="mb-2 text-2xl">New 리뷰 북스</div>
-            <BookList books={books} />
-          </div>
-          <div className="col-span-2">
-            <div className="mb-2 text-2xl">웹소설도 북스야~</div>
-            <BookList books={books} />
-          </div>
-          <div className="col-span-2">
-            <div className="mb-2 text-2xl">이것도 읽어봐~</div>
-            <BookList books={books} />
-          </div> */}
         </div>
         <div className="flex flex-col">
           <div className="mb-3 h-1/2">

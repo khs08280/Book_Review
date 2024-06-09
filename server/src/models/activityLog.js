@@ -20,6 +20,10 @@ const activityLogSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  modifiedAt: {
+    type: Date,
+    default: null,
+  },
   description: {
     type: String,
   },

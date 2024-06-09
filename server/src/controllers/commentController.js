@@ -115,8 +115,15 @@ export const updateComment = async (req, res) => {
 
   try {
     const comment = await CommunityComment.findById(commentId);
+    const activityLog = await ActivityLog.findOne({ referenceId: commentId });
+
     if (!comment) {
       return res.status(404).json({ message: "댓글을 찾을 수 없습니다." });
+    }
+    if (!activityLog) {
+      return res.status(404).json({
+        message: "해당 게시글을 찾을 수 없습니다.",
+      });
     }
 
     if (comment.author.toString() !== userId.toString()) {
@@ -127,7 +134,12 @@ export const updateComment = async (req, res) => {
 
     comment.content = content;
     comment.modifiedAt = Date.now();
+
+    activityLog.metadata.content = content;
+    activityLog.modifiedAt = Date.now();
+
     await comment.save();
+    await activityLog.save();
 
     res.status(200).json({
       data: comment,

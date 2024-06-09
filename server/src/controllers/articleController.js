@@ -177,8 +177,15 @@ export const updateArticle = async (req, res) => {
   }
   try {
     const article = await CommunityArticle.findById(articleId);
+    const activityLog = await ActivityLog.findOne({ referenceId: articleId });
 
     if (!article) {
+      return res.status(404).json({
+        message: "해당 게시글을 찾을 수 없습니다.",
+      });
+    }
+
+    if (!activityLog) {
       return res.status(404).json({
         message: "해당 게시글을 찾을 수 없습니다.",
       });
@@ -192,12 +199,16 @@ export const updateArticle = async (req, res) => {
 
     article.title = title;
     article.content = content;
+    activityLog.metadata.title = title;
+    activityLog.metadata.content = content;
     if (tags) {
       article.tags = tags;
     }
     article.modifiedAt = Date.now();
+    activityLog.modifiedAt = Date.now();
 
     await article.save();
+    await activityLog.save();
 
     res.status(200).json({
       data: article,
