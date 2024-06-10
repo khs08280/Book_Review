@@ -28,7 +28,7 @@ export default function Login() {
       );
       router.push("/");
     }
-  }, [isLoggedIn, router]);
+  }, []);
 
   const handleLogin = async () => {
     try {

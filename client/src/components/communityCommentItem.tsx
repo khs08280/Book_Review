@@ -10,7 +10,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import CommunityReCommentItem from "./communityReCommentItem";
 import { useRouter } from "next/navigation";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 
 interface CommentProps {
@@ -45,17 +45,24 @@ export default function CommunityReviewItem({
     [key: string]: boolean;
   }>({});
   const router = useRouter();
-  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
 
   const [selectedCommentId, setSelectedCommentId] = useState("");
   const [selectedReCommentContent, setSelectedReCommentContent] = useState("");
 
   const divRef = useRef<HTMLDivElement>(null);
   let accessToken = LocalStorage.getItem("accessToken");
-  const { userAtom } = JSON.parse(
-    LocalStorage.getItem("loggedUserData") as string,
-  );
-  const userId = userAtom._id;
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const { userAtom } = JSON.parse(
+        LocalStorage.getItem("loggedUserData") as string,
+      );
+      setUserId(userAtom._id);
+    }
+  }, [isLoggedIn]);
 
   const openMenuClick = (commentId: string) => {
     setIsMenuOpen((prev) => !prev);
@@ -147,12 +154,16 @@ export default function CommunityReviewItem({
     <div>
       <div className="mb-4 border-b-2 border-solid border-black border-opacity-5 pb-2">
         <div className="flex w-full items-center justify-between">
-          <div className="mb-4">
+          <div className="mb-4 text-black text-opacity-35">
             <span className="mr-2">
               {comment.author.nickname} ({maskUsername(comment.author.username)}
               )
             </span>
-            <span>{formatDate(comment.createdAt)}</span>
+            {comment.modifiedAt ? (
+              <span>{formatDate(comment.modifiedAt)} (수정됨)</span>
+            ) : (
+              <span>{formatDate(comment.createdAt)}</span>
+            )}
           </div>
           <div className="flex items-center">
             <span
@@ -259,6 +270,7 @@ export default function CommunityReviewItem({
       {comment.children &&
         comment.children.map((reComment: IReComment) => (
           <CommunityReCommentItem
+            key={reComment._id}
             reComment={reComment}
             userId={userId}
             accessToken={accessToken}

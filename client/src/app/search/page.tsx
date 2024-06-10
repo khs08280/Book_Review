@@ -45,7 +45,7 @@ export default function Search() {
             <Link href={`/books/${book._id}`}>
               <motion.div
                 key={book._id}
-                className="h-120 mr-10 flex  cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-gray-300 p-5"
+                className="h-120 mr-10 flex cursor-pointer  flex-col items-center rounded-lg border-2 border-solid border-gray-300 bg-green-300 p-5"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 layoutId={book._id}

@@ -17,7 +17,7 @@ import useClickOutside from "@/src/hooks/outsideClick";
 import Link from "next/link";
 import { formatDate } from "@/src/hooks/checkDate";
 import Footer from "@/src/components/footer";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "@/src/states/atoms";
 import { convertJsonToText } from "@/src/hooks/convertToPlainText";
 
@@ -31,9 +31,10 @@ export default function ArticlePage() {
   }>({});
 
   const [isFollowed, setIsFollowed] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
 
   const divRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -41,10 +42,15 @@ export default function ArticlePage() {
   const params = useParams();
   const queryClient = useQueryClient();
   let accessToken = LocalStorage.getItem("accessToken");
-  const { userAtom } = JSON.parse(
-    LocalStorage.getItem("loggedUserData") as string,
-  );
-  const userId = userAtom._id;
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const { userAtom } = JSON.parse(
+        LocalStorage.getItem("loggedUserData") as string,
+      );
+      setUserId(userAtom._id);
+    }
+  }, [isLoggedIn]);
 
   const fetchData = async () => {
     const response = await fetch(
@@ -268,17 +274,14 @@ export default function ArticlePage() {
   const handleLike = async (articleId: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }
+
     accessToken = LocalStorage.getItem("accessToken");
     try {
       const response = await fetch(
@@ -345,29 +348,44 @@ export default function ArticlePage() {
       router.push("/login");
       return;
     }
-    const response = await fetch(
-      `http://localhost:5000/api/users/handlefollow/${article?.author._id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+    if (isLoggedIn) {
+      const response = await fetch(
+        `http://localhost:5000/api/users/handlefollow/${article?.author._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      },
-    );
-    if (!response.ok) {
-      console.log(response.json());
-      throw new Error("Network response was not ok");
+      );
+      if (!response.ok) {
+        console.log(response.json());
+        throw new Error("Network response was not ok");
+      }
+      const fetchData = await response.json();
+      console.log(fetchData);
+      setIsFollowed(fetchData.result);
     }
-    const fetchData = await response.json();
-    console.log(fetchData);
-    setIsFollowed(fetchData.result);
   };
 
   useEffect(() => {
     const fetchFollowStatus = async () => {
+      const expired = await isExpired(accessToken);
+      accessToken = LocalStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.log("액세스 토큰이 올바르지 않습니다");
+        return;
+      }
+      if (expired) {
+        console.log("만료되었거나 유효하지 않은 토큰입니다.");
+        setIsLoggedIn(false);
+        LocalStorage.removeItem("accessToken");
+        router.push("/login");
+        return;
+      }
       try {
         const response = await fetch(
           `http://localhost:5000/api/users/isFollowed/${article?.author._id}`,
@@ -387,7 +405,7 @@ export default function ArticlePage() {
         console.error("팔로우 상태를 가져오는데 실패했습니다:", error);
       }
     };
-    if (article) {
+    if (article && isLoggedIn) {
       fetchFollowStatus();
     }
   }, [article]);
@@ -418,6 +436,7 @@ export default function ArticlePage() {
                     <CiMenuKebab
                       onClick={() => setIsMenuOpen((prev) => !prev)}
                       className="size-5 cursor-pointer"
+                      title="수정 or 삭제"
                     />
                     {isMenuOpen && (
                       <div
@@ -474,10 +493,10 @@ export default function ArticlePage() {
                   {formatDate(article.createdAt)}
                 </span>
                 <span className="mr-3 flex items-center opacity-35">
-                  <FaRegEye className="mr-1" /> {article.view}
+                  <FaRegEye title="조회수" className="mr-1" /> {article.view}
                 </span>
                 <span className="flex items-center opacity-35 ">
-                  <AiOutlineLike className="mr-1" />
+                  <AiOutlineLike title="좋아요" className="mr-1" />
 
                   {article.likes?.length}
                 </span>
@@ -492,9 +511,15 @@ export default function ArticlePage() {
                 className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4 px-6"
               >
                 {isLikeClicked[article._id] ? (
-                  <AiFillLike className=" size-5 cursor-pointer text-white" />
+                  <AiFillLike
+                    title="좋아요"
+                    className=" size-5 cursor-pointer text-white"
+                  />
                 ) : (
-                  <AiOutlineLike className=" size-5 cursor-pointer" />
+                  <AiOutlineLike
+                    title="좋아요"
+                    className=" size-5 cursor-pointer"
+                  />
                 )}
                 <span className="my-1">좋아요</span>
                 <span>{reviewLikes[article._id]}</span>

@@ -99,6 +99,8 @@ interface IReComment {
   _id: string;
   createdAt: string;
   content: string;
+  modifiedAt: null | string;
+
   author: {
     _id: string;
     username: string;

@@ -5,7 +5,7 @@ import ReactQueryProviders from "../utils/react-query-provider";
 import RecoilRootProvider from "../utils/recoilRoot-provider";
 import { Header } from "../components/header";
 import React, { Suspense } from "react";
-import Loading from "./loading";
+import Loading from "../components/loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "북스 - BOOX 책 리뷰, 커뮤니티",
 };
 
-export default function RootLayout({
+export default function CommunityLayout({
   children,
   modal,
 }: Readonly<{
@@ -27,7 +27,7 @@ export default function RootLayout({
         <RecoilRootProvider>
           <ReactQueryProviders>
             <Header />
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+            <main>{children}</main>
           </ReactQueryProviders>
         </RecoilRootProvider>
       </body>

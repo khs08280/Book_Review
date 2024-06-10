@@ -451,7 +451,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               <div className="flex flex-col">
                 <img
                   className="h-80 w-60"
-                  alt="Book Cover"
+                  alt={book.title}
                   src={`${book.image}`}
                 />
                 <span className="my-2">저자 {book.writer}</span>
@@ -493,7 +493,8 @@ function Modal({ isOpen, onClose, bookId }: any) {
                       maxLength={300}
                       onChange={(e) => setReviewContent(e.target.value)}
                       value={reviewContent}
-                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-2 focus:outline-none`}
+                      placeholder="리뷰를 입력해주세요"
+                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-3 focus:outline-none`}
                     />
                     {isReviewActive ? (
                       <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">

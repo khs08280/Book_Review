@@ -11,7 +11,7 @@ import { isLoggedInAtom } from "../states/atoms";
 
 interface ReCommentItemProps {
   reComment: IReComment;
-  userId: string;
+  userId: string | null;
   accessToken: string | null;
   openReCommentMenuClick: (commentId: string, content: string) => void;
   isMenuOpen: boolean;
@@ -118,12 +118,16 @@ export default function CommunityReCommentItem({
       className="mb-4 ml-7 border-b-2 border-solid border-black border-opacity-5 pb-2"
     >
       <div className="flex w-full items-center justify-between">
-        <div className="mb-4">
+        <div className="mb-4 text-black text-opacity-35">
           <span className="mr-2">
             {reComment.author.nickname} (
             {maskUsername(reComment.author.username)})
           </span>
-          <span>{formatDate(reComment.createdAt)}</span>
+          {reComment.modifiedAt ? (
+            <span>{formatDate(reComment.modifiedAt)} (수정됨)</span>
+          ) : (
+            <span>{formatDate(reComment.createdAt)}</span>
+          )}
         </div>
         <div className="flex items-center">
           {isLikeClicked[reComment._id] ? (

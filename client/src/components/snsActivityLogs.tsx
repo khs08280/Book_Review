@@ -1,19 +1,17 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import LocalStorage from "../hooks/localStorage";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { useEffect, useState } from "react";
 import { isExpired } from "../hooks/isExpired";
 import { maskUsername } from "../hooks/maskUsername";
 import { FaUserCircle } from "react-icons/fa";
-import { formatDate } from "../hooks/checkDate";
-import { PiArrowElbowDownRightBold } from "react-icons/pi";
-import { convertFromRaw } from "draft-js";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import { convertJsonToText } from "../hooks/convertToPlainText";
+import SnsLoading from "../app/sns/loading";
+import { formatDate } from "../hooks/checkDate";
 
 export default function SnsActivityLogs() {
   let accessToken = LocalStorage.getItem("accessToken");
@@ -23,6 +21,7 @@ export default function SnsActivityLogs() {
   }>({});
   const [userId, setUserId] = useState("");
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
+
   const router = useRouter();
 
   const handleLike = async (referenceId: string, type: string) => {
@@ -131,6 +130,10 @@ export default function SnsActivityLogs() {
       setIsLikeClicked(initialIsLikeClicked);
     }
   }, [activityLogs, userId]);
+
+  if (isLoading) {
+    return <SnsLoading />;
+  }
 
   return (
     <>

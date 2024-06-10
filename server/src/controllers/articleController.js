@@ -104,6 +104,7 @@ export const selectedArticle = async (req, res) => {
         author: comment.author,
         content: comment.content,
         createdAt: comment.createdAt,
+        modifiedAt: comment.modifiedAt,
         likes: comment.likes,
         _id: comment._id,
         children: [],
@@ -130,6 +131,8 @@ export const selectedArticle = async (req, res) => {
       author: comment.author,
       content: comment.content,
       createdAt: comment.createdAt,
+      modifiedAt: comment.modifiedAt,
+
       children: comment.children,
       likes: comment.likes,
       _id: comment._id,

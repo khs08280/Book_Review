@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa";
+import CommunityLoading from "./loading";
 
 export default function Community() {
   const getArticleList = async () => {
@@ -27,6 +28,10 @@ export default function Community() {
     queryKey: ["articles"],
     queryFn: getArticleList,
   });
+
+  if (isLoading) {
+    return <CommunityLoading />;
+  }
 
   return (
     <>
@@ -60,7 +65,11 @@ export default function Community() {
                     <div className=" flex text-xs opacity-35 ">
                       <span className="mr-3">{article.author.nickname}</span>
                       <span className="mr-3">
-                        {formatDate(article.createdAt)}
+                        {article.modifiedAt ? (
+                          <span>{formatDate(article.modifiedAt)} (수정됨)</span>
+                        ) : (
+                          <span>{formatDate(article.createdAt)}</span>
+                        )}
                       </span>
                       <span className="mr-3 flex items-center">
                         <FaRegEye className="mr-1" /> {article.view}

@@ -14,6 +14,7 @@ import debounce from "lodash.debounce";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "@/src/states/atoms";
 import { FaXmark } from "react-icons/fa6";
+import OneLineLoading from "./loading";
 
 const initialBookData: ISearchedBook = {
   _id: "",
@@ -333,6 +334,9 @@ export default function OneLine() {
     setUpdateSearchText("");
     setUpdateSearchedBook([]);
   };
+  if (isLoading) {
+    return <OneLineLoading />;
+  }
 
   return (
     <div>
@@ -382,6 +386,7 @@ export default function OneLine() {
                 <>
                   <img
                     className="mr-2 h-full w-16"
+                    alt={searchedBookData.title}
                     src={searchedBookData.image}
                   />
                   <FaXmark
@@ -391,7 +396,12 @@ export default function OneLine() {
                 </>
               )}
             </div>
-            <div onClick={createComment}>등록</div>
+            <div
+              className=" float-end  w-fit cursor-pointer  rounded-lg bg-blue-400 p-3 text-light-light"
+              onClick={createComment}
+            >
+              등록
+            </div>
           </section>
           <section>
             <ul>
@@ -405,11 +415,13 @@ export default function OneLine() {
                             {oneLine.author.nickname} (
                             {maskUsername(oneLine.author.username)})
                           </span>
-                          <span>
-                            {oneLine.modifiedAt
-                              ? formatDate(oneLine.modifiedAt)
-                              : formatDate(oneLine.createdAt)}
-                          </span>
+                          {oneLine.modifiedAt ? (
+                            <span>
+                              {formatDate(oneLine.modifiedAt)} (수정됨)
+                            </span>
+                          ) : (
+                            <span>{formatDate(oneLine.createdAt)}</span>
+                          )}
                         </div>
 
                         <div className="flex items-center">
@@ -420,6 +432,7 @@ export default function OneLine() {
                                   menuCliked(oneLine._id, oneLine.content)
                                 }
                                 className="size-4 cursor-pointer"
+                                title="수정 or 삭제"
                               />
                               {isMenuOpen &&
                                 selectedOneLineId === oneLine._id && (
@@ -464,6 +477,7 @@ export default function OneLine() {
                           <img
                             className="mr-7 h-full w-12"
                             src={oneLine.book.image}
+                            alt={oneLine.book.title}
                           />
                         )}
                       </div>
@@ -518,11 +532,13 @@ export default function OneLine() {
                                 <img
                                   className="mx-2 h-full w-20"
                                   src={updateSearchedBookData.image}
+                                  alt={updateSearchedBookData.title}
                                 />
                               ) : (
                                 <img
                                   className="mx-2 h-full w-20"
                                   src={oneLine.book?.image}
+                                  alt={oneLine.book?.title}
                                 />
                               )}
 
