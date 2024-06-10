@@ -24,11 +24,7 @@ export default function ArticleUpdate() {
     const fetchData = async () => {
       const expired = await isExpired(accessToken);
       accessToken = LocalStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.log("액세스 토큰이 올바르지 않습니다");
-        return;
-      }
-      if (expired) {
+      if (!accessToken || expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
         setIsLoggedIn(false);
         LocalStorage.removeItem("accessToken");
@@ -67,11 +63,7 @@ export default function ArticleUpdate() {
   const updateArticle = async () => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");

@@ -110,7 +110,7 @@ export default function Home() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex h-full bg-slate-400 p-10">
+      <div className="ml-52 flex h-full bg-slate-400 p-10 dark:bg-dark-darker dark:text-light-light">
         <div className="mr-5 grid w-4/6 grid-cols-2 grid-rows-4 gap-5">
           <div className="col-span-2 w-full flex-col">
             <div className="mb-5 text-2xl">Hot 리뷰 북스</div>

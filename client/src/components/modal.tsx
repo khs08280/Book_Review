@@ -7,7 +7,7 @@ import { getUserId, isExpired } from "../hooks/isExpired";
 import { useRouter } from "next/navigation";
 import ReviewItem from "./reviewItem";
 import Stars from "./stars";
-import AverageStars from "./averageStars";
+import AverageStars from "./AverageStars";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
@@ -104,11 +104,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const updateReview = async () => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");
@@ -129,11 +125,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const createReview = async () => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");
@@ -315,11 +307,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const likeClick = async (reviewId: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");
@@ -364,11 +352,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
   const handleRecommend = async (bookId: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");

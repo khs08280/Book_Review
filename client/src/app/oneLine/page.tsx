@@ -168,17 +168,14 @@ export default function OneLine() {
   const updateComment = async (oneLineId: string, oneLineContent: string) => {
     const expired = await isExpired(accessToken);
     accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
+    if (!accessToken || expired) {
       console.log("만료되었거나 유효하지 않은 토큰입니다.");
       setIsLoggedIn(false);
       LocalStorage.removeItem("accessToken");
       router.push("/login");
       return;
     }
+
     updateMutation.mutate({
       oneLineId,
       content: oneLineContent,
@@ -221,11 +218,7 @@ export default function OneLine() {
     if (check) {
       const expired = await isExpired(accessToken);
       accessToken = LocalStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.log("액세스 토큰이 올바르지 않습니다");
-        return;
-      }
-      if (expired) {
+      if (!accessToken || expired) {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
         setIsLoggedIn(false);
         LocalStorage.removeItem("accessToken");
@@ -246,19 +239,6 @@ export default function OneLine() {
     setIsMenuOpen(false);
   });
   const handleSearch = async (searchText: string) => {
-    const expired = await isExpired(accessToken);
-    accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
-      console.log("만료되었거나 유효하지 않은 토큰입니다.");
-      setIsLoggedIn(false);
-      LocalStorage.removeItem("accessToken");
-      router.push("/login");
-      return;
-    }
     const response = await fetch(
       `http://localhost:5000/api/oneLines/${searchText}`,
       {
@@ -279,19 +259,6 @@ export default function OneLine() {
     setSearchedBook(data.data);
   };
   const handleUpdateSearch = async (searchText: string) => {
-    const expired = await isExpired(accessToken);
-    accessToken = LocalStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.log("액세스 토큰이 올바르지 않습니다");
-      return;
-    }
-    if (expired) {
-      console.log("만료되었거나 유효하지 않은 토큰입니다.");
-      setIsLoggedIn(false);
-      LocalStorage.removeItem("accessToken");
-      router.push("/login");
-      return;
-    }
     const response = await fetch(
       `http://localhost:5000/api/oneLines/${searchText}`,
       {

@@ -10,6 +10,7 @@ import { isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaUser, FaUserCircle } from "react-icons/fa";
+import DarkModeToggle from "./darkModeToggle";
 
 export function Header() {
   const [isLoggedIn, setClientExampleState] = useState(false);
@@ -38,7 +39,7 @@ export function Header() {
         console.log("만료되었거나 유효하지 않은 토큰입니다.");
         setIsLoggedIn(false);
         LocalStorage.removeItem("accessToken");
-        router.push("/login");
+        router.push("/");
         return;
       }
 
@@ -90,7 +91,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker">
+    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:border-solid dark:border-b-green-200 dark:bg-dark-darker dark:text-light-light">
       <Link href={"/"}>
         <h1 className=" text-3xl ">BOOX</h1>
       </Link>
@@ -116,6 +117,7 @@ export function Header() {
             )}
           </AnimatePresence>
         </div>
+        <DarkModeToggle />
         {isLoggedIn ? (
           <>
             <button
@@ -132,7 +134,7 @@ export function Header() {
           </>
         ) : (
           <Link href={"/login"}>
-            <button className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600">
+            <button className="min-w-fit rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600">
               로그인
             </button>
           </Link>
