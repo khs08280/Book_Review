@@ -405,9 +405,9 @@ export default function ArticlePage() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10">
+      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
         {article && (
-          <main className=" w-7/12 bg-slate-500 p-10">
+          <main className=" w-7/12 bg-slate-500 p-10 dark:bg-dark-dark">
             <CommunityNav />
             <section className=" border-b-2 border-solid border-black border-opacity-5 pb-10">
               <div className="flex  justify-between">
@@ -433,16 +433,16 @@ export default function ArticlePage() {
                     {isMenuOpen && (
                       <div
                         ref={divRef}
-                        className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center justify-center rounded-sm bg-light-light p-2 shadow-lg"
+                        className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center rounded-sm bg-light-light p-2 shadow-lg"
                       >
                         <Link href={`/community/article/${article._id}/update`}>
-                          <span className="mb-2 cursor-pointer text-center text-blue-500">
+                          <span className=" cursor-pointer text-center text-blue-500">
                             수정
                           </span>
                         </Link>
                         <span
                           onClick={() => deleteArticle(article._id)}
-                          className="cursor-pointer text-center text-red-500"
+                          className="mt-2 cursor-pointer text-center text-red-500"
                         >
                           삭제
                         </span>
@@ -500,7 +500,7 @@ export default function ArticlePage() {
             <div className="mt-32 flex w-full flex-col items-center ">
               <div
                 onClick={() => handleLike(article._id)}
-                className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4 px-6"
+                className="flex w-fit cursor-pointer flex-col items-center rounded-xl border-2 border-solid border-black border-opacity-20 p-4 px-6 dark:border-light-light dark:border-opacity-20"
               >
                 {isLikeClicked[article._id] ? (
                   <AiFillLike
@@ -532,11 +532,11 @@ export default function ArticlePage() {
                 />
               ))}
 
-              <div className=" flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
+              <div className=" flex flex-col items-end rounded-md border-solid bg-light-light p-4 shadow-md dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
                 <textarea
                   onChange={(e) => setCommentContent(e.target.value)}
                   value={commentContent}
-                  className=" h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+                  className=" h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none dark:border-opacity-20 dark:bg-dark-dark"
                   placeholder="댓글을 작성해주세요"
                 />
                 <div

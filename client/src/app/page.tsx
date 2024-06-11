@@ -126,7 +126,7 @@ export default function Home() {
                   articles.map((article: IArticle) => (
                     <li
                       key={article._id}
-                      className="flex w-full  justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3"
+                      className="flex w-full justify-between   rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
                     >
                       <div className="flex flex-col">
                         <div className="mb-2">
@@ -160,7 +160,7 @@ export default function Home() {
                   oneLines.map((oneLine: IOneLine) => (
                     <li
                       key={oneLine._id}
-                      className="flex w-full  justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3"
+                      className="flex w-full  justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
                     >
                       <div className="flex flex-col">
                         <div className="mb-2">

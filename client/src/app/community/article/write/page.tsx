@@ -54,10 +54,11 @@ export default function CommunityWrite() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10">
-        <main className="flex h-screen w-7/12 flex-col space-y-4 bg-slate-500 p-5">
+      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
+        <main className="flex h-screen w-7/12 flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark">
           <span className="mb-4 text-2xl text-white">글 쓰기</span>
           <select
+            className="rounded-md border-solid p-2 dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -73,12 +74,17 @@ export default function CommunityWrite() {
             onChange={(e) => setTitle(e.target.value)}
             value={title}
             placeholder="제목"
-            className="rounded border border-gray-300 p-2"
+            className="rounded border border-gray-300 p-2 dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"
           />
-          <div className="h-64 rounded border border-gray-300 bg-white p-2">
+          <div className="h-64 rounded border border-solid border-gray-300 bg-white p-2 dark:border-opacity-40 dark:bg-dark-dark ">
             <DraftEditor setContent={setContent} />
           </div>
-          <div onClick={createArticle}>등록</div>
+          <div
+            className="cursor-pointer self-end rounded-md  bg-green-400 p-2 text-light-light"
+            onClick={createArticle}
+          >
+            등록
+          </div>
         </main>
       </div>
       <Footer />

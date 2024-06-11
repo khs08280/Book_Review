@@ -8,6 +8,7 @@ import LocalStorage from "../hooks/localStorage";
 import { useRouter } from "next/navigation";
 import { useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
+import useClickOutside from "../hooks/outsideClick";
 
 interface ReCommentItemProps {
   reComment: IReComment;
@@ -23,6 +24,7 @@ interface ReCommentItemProps {
   deleteCommentClick: (commentId: string) => void;
   setSelectedReCommentContent: React.Dispatch<React.SetStateAction<string>>;
   selectedReCommentContent: string;
+  setIsMenuOpen: (isMenuOpen: boolean) => void;
   updateComment: (commentId: string, content: string) => void;
 }
 
@@ -32,6 +34,7 @@ export default function CommunityReCommentItem({
   accessToken,
   openReCommentMenuClick,
   isMenuOpen,
+  setIsMenuOpen,
   selectedCommentId,
   isSelectedReCommentOpen,
   setIsSelectedReCommentOpen,
@@ -46,9 +49,9 @@ export default function CommunityReCommentItem({
   const [isLikeClicked, setIsLikeClicked] = useState<{
     [key: string]: boolean;
   }>({});
-  const divRef = useRef<HTMLDivElement>(null);
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
   const router = useRouter();
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (reComment) {
@@ -63,6 +66,9 @@ export default function CommunityReCommentItem({
       setIsLikeClicked(initialIsLikeClicked);
     }
   }, [reComment]);
+  useClickOutside(divRef, () => {
+    setIsMenuOpen(false);
+  });
 
   const handleLike = async (commentId: string) => {
     const expired = await isExpired(accessToken);
@@ -114,7 +120,7 @@ export default function CommunityReCommentItem({
       className="mb-4 ml-7 border-b-2 border-solid border-black border-opacity-5 pb-2"
     >
       <div className="flex w-full items-center justify-between">
-        <div className="mb-4 text-black text-opacity-35">
+        <div className="mb-4 text-black text-opacity-35 dark:text-light-light dark:text-opacity-20">
           <span className="mr-2">
             {reComment.author.nickname} (
             {maskUsername(reComment.author.username)})
@@ -184,11 +190,11 @@ export default function CommunityReCommentItem({
       </div>
       <div className="mb-2">{reComment.content}</div>
       {isSelectedReCommentOpen && selectedCommentId === reComment._id && (
-        <div className="ml-12 mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
+        <div className="ml-12 mt-4 flex flex-col items-end rounded-md border-solid bg-light-light p-4 shadow-md dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
           <textarea
             onChange={(e) => setSelectedReCommentContent(e.target.value)}
             value={selectedReCommentContent}
-            className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+            className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none dark:border-opacity-20 dark:bg-dark-dark"
           />
           <button
             onClick={() => {

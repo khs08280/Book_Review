@@ -35,7 +35,7 @@ export default function Search() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 min-h-screen p-5 px-10">
+      <div className="ml-52 min-h-screen p-5 px-10 dark:bg-dark-darker dark:text-light-light">
         {/* <BookDetailPage /> */}
         <span className="text-xl font-semibold">
           {searchText}에 대한 검색 결과

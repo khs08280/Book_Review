@@ -91,7 +91,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:border-solid dark:border-b-green-200 dark:bg-dark-darker dark:text-light-light">
+    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker  dark:text-light-light dark:shadow-xl">
       <Link href={"/"}>
         <h1 className=" text-3xl ">BOOX</h1>
       </Link>
@@ -111,7 +111,7 @@ export function Header() {
                 <input
                   onChange={(e) => setSearchText(e.target.value)}
                   value={searchText}
-                  className="h-7 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400"
+                  className="h-10 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400 dark:bg-dark-dark dark:text-light-light"
                 />
               </motion.form>
             )}

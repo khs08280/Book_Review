@@ -5,7 +5,7 @@ import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { maskUsername } from "@/src/hooks/maskUsername";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import useClickOutside from "@/src/hooks/outsideClick";
 import { formatDate } from "@/src/hooks/checkDate";
@@ -308,15 +308,15 @@ export default function OneLine() {
   return (
     <div>
       <SideBar />
-      <div className="ml-52 flex justify-center bg-blue-300 pt-20">
-        <main className="flex w-1/2 flex-col bg-slate-400 p-10">
+      <div className="ml-52 flex justify-center bg-blue-300 pt-20 dark:bg-dark-darker dark:text-light-light">
+        <main className="flex w-1/2 flex-col bg-slate-400 p-10 dark:bg-dark-dark">
           <section className="mb-6">
             <h3 className="text-2xl">한줄 책 추천</h3>
             <form className="my-3">
               <input
                 onChange={handleSearchChange}
                 value={searchText}
-                className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none"
+                className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"
                 placeholder="추천 할 책을 검색해주세요"
               />
             </form>
@@ -326,7 +326,7 @@ export default function OneLine() {
                 {searchedBooks.map((searchedBook: ISearchedBook) => (
                   <div
                     onClick={() => searchedBookClick(searchedBook)}
-                    className="flex cursor-pointer flex-col items-center rounded-lg bg-white p-2 shadow-md"
+                    className=" flex cursor-pointer  flex-col items-center rounded-lg border border-solid bg-white p-2 shadow-md dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark "
                     key={searchedBook._id}
                   >
                     <img
@@ -334,7 +334,7 @@ export default function OneLine() {
                       src={searchedBook.image}
                       alt={searchedBook.title}
                     />
-                    <span className="line-clamp-2 text-center text-sm font-medium text-gray-700">
+                    <span className="line-clamp-2 text-center text-sm font-medium text-gray-700 dark:text-light-light">
                       {searchedBook.title}
                     </span>
                   </div>
@@ -342,12 +342,12 @@ export default function OneLine() {
               </div>
             )}
 
-            <div className="my-5 flex items-center bg-white pr-3">
+            <div className="my-5 flex items-center bg-white pr-3 dark:border dark:border-solid dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
               <textarea
                 placeholder="책을 마음껏 추천해주세요"
                 onChange={(e) => setContent(e.target.value)}
                 value={content}
-                className=" h-32 w-full resize-none rounded-md p-3 focus:outline-none"
+                className=" h-32 w-full resize-none rounded-md  p-3 focus:outline-none  dark:bg-dark-dark "
               />
               {searchedBookData.image && (
                 <>
@@ -456,7 +456,7 @@ export default function OneLine() {
                             <input
                               onChange={handleUpdateSearchChange}
                               value={updateSearchText}
-                              className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none"
+                              className="h-10 w-full rounded-md border border-gray-300 pl-3 focus:border-green-400 focus:outline-none dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"
                               placeholder="추천 할 책을 검색해주세요"
                             />
                           </form>
@@ -486,14 +486,14 @@ export default function OneLine() {
                             </div>
                           )}
 
-                          <div className=" mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
-                            <div className="flex w-full items-center">
+                          <div className=" mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md dark:border dark:border-solid dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
+                            <div className="flex w-full items-center dark:bg-dark-dark">
                               <textarea
                                 onChange={(e) =>
                                   setUpdateContent(e.target.value)
                                 }
                                 value={updateContent}
-                                className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+                                className="h-24 w-full resize-none rounded-md  bg-light-light p-2 focus:border-blue-500 focus:outline-none dark:border-opacity-20 dark:bg-dark-dark"
                               />
                               {updateSearchedBookData.image ? (
                                 <img

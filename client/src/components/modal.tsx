@@ -394,7 +394,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
       <div className="flex h-screen items-center justify-center">
         <div
           onClick={handleModalClick}
-          className=" relative h-4/5 w-modal_width overflow-y-auto rounded-lg bg-white p-10 shadow-lg"
+          className=" relative h-4/5 w-modal_width overflow-y-auto rounded-lg bg-white p-10 shadow-lg dark:bg-dark-darker dark:text-light-light"
         >
           <div className="absolute right-3 top-3 ">
             <button onClick={onClose}>
@@ -402,7 +402,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
             </button>
           </div>
           <div
-            className={`mb-7 h-2/3 place-content-center bg-cover bg-center text-light-light`}
+            className={`mb-7 h-2/3 place-content-center bg-cover bg-center text-green-300`}
             style={{ backgroundImage: `url(${book.image})` }}
           >
             <div className="z-30 flex items-center justify-between ">

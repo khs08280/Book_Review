@@ -28,7 +28,7 @@ export default function DraftEditor({ setContent, alreadyEditorState }: any) {
     setContent(rawContentStateJson);
   };
   return (
-    <div className="rounded border border-gray-300 bg-white p-2">
+    <div className="rounded  bg-white p-2 dark:bg-dark-dark">
       <Editor
         editorState={editorState}
         onEditorStateChange={handleEditorChange}

@@ -4,11 +4,16 @@ import { MdOutlineWbSunny } from "react-icons/md";
 import { FaMoon } from "react-icons/fa";
 
 export default function DarkModeToggle() {
-  const [theme, setTheme] = useState<string>(
-    typeof window !== "undefined" && LocalStorage.getItem("theme")
-      ? (LocalStorage.getItem("theme") as string)
-      : "light",
-  );
+  const [theme, setTheme] = useState<string>("light");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const storedTheme = LocalStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme as string);
+    }
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -16,10 +21,10 @@ export default function DarkModeToggle() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-    if (typeof window !== "undefined") {
+    if (isMounted) {
       LocalStorage.setItem("theme", theme);
     }
-  }, [theme]);
+  }, [theme, isMounted]);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");

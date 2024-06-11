@@ -149,9 +149,9 @@ export default function CommunityReviewItem({
   return (
     <div>
       <div className="mb-4 border-b-2 border-solid border-black border-opacity-5 pb-2">
-        <div className="flex w-full items-center justify-between">
-          <div className="mb-4 text-black text-opacity-35">
-            <span className="mr-2">
+        <div className="flex w-full items-center justify-between ">
+          <div className="mb-4 text-black text-opacity-35 dark:text-light-light dark:text-opacity-20">
+            <span className="mr-2 ">
               {comment.author.nickname} ({maskUsername(comment.author.username)}
               )
             </span>
@@ -171,18 +171,20 @@ export default function CommunityReviewItem({
             >
               답글
             </span>
-            {isLikeClicked[comment._id] ? (
-              <AiFillLike
-                onClick={() => handleLike(comment._id)}
-                className=" size-5 cursor-pointer text-white"
-              />
-            ) : (
-              <AiOutlineLike
-                onClick={() => handleLike(comment._id)}
-                className=" size-5 cursor-pointer"
-              />
-            )}
-            <span>{reviewLikes[comment._id]}</span>
+            <div className="mx-2 flex items-center">
+              {isLikeClicked[comment._id] ? (
+                <AiFillLike
+                  onClick={() => handleLike(comment._id)}
+                  className=" mr-1  size-5 cursor-pointer text-white"
+                />
+              ) : (
+                <AiOutlineLike
+                  onClick={() => handleLike(comment._id)}
+                  className=" mr-1 size-5 cursor-pointer"
+                />
+              )}
+              <span>{reviewLikes[comment._id]}</span>
+            </div>
             {userId == comment.author._id && (
               <div className="relative">
                 <CiMenuKebab
@@ -192,7 +194,7 @@ export default function CommunityReviewItem({
                 {isMenuOpen && selectedCommentId === comment._id && (
                   <div
                     ref={divRef}
-                    className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center justify-center rounded-sm bg-light-light p-2 shadow-lg"
+                    className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center justify-center rounded-sm bg-light-light p-2  shadow-lg dark:bg-dark-dark"
                   >
                     {isCommentOpen ? (
                       <span
@@ -226,11 +228,11 @@ export default function CommunityReviewItem({
         </div>
         <div className="mb-2">{comment.content}</div>
         {isCommentOpen && (
-          <div className="ml-12 mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
+          <div className="ml-12 mt-4 flex flex-col items-end rounded-md border-solid bg-light-light p-4 shadow-md dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
             <textarea
               onChange={(e) => setCommentContent(e.target.value)}
               value={commentContent}
-              className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+              className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none dark:border-opacity-20 dark:bg-dark-dark"
             />
             <button
               onClick={() => {
@@ -244,11 +246,12 @@ export default function CommunityReviewItem({
           </div>
         )}
         {isReCommentOpen && (
-          <div className="ml-12 mt-4 flex flex-col items-end rounded-md bg-light-light p-4 shadow-md">
+          <div className="ml-12 mt-4 flex flex-col items-end rounded-md border-solid bg-light-light p-4 shadow-md dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark">
             <textarea
+              placeholder="답글을 입력해주세요"
               onChange={(e) => setReCommentContent(e.target.value)}
               value={reCommentContent}
-              className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none"
+              className="h-24 w-full resize-none rounded-md border border-gray-300 bg-light-light p-2 focus:border-blue-500 focus:outline-none dark:border-opacity-20 dark:bg-dark-dark"
             />
             <button
               onClick={() => {
@@ -266,6 +269,7 @@ export default function CommunityReviewItem({
       {comment.children &&
         comment.children.map((reComment: IReComment) => (
           <CommunityReCommentItem
+            setIsMenuOpen={setIsMenuOpen}
             key={reComment._id}
             reComment={reComment}
             userId={userId}

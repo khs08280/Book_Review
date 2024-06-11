@@ -33,7 +33,7 @@ export function SideBar() {
   };
 
   return (
-    <div className="fixed h-screen w-52 border-r border-solid border-black border-opacity-10 p-5 shadow dark:bg-dark-darker dark:text-light-light">
+    <div className="fixed h-screen w-52 border-r border-solid border-black border-opacity-10 p-5 shadow dark:border-r-2 dark:border-solid dark:border-light-light dark:border-opacity-5 dark:bg-dark-darker dark:text-light-light">
       <ul>
         <Link href={"/"}>
           <li

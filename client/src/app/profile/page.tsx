@@ -269,7 +269,7 @@ export default function Profile() {
     <>
       <SideBar />
       <main
-        className="ml-52 flex items-center justify-center"
+        className="ml-52 flex items-center justify-center dark:bg-dark-darker dark:text-light-light"
         style={{ height: "calc(100vh - 20vh)" }}
       >
         <nav className="text-blue-400">
@@ -335,7 +335,7 @@ export default function Profile() {
                 {myInfo?.recommendedBooks?.length > 0 ? (
                   myInfo.recommendedBooks.map((book: IBook) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
                       key={book._id}
                     >
                       <span className="truncate text-2xl font-medium">
@@ -356,7 +356,7 @@ export default function Profile() {
                 {myInfo?.review?.length > 0 ? (
                   myInfo.review.map((review: IReview) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      className="dark: mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
                       key={review._id}
                     >
                       <span className="truncate text-2xl font-medium">
@@ -378,7 +378,7 @@ export default function Profile() {
                 {myInfo?.communityArticles?.length > 0 ? (
                   myInfo.communityArticles.map((article: IArticle) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
                       key={article._id}
                     >
                       <span className="truncate text-2xl font-medium">
@@ -402,7 +402,7 @@ export default function Profile() {
                 {myInfo?.communityComments?.length > 0 ? (
                   myInfo.communityComments.map((comment: IComment) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
                       key={comment._id}
                     >
                       <span className="truncate text-2xl font-medium">
@@ -426,7 +426,7 @@ export default function Profile() {
                 {myInfo?.oneLineRecommends?.length > 0 ? (
                   myInfo.oneLineRecommends.map((oneLine: IOneLine) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2"
+                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
                       key={oneLine._id}
                     >
                       <span className="text-lg">{oneLine.content}</span>
@@ -451,7 +451,7 @@ export default function Profile() {
                 onChange={(e) => setIntroduction(e.target.value)}
               />
               <button
-                className=" w-fit self-end rounded-lg bg-blue-200 px-3 py-2 text-dark-dark transition-all duration-75 hover:bg-slate-200"
+                className=" w-fit self-end rounded-lg bg-green-400 px-3 py-2 text-dark-dark transition-all duration-75 hover:bg-slate-200"
                 onClick={updateReview}
               >
                 자기소개 변경
@@ -479,7 +479,10 @@ export default function Profile() {
                 value={newPw}
                 onChange={(e) => setNewPw(e.target.value)}
               />
-              <button className="w-fit self-center" onClick={handleUpdatePw}>
+              <button
+                className="w-fit self-end rounded-lg bg-green-400 px-3 py-2 text-dark-dark transition-all duration-75 hover:bg-slate-200"
+                onClick={handleUpdatePw}
+              >
                 비밀번호 변경
               </button>
             </div>
@@ -495,7 +498,7 @@ export default function Profile() {
               />
               {error}
               <button
-                className="w-fit self-center"
+                className="w-fit self-end rounded-lg bg-green-400 px-3 py-2 text-dark-dark transition-all duration-75 hover:bg-slate-200"
                 onClick={handleDeleteAccount}
               >
                 회원 탈퇴

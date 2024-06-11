@@ -132,7 +132,7 @@ export default function SnsActivityLogs() {
       {activityLogs &&
         activityLogs.map((activityLog: IActivityLog) => (
           <div
-            className=" mb-5 flex w-full flex-col justify-between rounded-md border-2 border-solid border-white p-5"
+            className=" mb-5 flex w-full flex-col justify-between rounded-md border-2 border-solid border-white p-5 dark:border-opacity-20"
             key={activityLog._id}
           >
             <div className="mb-5 flex items-center">
@@ -148,7 +148,7 @@ export default function SnsActivityLogs() {
               </div>
             </div>
             <div className="mb-5 flex flex-col ">
-              <span className=" text-black text-opacity-35">
+              <span className=" text-black text-opacity-35 dark:text-light-light dark:text-opacity-30">
                 {activityLog.description}
               </span>
               <div className="my-3 flex items-center">
@@ -178,7 +178,7 @@ export default function SnsActivityLogs() {
               onClick={() =>
                 handleLike(activityLog.referenceId, activityLog.type)
               }
-              className="flex w-fit cursor-pointer items-center rounded-md border-2 border-solid border-white p-2 px-4"
+              className="flex w-fit cursor-pointer items-center rounded-md border-2 border-solid border-white p-2 px-4 dark:border-opacity-20"
             >
               {isLikeClicked[activityLog.referenceId] ? (
                 <AiFillLike className=" size-5 cursor-pointer text-white" />

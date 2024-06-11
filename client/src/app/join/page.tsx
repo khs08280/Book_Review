@@ -57,33 +57,33 @@ export default function Join() {
 
   return (
     <>
-      <div className="flex h-screen flex-col items-center justify-start bg-light-lightest p-40">
-        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-32 py-10">
+      <div className="flex h-screen flex-col items-center justify-start bg-light-lightest p-40 dark:bg-dark-darker dark:text-light-light">
+        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-32 py-10 dark:border-opacity-20 dark:bg-dark-darker">
           <span className="mb-20 text-3xl">회원가입</span>
           <div className="mb-20 flex w-96 border-collapse flex-col">
             <input
               placeholder="아이디"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none dark:bg-dark-dark"
             />
             <input
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mb-3 h-10 cursor-pointer rounded-lg border-2  border-solid border-black border-opacity-20 p-4 focus:outline-none"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid  border-black border-opacity-20 p-4 focus:outline-none dark:bg-dark-dark"
             />
             <input
               placeholder="이메일"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none dark:bg-dark-dark"
             />
             <input
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid  border-black border-opacity-20 p-4 focus:outline-none"
+              className="mb-3 h-10 cursor-pointer rounded-lg border-2 border-solid border-black  border-opacity-20 p-4 focus:outline-none dark:bg-dark-dark"
             />
           </div>
           <span className="text-lg text-red-600">{error}</span>

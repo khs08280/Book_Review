@@ -21,7 +21,7 @@ const config: Config = {
         },
         dark: {
           dark: "#333333",
-          darker: "#1a1a1a",
+          darker: "#1E1E20",
           darkest: "#0a0a0a",
         },
       },

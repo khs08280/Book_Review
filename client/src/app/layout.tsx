@@ -21,11 +21,23 @@ export default function CommunityLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
+  const setInitialTheme = `
+  (function() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  })()
+`;
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <RecoilRootProvider>
           <ReactQueryProviders>
+            <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
             <Header />
             <main>{children}</main>
           </ReactQueryProviders>

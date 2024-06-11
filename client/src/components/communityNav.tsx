@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function CommunityNav() {
   return (
     <nav>
-      <ul className="mb-20 flex w-full  justify-between bg-green-300 p-5 px-20">
+      <ul className="mb-20 flex w-full justify-between  bg-green-300 p-5 px-20 dark:text-dark-dark">
         <Link href={`/community/인기글`}>
           <li className="cursor-pointer">인기글</li>
         </Link>
