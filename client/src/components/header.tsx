@@ -11,6 +11,7 @@ import LocalStorage from "../hooks/localStorage";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaUser, FaUserCircle } from "react-icons/fa";
 import DarkModeToggle from "./darkModeToggle";
+import { FiMenu } from "react-icons/fi";
 
 export function Header() {
   const [isLoggedIn, setClientExampleState] = useState(false);
@@ -92,9 +93,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker  dark:text-light-light dark:shadow-xl">
-      <Link href={"/"}>
-        <h1 className=" text-3xl ">BOOX</h1>
-      </Link>
+      <div className="flex items-center">
+        <FiMenu className="mr-3 size-5 cursor-pointer lg:hidden" />
+        <Link href={"/"}>
+          <h1 className=" text-3xl ">BOOX</h1>
+        </Link>
+      </div>
       <div className="flex max-w-fit items-center ">
         <div className="flex items-center" ref={searchRef}>
           <IoSearch onClick={searchClick} className=" size-6 cursor-pointer" />

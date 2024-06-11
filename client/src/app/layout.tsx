@@ -6,6 +6,7 @@ import RecoilRootProvider from "../utils/recoilRoot-provider";
 import { Header } from "../components/header";
 import React, { Suspense } from "react";
 import Loading from "../components/loading";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,10 +35,13 @@ export default function CommunityLayout({
 
   return (
     <html lang="en">
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
+      </Head>
       <body className={inter.className}>
         <RecoilRootProvider>
           <ReactQueryProviders>
-            <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
             <Header />
             <main>{children}</main>
           </ReactQueryProviders>

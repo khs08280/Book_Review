@@ -110,92 +110,100 @@ export default function Home() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex h-full bg-slate-400 p-10 dark:bg-dark-darker dark:text-light-light">
-        <div className="mr-5 grid w-4/6 grid-cols-2 grid-rows-4 gap-5">
-          <div className="col-span-2 w-full flex-col">
+      <div className="grid grid-cols-1 grid-rows-6 gap-5 bg-slate-400 p-10 dark:bg-dark-darker dark:text-light-light sm:bg-green-400 lg:ml-52 lg:grid-cols-3 lg:grid-rows-4 lg:bg-blue-500">
+        <div className="col-span-1 mr-5 sm:w-full lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:row-end-2">
+          <div className="flex-col">
             <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
             <BookList books={books} />
           </div>
         </div>
-        <div className="flex w-1/3 flex-col">
-          <div className="mb-3 ml-8 h-1/2 ">
-            <div className="">
-              <h2 className="mb-5 text-2xl">지금 커뮤니티는?</h2>
-              <ul>
-                {articles &&
-                  articles.map((article: IArticle) => (
-                    <li
-                      key={article._id}
-                      className="flex w-full justify-between   rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
-                    >
-                      <div className="flex flex-col">
-                        <div className="mb-2">
-                          <Link href={`/community/article/${article._id}`}>
-                            <span>{article.title}</span>
-                          </Link>
-                        </div>
-                        <div className=" flex text-xs opacity-35 ">
-                          <span className="mr-3">
-                            {article.author.nickname}
-                          </span>
-                          <span className="mr-3">
-                            {formatDate(article.createdAt)}
-                          </span>
-                          <span className="flex items-center ">
-                            <AiOutlineLike className="mr-1" />
-                            {article.likes?.length}
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          </div>
-          <div className="mb-3 ml-8 h-1/2 ">
-            <div className="">
-              <h2 className="mb-5 text-2xl">한줄 책 추천</h2>
-              <ul>
-                {oneLines &&
-                  oneLines.map((oneLine: IOneLine) => (
-                    <li
-                      key={oneLine._id}
-                      className="flex w-full  justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
-                    >
-                      <div className="flex flex-col">
-                        <div className="mb-2">
-                          <Link href={`/oneLine`}>
-                            <span>{oneLine.content}</span>
-                          </Link>
-                        </div>
-                        <div className=" flex text-xs opacity-35 ">
-                          <span className="mr-3">
-                            {oneLine.author.nickname}
-                          </span>
-                          <span className="mr-3">
-                            {formatDate(oneLine.createdAt)}
-                          </span>
-                          {/* <span className="flex items-center ">
-                      <AiOutlineLike className="mr-1" />
-                      {oneLine.likes?.length}
-                    </span> */}
-                        </div>
-                      </div>
 
-                      {oneLine.book?.image && (
-                        <img
-                          src={oneLine.book?.image}
-                          alt={oneLine.book.title}
-                          className="h-16 w-12"
-                        />
-                      )}
-                    </li>
-                  ))}
-              </ul>
-            </div>
+        <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
+          <div className="w-full flex-col">
+            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          </div>
+        </div>
+
+        <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-3 lg:row-end-4">
+          <div className="w-full flex-col">
+            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          </div>
+        </div>
+
+        <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-4 lg:row-end-5">
+          <div className="w-full flex-col">
+            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          </div>
+        </div>
+
+        <div className="col-span-1 mb-3 ml-8 h-1/2 lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-3">
+          <h2 className="mb-5 text-2xl">지금 커뮤니티는?</h2>
+          <ul>
+            {articles &&
+              articles.map((article: IArticle) => (
+                <li
+                  key={article._id}
+                  className="flex w-full justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
+                >
+                  <div className="flex flex-col">
+                    <div className="mb-2">
+                      <Link href={`/community/article/${article._id}`}>
+                        <span>{article.title}</span>
+                      </Link>
+                    </div>
+                    <div className="flex text-xs opacity-35">
+                      <span className="mr-3">{article.author.nickname}</span>
+                      <span className="mr-3">
+                        {formatDate(article.createdAt)}
+                      </span>
+                      <span className="flex items-center">
+                        <AiOutlineLike className="mr-1" />
+                        {article.likes?.length}
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        <div className="col-span-1 mb-3 ml-8 h-1/2 lg:col-start-3 lg:col-end-4 lg:row-start-3 lg:row-end-5">
+          <div>
+            <h2 className="mb-5 text-2xl">한줄 책 추천</h2>
+            <ul>
+              {oneLines &&
+                oneLines.map((oneLine: IOneLine) => (
+                  <li
+                    key={oneLine._id}
+                    className="flex w-full justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
+                  >
+                    <div className="flex flex-col">
+                      <div className="mb-2">
+                        <Link href={`/oneLine`}>
+                          <span>{oneLine.content}</span>
+                        </Link>
+                      </div>
+                      <div className="flex text-xs opacity-35">
+                        <span className="mr-3">{oneLine.author.nickname}</span>
+                        <span className="mr-3">
+                          {formatDate(oneLine.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                    {oneLine.book?.image && (
+                      <img
+                        src={oneLine.book?.image}
+                        alt={oneLine.book.title}
+                        className="h-16 w-12"
+                      />
+                    )}
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
       </div>
+
       <Footer />
     </>
   );
