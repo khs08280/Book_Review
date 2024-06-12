@@ -394,7 +394,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
       <div className="flex h-screen items-center justify-center">
         <div
           onClick={handleModalClick}
-          className=" relative h-4/5 w-modal_width overflow-y-auto rounded-lg bg-white p-10 shadow-lg dark:bg-dark-darker dark:text-light-light"
+          className=" relative h-full w-modal_width overflow-y-auto rounded-lg bg-white p-10 shadow-lg dark:bg-dark-darker dark:text-light-light lg:h-4/5"
         >
           <div className="absolute right-3 top-3 ">
             <button onClick={onClose}>

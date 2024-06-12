@@ -7,8 +7,8 @@ export default function Sns() {
   return (
     <div>
       <SideBar />
-      <main className="ml-52 flex flex-col items-center p-5 dark:bg-dark-darker dark:text-light-light">
-        <div className=" min-h-screen  min-w-main_box max-w-fit bg-blue-200 p-5 dark:bg-dark-dark">
+      <main className="flex flex-col items-center dark:bg-dark-darker dark:text-light-light lg:ml-52 lg:p-5">
+        <div className=" min-h-screen  w-full bg-blue-200 p-5 dark:bg-dark-dark sm:w-2/3 lg:min-w-main_box lg:max-w-fit">
           <h2 className="mb-4 text-2xl font-medium">북스타그램</h2>
           <SnsActivityLogs />
         </div>

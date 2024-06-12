@@ -36,8 +36,8 @@ export default function CommunityCategory() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10">
-        <main className="h-screen w-7/12 bg-slate-500">
+      <div className=" flex justify-center px-2 py-5  dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52">
+        <main className="h-screen w-full bg-slate-500 dark:bg-dark-darker lg:w-7/12">
           <CommunityNav />
           <section className="flex flex-col">
             <ul>
@@ -45,7 +45,7 @@ export default function CommunityCategory() {
                 articles.map((article: any) => (
                   <li
                     key={article._id}
-                    className="flex flex-col rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light p-2 py-3"
+                    className="flex flex-col rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light p-2 py-3  dark:border-b-2 dark:bg-dark-dark"
                   >
                     <div className="mb-2">
                       <span className="mr-2 rounded-lg bg-green-400 p-2 py-1 text-sm">
@@ -72,7 +72,7 @@ export default function CommunityCategory() {
                 ))}
             </ul>
             <Link href={"/community/article/write"}>
-              <div className="mt-5 h-fit max-w-fit cursor-pointer self-end rounded-lg bg-green-200 p-3 hover:bg-green-400">
+              <div className="float-end mt-5 cursor-pointer rounded-lg bg-green-400 p-3 hover:bg-green-600">
                 글 쓰기
               </div>
             </Link>

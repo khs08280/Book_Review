@@ -269,64 +269,61 @@ export default function Profile() {
     <>
       <SideBar />
       <main
-        className="ml-52 flex items-center justify-center dark:bg-dark-darker dark:text-light-light"
+        className="flex-col items-center justify-center p-10  dark:bg-dark-darker dark:text-light-light sm:dark:bg-slate-700 lg:ml-52 lg:flex lg:flex-row lg:p-0"
         style={{ height: "calc(100vh - 20vh)" }}
       >
-        <nav className="text-blue-400">
-          <ul>
+        <nav className="text-blue-400 sm:text-lg lg:text-xl">
+          <ul className="grid grid-cols-2 grid-rows-4 gap-1 lg:block">
             <li
-              className=" mb-4 cursor-pointer text-xl "
+              className=" cursor-pointer  "
               onClick={() => handleMenuClick(0)}
             >
               내가 추천한 책
             </li>
 
             <li
-              className="  mb-4 cursor-pointer text-xl "
+              className="  cursor-pointer  "
               onClick={() => handleMenuClick(1)}
             >
               내가 리뷰를 남긴 책
             </li>
             <li
-              className=" mb-4 cursor-pointer text-xl "
+              className=" cursor-pointer  "
               onClick={() => handleMenuClick(2)}
             >
               내가 작성한 게시글
             </li>
             <li
-              className=" mb-4 cursor-pointer text-xl "
+              className=" cursor-pointer  "
               onClick={() => handleMenuClick(3)}
             >
               내가 작성한 댓글
             </li>
-            <li
-              className=" mb-4 cursor-pointer text-xl "
-              onClick={() => handleMenuClick(4)}
-            >
+            <li className=" cursor-pointer " onClick={() => handleMenuClick(4)}>
               내가 작성한 한줄 책 추천
             </li>
 
             <li
-              className="  mb-4 cursor-pointer text-xl "
+              className="  cursor-pointer  "
               onClick={() => handleMenuClick(5)}
             >
               자기소개 변경
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl "
+              className="  cursor-pointer  "
               onClick={() => handleMenuClick(6)}
             >
               비밀번호 변경
             </li>
             <li
-              className="  mb-4 cursor-pointer text-xl "
+              className="  cursor-pointer  "
               onClick={() => handleMenuClick(7)}
             >
               회원탈퇴
             </li>
           </ul>
         </nav>
-        <div className="w-40" />
+        <div className=" sm:w-20 lg:w-40" />
         <section className="flex flex-col">
           {selectedIndex === 0 && (
             <div>
@@ -335,10 +332,10 @@ export default function Profile() {
                 {myInfo?.recommendedBooks?.length > 0 ? (
                   myInfo.recommendedBooks.map((book: IBook) => (
                     <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
+                      className="mb-5 flex flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20 sm:w-72 lg:w-96"
                       key={book._id}
                     >
-                      <span className="truncate text-2xl font-medium">
+                      <span className="truncate text-lg font-medium lg:text-2xl">
                         {book.title}
                       </span>
                     </li>
@@ -356,7 +353,7 @@ export default function Profile() {
                 {myInfo?.review?.length > 0 ? (
                   myInfo.review.map((review: IReview) => (
                     <li
-                      className="dark: mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
+                      className="dark: sm:72 mb-5 flex flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20 lg:w-96"
                       key={review._id}
                     >
                       <span className="truncate text-2xl font-medium">

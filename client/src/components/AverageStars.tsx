@@ -27,17 +27,17 @@ export default function AverageStars({
               {Number.isInteger(value) ? (
                 <button
                   style={{ transform: "rotateY(-180deg)" }}
-                  className="w-4 cursor-auto overflow-hidden border-none bg-none"
+                  className="w-2 cursor-auto overflow-hidden border-none bg-none sm:w-3 lg:w-4"
                 >
                   <FaStar
-                    className="size-8 border-none transition-all duration-0"
+                    className="size-4 border-none transition-all duration-0 sm:size-6 lg:size-8"
                     color={value <= clickedStarIndex ? "#ffc107" : "#e4e5e9"}
                   />
                 </button>
               ) : (
-                <button className="w-4 cursor-auto overflow-hidden border-none bg-none">
+                <button className="w-2 cursor-auto overflow-hidden border-none bg-none sm:w-3 lg:w-4">
                   <FaStar
-                    className="size-8 border-none transition-all duration-0"
+                    className="size-4 border-none transition-all duration-0 sm:size-6 lg:size-8"
                     color={value <= clickedStarIndex ? "#ffc107" : "#e4e5e9"}
                   />
                 </button>

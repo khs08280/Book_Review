@@ -405,9 +405,9 @@ export default function ArticlePage() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
+      <div className="flex justify-center  dark:bg-dark-darker dark:text-light-light lg:ml-52">
         {article && (
-          <main className=" w-7/12 bg-slate-500 p-10 dark:bg-dark-dark">
+          <main className="w-full bg-slate-500 p-5 dark:bg-dark-dark lg:w-8/12">
             <CommunityNav />
             <section className=" border-b-2 border-solid border-black border-opacity-5 pb-10">
               <div className="flex  justify-between">

@@ -60,10 +60,10 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex h-screen flex-col items-center justify-start bg-light-lightest p-40 dark:bg-dark-darker dark:text-light-light">
-        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-32 py-10 dark:border-opacity-20 dark:bg-dark-darker">
-          <span className="mb-20 text-3xl">로그인</span>
-          <div className="mb-20 flex w-96 border-collapse flex-col">
+      <div className="flex h-screen flex-col items-center justify-start bg-light-lightest px-60 py-40 dark:bg-dark-darker dark:text-light-light sm:p-40">
+        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-10 py-10 dark:border-opacity-20 dark:bg-dark-darker sm:px-32">
+          <span className="mb-10 text-3xl sm:mb-20">로그인</span>
+          <div className=" mb-10 flex border-collapse  flex-col sm:mb-20 sm:w-96">
             <input
               placeholder="아이디"
               value={username}
@@ -85,8 +85,8 @@ export default function Login() {
             로그인
           </button>
         </div>
-        <Link href={"/join"}>
-          <span className=" hover:underline">회원가입</span>
+        <Link className="w-20" href={"/join"}>
+          <span className="  hover:underline">회원가입</span>
         </Link>
       </div>
     </>

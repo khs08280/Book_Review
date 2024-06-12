@@ -54,8 +54,8 @@ export default function CommunityWrite() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
-        <main className="flex h-screen w-7/12 flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark">
+      <div className="flex justify-center dark:bg-dark-darker dark:text-light-light lg:ml-52">
+        <main className="flex h-screen  w-full flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark lg:w-7/12">
           <span className="mb-4 text-2xl text-white">글 쓰기</span>
           <select
             className="rounded-md border-solid p-2 dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"
@@ -80,7 +80,7 @@ export default function CommunityWrite() {
             <DraftEditor setContent={setContent} />
           </div>
           <div
-            className="cursor-pointer self-end rounded-md  bg-green-400 p-2 text-light-light"
+            className="w-full cursor-pointer self-end rounded-md bg-green-400 px-3  py-2 text-center text-lg text-light-light sm:p-2 lg:w-fit"
             onClick={createArticle}
           >
             등록

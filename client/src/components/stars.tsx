@@ -66,7 +66,7 @@ export default function Stars({ myRating, handleRating }: StarsProps) {
               {Number.isInteger(value) ? (
                 <button
                   style={{ transform: "rotateY(-180deg)" }}
-                  className="w-4 overflow-hidden border-none bg-none"
+                  className="w-2 overflow-hidden border-none bg-none sm:w-3 lg:w-4"
                   onMouseEnter={() => setHoveredStarIndex(value)}
                   onMouseLeave={() => setHoveredStarIndex(clickedStarIndex)}
                   onClick={() => {
@@ -75,7 +75,7 @@ export default function Stars({ myRating, handleRating }: StarsProps) {
                   }}
                 >
                   <FaStar
-                    className="size-8 cursor-pointer border-none transition-all duration-0"
+                    className="size-4 cursor-pointer border-none transition-all duration-0 sm:size-6 lg:size-8"
                     color={
                       value <= (hoveredStarIndex || clickedStarIndex)
                         ? "#ffc107"
@@ -87,14 +87,14 @@ export default function Stars({ myRating, handleRating }: StarsProps) {
                 <button
                   onMouseEnter={() => setHoveredStarIndex(value)}
                   onMouseLeave={() => setHoveredStarIndex(clickedStarIndex)}
-                  className="w-4 overflow-hidden border-none bg-none"
+                  className="w-2 overflow-hidden border-none bg-none sm:w-3 lg:w-4"
                   onClick={() => {
                     setClickedStarIndex(value);
                     handleRating(value);
                   }}
                 >
                   <FaStar
-                    className="size-8 cursor-pointer border-none transition-all duration-0"
+                    className="size-4 cursor-pointer border-none transition-all duration-0 sm:size-6 lg:size-8"
                     color={
                       value <= (hoveredStarIndex || clickedStarIndex)
                         ? "#ffc107"

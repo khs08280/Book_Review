@@ -33,7 +33,7 @@ export default function DarkModeToggle() {
   return (
     <button onClick={toggleTheme} className="mx-5">
       {theme === "dark" ? (
-        <FaMoon className="size-10 rounded-md border-2 border-solid border-light-lighter p-2 text-white transition-all hover:bg-slate-700" />
+        <FaMoon className=" size-10  rounded-md border-2 border-solid border-light-lighter p-2 text-white transition-all hover:bg-slate-700" />
       ) : (
         <MdOutlineWbSunny className=" size-10 rounded-md border-2 border-solid border-dark-darker border-opacity-55 p-2 text-black transition-all hover:bg-slate-200" />
       )}

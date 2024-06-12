@@ -93,8 +93,8 @@ export default function ArticleUpdate() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
-        <main className="flex h-screen w-7/12 flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark">
+      <div className="flex justify-center dark:bg-dark-darker dark:text-light-light lg:ml-52 lg:p-10">
+        <main className="flex h-screen  w-full flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark lg:w-7/12">
           <span className="mb-4 text-2xl text-white">게시글 수정</span>
           <input
             onChange={handleTitleChange}
@@ -109,7 +109,7 @@ export default function ArticleUpdate() {
             />
           </div>
           <div
-            className="cursor-pointer self-end rounded-md  bg-green-400 p-2 text-light-light"
+            className="w-full cursor-pointer self-end rounded-md bg-green-400 px-3  py-2 text-center text-lg text-light-light sm:p-2 lg:w-fit"
             onClick={updateArticle}
           >
             수정

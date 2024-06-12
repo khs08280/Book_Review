@@ -13,6 +13,9 @@ const config: Config = {
       minWidth: {
         main_box: "40rem",
       },
+      height: {
+        bool_list_height: "30rem",
+      },
       colors: {
         light: {
           light: "#f3f3f3",

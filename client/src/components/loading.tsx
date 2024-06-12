@@ -11,7 +11,10 @@ export default function Loading() {
             <h2 className="mb-5 text-2xl">Hot 리뷰 북스</h2>
             <ul className="mb-5 flex ">
               {Array.from({ length: 4 }).map((_, index: number) => (
-                <li className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker">
+                <li
+                  key={index}
+                  className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                >
                   <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
                     <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
                     <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
@@ -24,7 +27,10 @@ export default function Loading() {
               <h2 className="mb-5 text-2xl">New 리뷰 북스</h2>
               <ul className="mb-5 flex ">
                 {Array.from({ length: 4 }).map((_, index: number) => (
-                  <li className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker">
+                  <li
+                    key={index}
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                  >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
@@ -38,7 +44,10 @@ export default function Loading() {
               <h2 className="mb-5 text-2xl">New 리뷰 북스</h2>
               <ul className="mb-5 flex ">
                 {Array.from({ length: 4 }).map((_, index: number) => (
-                  <li className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker">
+                  <li
+                    key={index}
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                  >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
@@ -52,7 +61,10 @@ export default function Loading() {
               <h2 className="mb-5 text-2xl">New 리뷰 북스</h2>
               <ul className="mb-5 flex ">
                 {Array.from({ length: 4 }).map((_, index: number) => (
-                  <li className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker">
+                  <li
+                    key={index}
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                  >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
                       <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />

@@ -308,8 +308,8 @@ export default function OneLine() {
   return (
     <div>
       <SideBar />
-      <div className="ml-52 flex justify-center bg-blue-300 pt-20 dark:bg-dark-darker dark:text-light-light">
-        <main className="flex w-1/2 flex-col bg-slate-400 p-10 dark:bg-dark-dark">
+      <div className="flex justify-center bg-blue-300 dark:bg-dark-darker dark:text-light-light lg:ml-52 lg:pt-20">
+        <main className="flex w-full flex-col bg-slate-400 p-10 dark:bg-dark-dark lg:w-1/2">
           <section className="mb-6">
             <h3 className="text-2xl">한줄 책 추천</h3>
             <form className="my-3">
@@ -364,7 +364,7 @@ export default function OneLine() {
               )}
             </div>
             <div
-              className=" float-end  w-fit cursor-pointer  rounded-lg bg-blue-400 p-3 text-light-light"
+              className=" float-end w-full cursor-pointer  rounded-lg bg-blue-400  p-3 text-center text-light-light lg:w-fit"
               onClick={createComment}
             >
               등록

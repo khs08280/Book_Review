@@ -35,7 +35,7 @@ export default function Search() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 min-h-screen p-5 px-10 dark:bg-dark-darker dark:text-light-light">
+      <div className="min-h-screen p-5 px-10 dark:bg-dark-darker dark:text-light-light lg:ml-52">
         {/* <BookDetailPage /> */}
         <span className="text-xl font-semibold">
           {searchText}에 대한 검색 결과
@@ -45,7 +45,7 @@ export default function Search() {
             <Link href={`/books/${book._id}`}>
               <motion.div
                 key={book._id}
-                className="h-120 mr-10 flex cursor-pointer  flex-col items-center rounded-lg border-2 border-solid border-gray-300 bg-green-300 p-5"
+                className="  mr-10 flex cursor-pointer  flex-col items-center rounded-lg border-2 border-solid border-gray-300 bg-green-300 p-5"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 layoutId={book._id}
@@ -53,7 +53,7 @@ export default function Search() {
                 <img
                   src={book.image}
                   alt={book.title}
-                  className="mb-3 h-60 w-40"
+                  className="mb-3 h-40 w-28 sm:h-60 sm:w-40"
                 />
               </motion.div>
             </Link>

@@ -36,8 +36,8 @@ export default function Community() {
   return (
     <>
       <SideBar />
-      <div className="ml-52 flex justify-center p-10 dark:bg-dark-darker dark:text-light-light">
-        <main className="h-screen w-7/12 bg-slate-500 dark:bg-dark-darker">
+      <div className="flex justify-center  px-2 py-5 dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52">
+        <main className="h-screen w-full bg-slate-500 dark:bg-dark-darker lg:w-7/12">
           <CommunityNav />
           <section className="flex flex-col">
             <ul>

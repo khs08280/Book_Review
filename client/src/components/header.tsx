@@ -17,6 +17,7 @@ export function Header() {
   const [isLoggedIn, setClientExampleState] = useState(false);
   const [exampleState, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -59,6 +60,7 @@ export function Header() {
       LocalStorage.removeItem("accessToken");
       LocalStorage.removeItem("loggedUserData");
       setIsLoggedIn(false);
+      setIsUserMenuOpen(false);
       router.push("/");
     } catch (error) {
       console.error("로그아웃 오류:", error);
@@ -92,58 +94,111 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker  dark:text-light-light dark:shadow-xl">
-      <div className="flex items-center">
-        <FiMenu className="mr-3 size-5 cursor-pointer lg:hidden" />
-        <Link href={"/"}>
-          <h1 className=" text-3xl ">BOOX</h1>
-        </Link>
-      </div>
-      <div className="flex max-w-fit items-center ">
-        <div className="flex items-center" ref={searchRef}>
-          <IoSearch onClick={searchClick} className=" size-6 cursor-pointer" />
-          <AnimatePresence>
-            {isSearchOpen && (
-              <motion.form
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 200, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="ml-2"
-                onSubmit={handleSearch}
-              >
-                <input
-                  onChange={(e) => setSearchText(e.target.value)}
-                  value={searchText}
-                  className="h-10 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400 dark:bg-dark-dark dark:text-light-light"
-                />
-              </motion.form>
-            )}
-          </AnimatePresence>
+    <div className="sticky top-0 z-10">
+      <header className=" flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker dark:text-light-light dark:shadow-xl">
+        <div className="flex items-center">
+          <FiMenu className="mr-3 size-5 cursor-pointer lg:hidden" />
+          <Link href="/">
+            <h1 className="text-3xl">BOOX</h1>
+          </Link>
         </div>
-        <DarkModeToggle />
         {isLoggedIn ? (
-          <>
-            <button
-              className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600"
-              onClick={handleLogout}
-            >
-              로그아웃
-            </button>
-            <Link href={"/profile"}>
-              <div>
-                <FaUserCircle className="ml-5 size-10" />
-              </div>
-            </Link>
-          </>
+          <FaUser
+            onClick={() => {
+              setIsUserMenuOpen(true);
+              console.log(isUserMenuOpen);
+            }}
+            className="size-8 cursor-pointer lg:hidden"
+          />
         ) : (
-          <Link href={"/login"}>
-            <button className="min-w-fit rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600">
+          <Link href="/login">
+            <button className="min-w-fit rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600 lg:hidden">
               로그인
             </button>
           </Link>
         )}
-      </div>
-    </header>
+
+        <div className="hidden max-w-fit items-center lg:flex">
+          <div className="flex items-center" ref={searchRef}>
+            <IoSearch onClick={searchClick} className="size-6 cursor-pointer" />
+            <AnimatePresence>
+              {isSearchOpen && (
+                <motion.form
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 200, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="ml-2"
+                  onSubmit={handleSearch}
+                >
+                  <input
+                    onChange={(e) => setSearchText(e.target.value)}
+                    value={searchText}
+                    className="h-10 w-full rounded-md border border-solid border-black pl-2 focus:outline-green-400 dark:bg-dark-dark dark:text-light-light"
+                  />
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
+          <DarkModeToggle />
+          {isLoggedIn ? (
+            <>
+              <button
+                className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600"
+                onClick={handleLogout}
+              >
+                로그아웃
+              </button>
+              <Link href="/profile">
+                <div>
+                  <FaUserCircle className="ml-5 size-10" />
+                </div>
+              </Link>
+            </>
+          ) : (
+            <Link href="/login">
+              <button className="min-w-fit rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600">
+                로그인
+              </button>
+            </Link>
+          )}
+        </div>
+      </header>
+      <AnimatePresence>
+        {isUserMenuOpen && (
+          <div className="lg:hidden">
+            <motion.div
+              className="fixed inset-0 z-40 bg-black bg-opacity-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsUserMenuOpen(false)}
+            />
+            <motion.div
+              className="fixed right-0 top-0 z-50 h-full w-1/2 bg-light-light bg-opacity-100 dark:bg-dark-darker"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div className="p-5 dark:text-light-light">
+                <Link href="/profile">
+                  <div className="block py-2 text-lg">프로필</div>
+                </Link>
+                {isLoggedIn && (
+                  <button
+                    className="block w-full py-2 text-left text-lg text-red-600"
+                    onClick={handleLogout}
+                  >
+                    로그아웃
+                  </button>
+                )}
+                <DarkModeToggle />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

@@ -110,9 +110,9 @@ export default function Home() {
   return (
     <>
       <SideBar />
-      <div className="grid grid-cols-1 grid-rows-6 gap-5 bg-slate-400 p-10 dark:bg-dark-darker dark:text-light-light sm:bg-green-400 lg:ml-52 lg:grid-cols-3 lg:grid-rows-4 lg:bg-blue-500">
+      <div className="grid grid-cols-1 grid-rows-6 gap-5 bg-slate-400 dark:bg-dark-darker dark:text-light-light sm:bg-green-400 sm:p-10 lg:ml-52 lg:grid-cols-3 lg:grid-rows-4 lg:bg-blue-500">
         <div className="col-span-1 mr-5 sm:w-full lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:row-end-2">
-          <div className="flex-col">
+          <div className="lg:h-bool_list_height  block  h-2/3 flex-col overflow-hidden p-5">
             <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
             <BookList books={books} />
           </div>
@@ -136,7 +136,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="col-span-1 mb-3 ml-8 h-1/2 lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-3">
+        <div className="col-span-1 mb-3 h-1/2 px-5 lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-3 lg:ml-8">
           <h2 className="mb-5 text-2xl">지금 커뮤니티는?</h2>
           <ul>
             {articles &&
@@ -167,7 +167,7 @@ export default function Home() {
           </ul>
         </div>
 
-        <div className="col-span-1 mb-3 ml-8 h-1/2 lg:col-start-3 lg:col-end-4 lg:row-start-3 lg:row-end-5">
+        <div className="col-span-1 mb-3 h-1/2 px-5 lg:col-start-3 lg:col-end-4 lg:row-start-3 lg:row-end-5 lg:ml-8">
           <div>
             <h2 className="mb-5 text-2xl">한줄 책 추천</h2>
             <ul>
