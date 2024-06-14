@@ -5,7 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { isLoggedInAtom } from "../states/atoms";
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { isExpired } from "../hooks/isExpired";
 import LocalStorage from "../hooks/localStorage";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,8 +18,11 @@ export function Header() {
   const [exampleState, setIsLoggedIn] = useRecoilState(isLoggedInAtom);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -89,15 +92,38 @@ export function Header() {
     if (searchText.length < 2) {
       alert("검색어는 2글자 이상이어야 합니다.");
     } else {
+      setSearchText("");
       router.push(`/search?searchText=${searchText}`);
+    }
+  };
+  const handleClick = async (href: string) => {
+    const expired = await isExpired(accessToken);
+    accessToken = LocalStorage.getItem("accessToken");
+    if (!accessToken || expired) {
+      console.log("만료되었거나 유효하지 않은 토큰입니다.");
+      setIsLoggedIn(false);
+      LocalStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
+    }
+
+    if (isLoggedIn) {
+      router.push(href);
+    } else {
+      router.push("/login");
     }
   };
 
   return (
-    <div className="sticky top-0 z-10">
+    <div className="sticky top-0 z-20">
       <header className=" flex max-w-full items-center justify-between bg-light-lighter px-8 py-5 shadow dark:bg-dark-darker dark:text-light-light dark:shadow-xl">
         <div className="flex items-center">
-          <FiMenu className="mr-3 size-5 cursor-pointer lg:hidden" />
+          <FiMenu
+            onClick={() => {
+              setIsMenuOpen((prev) => !prev);
+            }}
+            className="mr-3 size-7 cursor-pointer lg:hidden"
+          />
           <Link href="/">
             <h1 className="text-3xl">BOOX</h1>
           </Link>
@@ -105,8 +131,7 @@ export function Header() {
         {isLoggedIn ? (
           <FaUser
             onClick={() => {
-              setIsUserMenuOpen(true);
-              console.log(isUserMenuOpen);
+              setIsUserMenuOpen((prev) => !prev);
             }}
             className="size-8 cursor-pointer lg:hidden"
           />
@@ -144,7 +169,7 @@ export function Header() {
           {isLoggedIn ? (
             <>
               <button
-                className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600"
+                className="ml-10 rounded bg-green-500 p-4 py-2 text-lg text-white transition-colors hover:bg-green-600 dark:bg-stone-700"
                 onClick={handleLogout}
               >
                 로그아웃
@@ -195,6 +220,81 @@ export function Header() {
                 )}
                 <DarkModeToggle />
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <div className="lg:hidden">
+            <motion.div
+              className="fixed inset-0 z-40 bg-black bg-opacity-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+            />
+            <motion.div
+              className="fixed left-0 top-0 z-50 h-full w-1/2 bg-light-light bg-opacity-100 dark:bg-dark-darker"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <ul className="p-5 dark:text-light-light">
+                <Link href={"/"}>
+                  <li
+                    className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700 ${
+                      pathname === "/" ? "bg-slate-500" : ""
+                    }`}
+                  >
+                    홈
+                  </li>
+                </Link>
+                <Link href={"/books"}>
+                  <li
+                    className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700 ${
+                      pathname === "/books" ? "bg-slate-500" : ""
+                    }`}
+                  >
+                    모든 북스
+                  </li>
+                </Link>
+
+                <Link href={"/community"}>
+                  <li
+                    className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700 ${
+                      pathname === "/community" ? "bg-slate-500" : ""
+                    }`}
+                  >
+                    커뮤니티
+                  </li>
+                </Link>
+                <Link href={"/oneLine"}>
+                  <li className="mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700">
+                    한줄 책 추천
+                  </li>
+                </Link>
+                <li
+                  onClick={() => handleClick("/sns")}
+                  className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700 ${
+                    pathname === "/sns" ? "bg-slate-500" : ""
+                  }`}
+                >
+                  SNS
+                </li>
+                {isLoggedIn ? (
+                  <Link href={"/profile"}>
+                    <li
+                      className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-slate-700 ${
+                        pathname === "/profile" ? "bg-slate-500" : ""
+                      }`}
+                    >
+                      내 책장
+                    </li>
+                  </Link>
+                ) : null}
+              </ul>
             </motion.div>
           </div>
         )}

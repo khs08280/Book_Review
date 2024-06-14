@@ -3,7 +3,11 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
-export function BookList({ books = [] }) {
+interface BookListProps {
+  books: IBook[];
+}
+
+export default function BookList({ books }: BookListProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [back, setBack] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(4);
@@ -58,7 +62,6 @@ export function BookList({ books = [] }) {
       transition: { duration: 0.7 },
     }),
   };
-
   const displayedBooks =
     window.innerWidth < 640
       ? books.slice(currentIndex, currentIndex + 2)
@@ -66,10 +69,14 @@ export function BookList({ books = [] }) {
 
   return (
     <div className="relative flex w-full  items-center">
-      <FaArrowLeft
-        onClick={handlePrev}
-        className={`absolute -left-4  top-44 z-20 size-8 -translate-y-1/2 transform cursor-pointer rounded-full bg-light-light p-2 dark:bg-dark-dark dark:text-light-light dark:text-opacity-80 ${currentIndex === 0 ? "cursor-not-allowed opacity-50" : ""}`}
-      />
+      {currentIndex <
+        (window.innerWidth < 640 ? books.length - 2 : books.length - 4) && (
+        <FaArrowLeft
+          onClick={handlePrev}
+          aria-label="이전"
+          className={`absolute left-0 top-44 z-10 size-8 -translate-y-1/2 transform cursor-pointer rounded-full bg-light-light p-2 dark:bg-dark-dark dark:text-light-light dark:text-opacity-80`}
+        />
+      )}
       <div className="relative w-full">
         <AnimatePresence initial={false} custom={back}>
           <motion.div
@@ -86,19 +93,18 @@ export function BookList({ books = [] }) {
               <Link key={book._id} href={`/books/${book._id}`} shallow={true}>
                 <motion.div
                   key={book._id}
-                  className=" flex w-full cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-gray-300 p-5 dark:border-opacity-50"
+                  className=" flex w-full cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-green-400 border-opacity-40 bg-green-200 p-5 dark:border-opacity-10 dark:bg-dark-darker"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  layoutId={book._id}
                 >
                   <div className="relative mb-3 h-48 w-32">
                     <img
                       src={book.image}
                       alt={book.title}
-                      className="absolute left-0 top-0 h-full w-full object-cover"
+                      className="absolute left-0 top-0"
                     />
                   </div>
-                  <div className="h-20 w-full rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
+                  <div className="h-20 w-full rounded-lg bg-green-300 p-2  dark:bg-dark-dark">
                     <span>{book.review[0]?.content}</span>
                   </div>
                 </motion.div>
@@ -107,10 +113,14 @@ export function BookList({ books = [] }) {
           </motion.div>
         </AnimatePresence>
       </div>
-      <FaArrowRight
-        onClick={handleNext}
-        className={`absolute -right-4 top-44 z-20 size-8 -translate-y-1/2 transform cursor-pointer rounded-full bg-light-light p-2 dark:bg-dark-dark dark:text-light-light dark:text-opacity-80 ${currentIndex === (window.innerWidth < 640 ? books.length - 2 : books.length - 4) ? "cursor-not-allowed opacity-50" : ""}`}
-      />
+      {currentIndex <
+        (window.innerWidth < 640 ? books.length - 2 : books.length - 4) && (
+        <FaArrowRight
+          onClick={handleNext}
+          aria-label="다음"
+          className={`absolute right-0 top-44 z-10 size-8 -translate-y-1/2 transform cursor-pointer rounded-full bg-light-light p-2 dark:bg-dark-dark dark:text-light-light dark:text-opacity-80`}
+        />
+      )}
     </div>
   );
 }

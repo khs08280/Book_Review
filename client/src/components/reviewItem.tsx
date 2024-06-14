@@ -87,7 +87,7 @@ function ReviewItem({
   }, []);
 
   return (
-    <li className="mb-5 flex h-28 flex-col justify-between border-b border-solid border-slate-400 pb-4">
+    <li className="mb-5 flex h-28 flex-col justify-between border-b border-solid border-green-200 pb-4">
       {isUserReview ? (
         <div className="flex">
           {myRating !== null &&

@@ -6,6 +6,7 @@ import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom } from "@/src/states/atoms";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -275,48 +276,51 @@ export default function Profile() {
         <nav className="text-blue-400 sm:text-lg lg:text-xl">
           <ul className="grid grid-cols-2 grid-rows-4 gap-1 lg:block">
             <li
-              className=" cursor-pointer  "
+              className=" cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(0)}
             >
               내가 추천한 책
             </li>
 
             <li
-              className="  cursor-pointer  "
+              className="  cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(1)}
             >
               내가 리뷰를 남긴 책
             </li>
             <li
-              className=" cursor-pointer  "
+              className=" cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(2)}
             >
               내가 작성한 게시글
             </li>
             <li
-              className=" cursor-pointer  "
+              className=" cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(3)}
             >
               내가 작성한 댓글
             </li>
-            <li className=" cursor-pointer " onClick={() => handleMenuClick(4)}>
+            <li
+              className=" cursor-pointer lg:mb-2"
+              onClick={() => handleMenuClick(4)}
+            >
               내가 작성한 한줄 책 추천
             </li>
 
             <li
-              className="  cursor-pointer  "
+              className="  cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(5)}
             >
               자기소개 변경
             </li>
             <li
-              className="  cursor-pointer  "
+              className="  cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(6)}
             >
               비밀번호 변경
             </li>
             <li
-              className="  cursor-pointer  "
+              className="  cursor-pointer lg:mb-2 "
               onClick={() => handleMenuClick(7)}
             >
               회원탈퇴
@@ -374,17 +378,19 @@ export default function Profile() {
               <ul>
                 {myInfo?.communityArticles?.length > 0 ? (
                   myInfo.communityArticles.map((article: IArticle) => (
-                    <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
-                      key={article._id}
-                    >
-                      <span className="truncate text-2xl font-medium">
-                        {article.title}
-                      </span>
-                      <span className="text-lg">
-                        {convertJsonToText(article.content)}
-                      </span>
-                    </li>
+                    <Link href={`/community/article/${article._id}`}>
+                      <li
+                        className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
+                        key={article._id}
+                      >
+                        <span className="truncate text-2xl font-medium">
+                          {article.title}
+                        </span>
+                        <span className="text-lg">
+                          {convertJsonToText(article.content)}
+                        </span>
+                      </li>
+                    </Link>
                   ))
                 ) : (
                   <li>작성한 게시글이 없습니다.</li>
@@ -398,17 +404,19 @@ export default function Profile() {
               <ul>
                 {myInfo?.communityComments?.length > 0 ? (
                   myInfo.communityComments.map((comment: IComment) => (
-                    <li
-                      className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
-                      key={comment._id}
-                    >
-                      <span className="truncate text-2xl font-medium">
-                        {typeof comment.article === "string"
-                          ? comment.article
-                          : comment.article.title}
-                      </span>
-                      <span className="text-lg">{comment.content}</span>
-                    </li>
+                    <Link href={`/community/article/${comment.article._id}`}>
+                      <li
+                        className="mb-5 flex w-96 flex-col rounded-md border-2 border-solid border-dark-dark border-opacity-10 px-5 py-2 dark:border-light-light dark:border-opacity-20"
+                        key={comment._id}
+                      >
+                        <span className="truncate text-2xl font-medium">
+                          {typeof comment.article === "string"
+                            ? comment.article
+                            : comment.article.title}
+                        </span>
+                        <span className="text-lg">{comment.content}</span>
+                      </li>
+                    </Link>
                   ))
                 ) : (
                   <li>작성한 댓글이 없습니다.</li>

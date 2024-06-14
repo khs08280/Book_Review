@@ -402,8 +402,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
             </button>
           </div>
           <div
-            className={`mb-7 h-2/3 place-content-center bg-cover bg-center text-green-300`}
-            style={{ backgroundImage: `url(${book.image})` }}
+            className={`mb-7 h-2/3 place-content-center  bg-cover bg-center  text-green-500 dark:text-green-300`}
           >
             <div className="z-30 flex items-center justify-between ">
               <div className="flex flex-col ">
@@ -414,12 +413,14 @@ function Modal({ isOpen, onClose, bookId }: any) {
                 <span className="mb-2 text-3xl font-semibold">
                   {book.title}
                 </span>
-                <span className="mb-20">
+                <span className="mb-12">
                   {book.genre.map((genre: string, index: number) => (
                     <span key={index}>{genre}</span>
                   ))}
                 </span>
-                <span className=" w-2/3 text-base">{book.description}</span>
+                <span className=" mb-5 w-2/3 text-base">
+                  {book.description}
+                </span>
                 <div
                   onClick={() => handleRecommend(book._id)}
                   className=" z-50 flex w-fit cursor-pointer items-center rounded-md border-2 border-solid border-white bg-dark-dark p-2 px-4 text-white"
@@ -445,7 +446,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
               </div>
             </div>
           </div>
-          <div className="py-4">
+          <div className="border-t-2 border-solid border-green-200 border-opacity-40 py-4">
             <div>
               <span className=" text-2xl font-semibold">리뷰</span>
               <section className="mt-5 flex h-40 w-full justify-center">
@@ -459,11 +460,6 @@ function Modal({ isOpen, onClose, bookId }: any) {
                     averageRating={book.averageRating}
                     ratingCount={book.ratingCount}
                   />
-                </div>
-                <div className="flex h-full w-1/3 flex-col">
-                  <div className="flex h-full flex-col items-center justify-center">
-                    <span>여기 차트 들어갈 것{myRating}</span>
-                  </div>
                 </div>
               </section>
               <section>

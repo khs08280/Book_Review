@@ -1,13 +1,8 @@
 "use client";
 
-import { BookList } from "../components/book-list";
 import { SideBar } from "../components/sideBar";
-import { Suspense, useEffect, useState } from "react";
-import {
-  useQueries,
-  useSuspenseQueries,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useEffect, useMemo, useCallback } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import LocalStorage from "../hooks/localStorage";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -17,56 +12,52 @@ import Loading from "../components/loading";
 import Link from "next/link";
 import { formatDate } from "../hooks/checkDate";
 import { AiOutlineLike } from "react-icons/ai";
+import dynamic from "next/dynamic";
 
-const fetchData = async () => {
+const DynamicBookList = dynamic(() => import("../components/book-list"), {
+  loading: () => <div>Loading...</div>,
+  ssr: false,
+});
+
+const fetchData = async (url: string) => {
   try {
-    const response = await fetch("http://localhost:5000/api/books");
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    console.log(data.data);
     return data.data || [];
   } catch (error) {
     console.error("Fetch error:", error);
     return [];
   }
 };
-const fetchOneLines = async () => {
-  const response = await fetch(`http://localhost:5000/api/oneLines`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  console.log(data.data);
-  return data.data;
-};
-
-const getArticleList = async () => {
-  const response = await fetch("http://localhost:5000/api/articles", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-
-  return data.data;
-};
 
 export default function Home() {
   const isLoggedIn = useRecoilValue(isLoggedInAtom);
   const [
-    { data: books, error, isLoading },
-    { data: oneLines },
-    { data: articles },
+    { data: books = [], error, isLoading },
+    { data: oneLines = [] },
+    { data: articles = [] },
   ] = useQueries({
     queries: [
-      { queryKey: ["books"], queryFn: fetchData },
-      { queryKey: ["oneLines", "home"], queryFn: fetchOneLines },
-      { queryKey: ["articles", "home"], queryFn: getArticleList },
+      {
+        queryKey: ["books"],
+        queryFn: () => fetchData("http://localhost:5000/api/books"),
+      },
+      {
+        queryKey: ["oneLines", "home"],
+        queryFn: () => fetchData("http://localhost:5000/api/oneLines"),
+      },
+      {
+        queryKey: ["articles", "home"],
+        queryFn: () => fetchData("http://localhost:5000/api/articles"),
+      },
     ],
   });
 
@@ -85,14 +76,13 @@ export default function Home() {
             credentials: "include",
           },
         );
-        if (response.ok) {
-          console.log("refreshToLogin");
-        } else {
+        if (!response.ok) {
           LocalStorage.removeItem("isLoggedIn");
           setIsLoggedIn(false);
+          console.log("여기야");
           router.push("/login");
-          console.error("passport 재로그인에 실패");
         }
+        console.log("refreshToLogin");
       } catch (error) {
         console.error("passport 재로그인 시도 중 에러: ", error);
       }
@@ -103,6 +93,46 @@ export default function Home() {
     }
   }, [isLoggedIn, setIsLoggedIn, router]);
 
+  const sortByReviewCount = useCallback((books: IBook[]) => {
+    return [...books].sort((a, b) => b.review.length - a.review.length);
+  }, []);
+
+  const sortByRecentReview = useCallback((books: IBook[]) => {
+    return [...books].sort((a, b) => {
+      const aRecent = new Date(a.review[0]?.createdAt || 0);
+      const bRecent = new Date(b.review[0]?.createdAt || 0);
+      return bRecent.getTime() - aRecent.getTime();
+    });
+  }, []);
+
+  const filterByGenre = useCallback((books: IBook[], genres: string[]) => {
+    return books.filter((book) =>
+      book.genre.some((genre) => genres.includes(genre)),
+    );
+  }, []);
+
+  const getRandomBooks = useCallback((books: IBook[], count: number) => {
+    const shuffled = [...books].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  }, []);
+
+  const booksSortedByReviewCount = useMemo(
+    () => sortByReviewCount(books),
+    [books, sortByReviewCount],
+  );
+  const booksSortedByRecentReview = useMemo(
+    () => sortByRecentReview(books),
+    [books, sortByRecentReview],
+  );
+  const booksFilteredByGenre = useMemo(
+    () => filterByGenre(books, ["웹소설", "웹툰"]),
+    [books, filterByGenre],
+  );
+  const randomBooks = useMemo(
+    () => getRandomBooks(books, 5),
+    [books, getRandomBooks],
+  );
+
   if (isLoading) {
     return <Loading />;
   }
@@ -110,29 +140,32 @@ export default function Home() {
   return (
     <>
       <SideBar />
-      <div className="grid grid-cols-1 grid-rows-6 gap-5 bg-slate-400 dark:bg-dark-darker dark:text-light-light sm:bg-green-400 sm:p-10 lg:ml-52 lg:grid-cols-3 lg:grid-rows-4 lg:bg-blue-500">
+      <div className="grid grid-cols-1 grid-rows-6 gap-5  p-5 dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52 lg:grid-cols-3 lg:grid-rows-4">
         <div className="col-span-1 mr-5 sm:w-full lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:row-end-2">
-          <div className="lg:h-bool_list_height  block  h-2/3 flex-col overflow-hidden p-5">
+          <div className="block h-2/3 flex-col overflow-hidden  lg:h-bool_list_height lg:px-4">
             <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
-            <BookList books={books} />
+            <DynamicBookList books={booksSortedByReviewCount} />
           </div>
         </div>
 
         <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
-          <div className="w-full flex-col">
-            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          <div className="block h-2/3 flex-col overflow-hidden  lg:h-bool_list_height lg:px-4">
+            <div className="mb-5 text-2xl">New 리뷰 북스</div>
+            <DynamicBookList books={booksSortedByRecentReview} />
           </div>
         </div>
 
         <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-3 lg:row-end-4">
-          <div className="w-full flex-col">
-            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          <div className="block h-2/3 flex-col overflow-hidden  lg:h-bool_list_height lg:px-4">
+            <div className="mb-5 text-2xl">웹소설/웹툰</div>
+            <DynamicBookList books={booksFilteredByGenre} />
           </div>
         </div>
 
         <div className="col-span-1 mr-5 lg:col-start-1 lg:col-end-3 lg:row-start-4 lg:row-end-5">
-          <div className="w-full flex-col">
-            <div className="mb-5 text-2xl">Hot 리뷰 북스</div>
+          <div className="block h-2/3 flex-col overflow-hidden  lg:h-bool_list_height lg:px-4">
+            <div className="mb-5 text-2xl">랜덤 북스</div>
+            <DynamicBookList books={randomBooks} />
           </div>
         </div>
 
@@ -143,7 +176,7 @@ export default function Home() {
               articles.map((article: IArticle) => (
                 <li
                   key={article._id}
-                  className="flex w-full justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
+                  className="flex w-full justify-between rounded-lg border-2 border-solid border-green-400 border-opacity-40 bg-green-200 px-4 py-3 dark:border-opacity-10 dark:bg-dark-dark"
                 >
                   <div className="flex flex-col">
                     <div className="mb-2">
@@ -175,7 +208,7 @@ export default function Home() {
                 oneLines.map((oneLine: IOneLine) => (
                   <li
                     key={oneLine._id}
-                    className="flex w-full justify-between rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light px-4 py-3 dark:bg-dark-dark"
+                    className="flex w-full justify-between rounded-lg border-2 border-solid border-green-400 border-opacity-40 bg-green-200 px-4 py-3 dark:border-opacity-10 dark:bg-dark-dark"
                   >
                     <div className="flex flex-col">
                       <div className="mb-2">

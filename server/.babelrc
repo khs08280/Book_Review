@@ -1,3 +1,6 @@
 {
-  "presets": ["@babel/preset-env"]
+  "presets": ["@babel/preset-env"],
+  "ignore": ["node_modules", "**/*.test.js"],
+  "exclude": ["node_modules/*", "**/*.test.js"],
+  "plugins": []
 }

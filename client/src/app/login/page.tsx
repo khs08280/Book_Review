@@ -28,9 +28,10 @@ export default function Login() {
       );
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: any) => {
+    event.preventDefault();
     try {
       const response = await fetch("http://localhost:5000/api/users/login", {
         method: "POST",
@@ -46,6 +47,7 @@ export default function Login() {
         setTimeout(() => {
           setError("");
         }, 3000);
+        return;
       }
       const responseData = await response.json();
       setAuth(responseData.user);
@@ -61,9 +63,12 @@ export default function Login() {
   return (
     <>
       <div className="flex h-screen flex-col items-center justify-start bg-light-lightest px-60 py-40 dark:bg-dark-darker dark:text-light-light sm:p-40">
-        <div className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-10 py-10 dark:border-opacity-20 dark:bg-dark-darker sm:px-32">
+        <form
+          className="mb-5 flex h-fit flex-col items-center rounded-lg border-2 border-solid border-green-400 bg-white px-10 py-10 dark:border-opacity-20 dark:bg-dark-darker sm:px-32"
+          onSubmit={handleLogin}
+        >
           <span className="mb-10 text-3xl sm:mb-20">로그인</span>
-          <div className=" mb-10 flex border-collapse  flex-col sm:mb-20 sm:w-96">
+          <div className="mb-10 flex border-collapse flex-col sm:mb-20 sm:w-96">
             <input
               placeholder="아이디"
               value={username}
@@ -75,18 +80,16 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="h-10 cursor-pointer rounded-lg rounded-t-none border-2 border-solid border-black border-opacity-20 p-4 focus:outline-none dark:bg-dark-dark"
+              type="password"
             />
           </div>
           <span>{error}</span>
-          <button
-            onClick={handleLogin}
-            className="h-12 w-full rounded-lg bg-green-400"
-          >
+          <button type="submit" className="h-12 w-full rounded-lg bg-green-400">
             로그인
           </button>
-        </div>
+        </form>
         <Link className="w-20" href={"/join"}>
-          <span className="  hover:underline">회원가입</span>
+          <span className="hover:underline">회원가입</span>
         </Link>
       </div>
     </>

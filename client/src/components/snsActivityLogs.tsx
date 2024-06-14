@@ -127,6 +127,17 @@ export default function SnsActivityLogs() {
     return <SnsLoading />;
   }
 
+  if (activityLogs.length == 0) {
+    return (
+      <div className=" mb-5 flex w-full justify-center   p-5 py-20 dark:border-opacity-20">
+        <div className="flex flex-col items-center text-2xl">
+          <span>팔로잉 하고 있는 유저가 없어요</span>
+          <span>커뮤니티에서 소식을 받고 싶은 유저를 팔로우하세요.</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {activityLogs &&

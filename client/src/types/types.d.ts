@@ -84,11 +84,10 @@ interface IComment {
     username: string;
     nickname: string;
   };
-  article:
-    | string
-    | {
-        title: string;
-      };
+  article: {
+    title: string;
+    _id: string;
+  };
   parentComment: string;
   likes: string[];
   children: [];
