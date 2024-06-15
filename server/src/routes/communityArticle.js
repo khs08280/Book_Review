@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  ArticlePaging,
+  ArticleSearch,
   createArticle,
   deleteArticle,
   handleArticleLike,
@@ -34,6 +36,8 @@ articleRouter.delete(
 );
 articleRouter.post("/handleLike", handleArticleLike);
 
+articleRouter.get("/paging", ArticlePaging);
+articleRouter.get("/searchArticle", ArticleSearch);
 articleRouter.get("/:articleId", selectedArticle);
 articleRouter.get("/category/:category", selectedCategoryArticle);
 export default articleRouter;

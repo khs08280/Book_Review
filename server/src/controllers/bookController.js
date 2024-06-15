@@ -2,7 +2,7 @@ import Book from "../models/book.js";
 import Rating from "../models/rating.js";
 import User from "../models/user.js";
 
-export const bookList = async (req, res, next) => {
+export const bookList = async (req, res) => {
   try {
     const books = await Book.find().populate("review");
     return res.status(200).json({
@@ -46,11 +46,7 @@ export const selectedBook = async (req, res) => {
   }
 };
 
-export const hotBooks = (req, res) => {};
-export const newBooks = (req, res) => {};
-export const webFictions = (req, res) => {};
-
-export const createBook = async (req, res, next) => {
+export const createBook = async (req, res) => {
   const {
     title,
     writer,
@@ -206,5 +202,34 @@ export const searchBook = async (req, res) => {
   } catch (error) {
     console.error("Error searching books:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const infiniteBooks = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = 2;
+
+  try {
+    const totalCount = await Book.countDocuments();
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const books = await Book.find()
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate("review");
+
+    return res.status(200).json({
+      data: books,
+      currentPage: page,
+      totalPages: totalPages,
+      success: true,
+      message: "페이지별 책 리스트를 불러왔습니다",
+    });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    return res.status(500).json({
+      error: "페이지별 책 리스트를 불러오는 중 에러가 발생했습니다",
+      success: false,
+    });
   }
 };

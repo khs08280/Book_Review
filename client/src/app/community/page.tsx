@@ -6,32 +6,83 @@ import { SideBar } from "@/src/components/sideBar";
 import { formatDate } from "@/src/hooks/checkDate";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa";
 import CommunityLoading from "./loading";
+import ArticlePagination from "@/src/components/ArticlePaging";
+import { useRouter, useSearchParams } from "next/navigation";
+import CommunitySearchForm from "@/src/components/CommunitySearchForm";
+
+const PAGE_SIZE = 10;
 
 export default function Community() {
-  const getArticleList = async () => {
-    const response = await fetch("http://localhost:5000/api/articles", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    const data = await response.json();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const query = useSearchParams();
+  const categoryParams = query.get("category");
+  const pageParams = query.get("page");
+  const router = useRouter();
 
-    return data.data;
+  useEffect(() => {
+    if (pageParams) {
+      setCurrentPage(Number.parseInt(pageParams));
+      refetch();
+    }
+  }, [pageParams]);
+
+  const getArticleList = async (page: number) => {
+    console.log(currentPage, page);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/articles/paging?category=${categoryParams}&page=${page}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setTotalPages(Math.ceil(data.totalCount / PAGE_SIZE));
+        return data.data;
+      } else {
+        throw new Error(data.message || "Failed to fetch articles");
+      }
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      return [];
+    }
   };
 
-  const { data: articles, isLoading } = useQuery<IArticle[]>({
-    queryKey: ["articles"],
-    queryFn: getArticleList,
+  const {
+    data: articles,
+    isLoading,
+    refetch,
+  } = useQuery<IArticle[]>({
+    queryKey: ["categoryArticles", categoryParams],
+    queryFn: () => getArticleList(currentPage),
   });
 
   if (isLoading) {
     return <CommunityLoading />;
   }
+  const handlePageChange = async (page: number) => {
+    setCurrentPage(page);
+    router.push(`/community?category=${categoryParams}&page=${page}`);
+  };
+
+  const handleArticleSearch = (e: any) => {
+    e.preventDefault();
+    if (searchText.length < 2) {
+      alert("검색어는 2글자 이상이어야 합니다.");
+    } else {
+      setSearchText("");
+      router.push(`/community/search?searchText=${searchText}&page=1`);
+    }
+  };
 
   return (
     <>
@@ -42,7 +93,7 @@ export default function Community() {
           <section className="flex flex-col">
             <ul>
               {articles &&
-                articles.map((article: any) => (
+                articles.map((article: IArticle) => (
                   <li
                     key={article._id}
                     className=" flex flex-col rounded-lg border-2 border-solid border-green-400 border-opacity-40 bg-light-light p-2 py-3 dark:border-opacity-10 dark:bg-dark-dark"
@@ -87,6 +138,16 @@ export default function Community() {
                 글 쓰기
               </div>
             </Link>
+            <CommunitySearchForm
+              searchText={searchText}
+              setSearchText={setSearchText}
+              handleArticleSearch={handleArticleSearch}
+            />
+            <ArticlePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </section>
         </main>
       </div>

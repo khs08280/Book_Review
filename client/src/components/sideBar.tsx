@@ -58,10 +58,12 @@ export function SideBar() {
           </li>
         </Link>
 
-        <Link href={"/community"}>
+        <Link href={"/community?category=all&page=1"}>
           <li
             className={`mb-1 cursor-pointer rounded p-2 text-xl transition-colors hover:bg-green-400 dark:hover:bg-stone-500 ${
-              pathname === "/community" ? "bg-green-200 dark:bg-stone-700" : ""
+              pathname === "/community" || pathname === "/community/category"
+                ? "bg-green-200 dark:bg-stone-700"
+                : ""
             }`}
           >
             커뮤니티

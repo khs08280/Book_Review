@@ -1,26 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQueries } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isLoggedInAtom } from "@/src/states/atoms";
 import Loading from "@/src/components/loading";
 import { SideBar } from "@/src/components/sideBar";
 import { AllBookList } from "@/src/components/AllBook-list";
 import Footer from "@/src/components/footer";
-import LocalStorage from "@/src/hooks/localStorage";
 
-const fetchData = async () => {
+const fetchBooks = async ({ pageParam = 1 }) => {
   try {
-    const response = await fetch("http://localhost:5000/api/books");
+    const response = await fetch(
+      `http://localhost:5000/api/books/all?page=${pageParam}`,
+    );
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-
-    return data.data || [];
+    return data || []; // data.data 대신 data로 변경
   } catch (error) {
     console.error("Fetch error:", error);
     return [];
@@ -28,48 +27,26 @@ const fetchData = async () => {
 };
 
 export default function Books() {
-  const isLoggedIn = useRecoilValue(isLoggedInAtom);
-  const [{ data: books, error, isLoading }] = useQueries({
-    queries: [{ queryKey: ["books"], queryFn: fetchData }],
-  });
-
   const [sortedBooks, setSortedBooks] = useState<IBook[]>([]);
   const [sortOption, setSortOption] = useState<string>("리뷰 많은 순");
-
-  const router = useRouter();
-  const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
-
-  useEffect(() => {
-    const refreshToLogin = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/users/refreshToLogin",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          },
-        );
-        if (response.ok) {
-        } else {
-          LocalStorage.removeItem("isLoggedIn");
-          setIsLoggedIn(false);
-          router.push("/login");
+  const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["books"],
+      queryFn: fetchBooks,
+      initialPageParam: 1, // 페이지 번호는 1부터 시작
+      getNextPageParam: (lastPage, allPages) => {
+        // 만약 마지막 페이지라면 다음 페이지가 없다고 표시
+        if (lastPage.currentPage >= lastPage.totalPages) {
+          return undefined;
         }
-      } catch (error) {
-        console.error("passport 재로그인 시도 중 에러: ", error);
-      }
-    };
-
-    if (isLoggedIn) {
-      refreshToLogin();
-    }
-  }, [isLoggedIn, setIsLoggedIn, router]);
+        return lastPage.currentPage + 1; // 다음 페이지 번호
+      },
+    });
 
   useEffect(() => {
-    if (books) {
-      let sortedBooks = [...books];
+    if (data) {
+      const newBooks = data.pages.flatMap((page) => page.data); // data.data에서 data로 변경
+      let sortedBooks = [...newBooks];
       if (sortOption === "리뷰 많은 순") {
         sortedBooks = sortedBooks.sort(
           (a, b) => b.review.length - a.review.length,
@@ -87,7 +64,24 @@ export default function Books() {
       }
       setSortedBooks(sortedBooks);
     }
-  }, [books, sortOption]);
+  }, [data, sortOption]);
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 1 &&
+      !isLoading &&
+      hasNextPage &&
+      !isFetching
+    ) {
+      fetchNextPage();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   if (isLoading) {
     return <Loading />;
@@ -96,13 +90,13 @@ export default function Books() {
   return (
     <>
       <SideBar />
-      <div className="min-h-screen  dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52">
+      <div className="min-h-screen dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52">
         <div className="mr-5 sm:w-full">
           <div className="flex-col p-5">
             <div className="mb-5 flex justify-between">
               <span className="text-2xl">모든 북스</span>
               <select
-                className="grid grid-cols-2 rounded-md bg-gray-200 p-2 px-3 dark:bg-dark-dark lg:block"
+                className="rounded-md bg-gray-200 p-2 px-3 dark:bg-dark-dark lg:block"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
               >
@@ -112,6 +106,8 @@ export default function Books() {
               </select>
             </div>
             <AllBookList books={sortedBooks} />
+            {isFetching && <Loading />}{" "}
+            {/* 추가: 데이터를 추가로 로딩 중일 때 로딩 표시 */}
           </div>
         </div>
       </div>

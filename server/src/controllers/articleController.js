@@ -68,6 +68,7 @@ export const readArticle = async (req, res) => {
     );
     return res.status(200).json({
       data: articles,
+      totalCount: articles.length,
       message: "모든 책 리스트를 불러왔습니다",
     });
   } catch (error) {
@@ -308,5 +309,92 @@ export const handleArticleLike = async (req, res) => {
     res
       .status(500)
       .json({ success: false, error: "서버 오류가 발생했습니다." });
+  }
+};
+
+const PAGE_SIZE = 10;
+
+export const ArticlePaging = async (req, res) => {
+  const { category, page } = req.query;
+
+  if (!category || !page) {
+    return res
+      .status(400)
+      .json({ error: "카테고리와 페이지 번호를 입력해주세요." });
+  }
+
+  const pageNum = parseInt(page, 10);
+  const startIndex = (pageNum - 1) * PAGE_SIZE;
+
+  try {
+    let query = {};
+
+    if (category === "인기글") {
+      query = {};
+    } else if (category === "all") {
+      query = {};
+    } else {
+      query = { category };
+    }
+
+    const sortCriteria =
+      category === "인기글" ? { view: -1 } : { createdAt: -1 };
+
+    const totalCount = await CommunityArticle.countDocuments(query);
+
+    const articles = await CommunityArticle.find(query)
+      .sort(sortCriteria)
+      .skip(startIndex)
+      .limit(PAGE_SIZE)
+      .populate("author", "username nickname");
+
+    if (articles.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "해당 카테고리에 게시글이 없습니다." });
+    }
+
+    res.status(200).json({ data: articles, totalCount });
+  } catch (error) {
+    console.error("Error fetching paginated articles:", error);
+    res.status(500).json({
+      message: "페이지네이션 중 에러가 발생했습니다.",
+    });
+  }
+};
+
+export const ArticleSearch = async (req, res) => {
+  const { searchText, page } = req.query;
+
+  if (!searchText || !page) {
+    return res
+      .status(400)
+      .json({ error: "검색어와 페이지 번호를 입력해주세요." });
+  }
+
+  const pageNum = parseInt(page, 10);
+  const startIndex = (pageNum - 1) * PAGE_SIZE;
+
+  try {
+    const regex = new RegExp(searchText, "i");
+    const query = {
+      $or: [{ title: { $regex: regex } }, { content: { $regex: regex } }],
+    };
+
+    const articles = await CommunityArticle.find(query)
+      .skip(startIndex)
+      .limit(PAGE_SIZE)
+      .populate("author", "username nickname");
+
+    if (articles.length === 0) {
+      return res.status(404).json({ message: "검색 결과가 없습니다." });
+    }
+
+    res.status(200).json({ data: articles });
+  } catch (error) {
+    console.error("Error searching articles:", error);
+    res.status(500).json({
+      message: "검색 중 에러가 발생했습니다.",
+    });
   }
 };

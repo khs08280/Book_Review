@@ -9,6 +9,7 @@ import {
   selectedBook,
   getUserRatingForBook,
   searchBook,
+  infiniteBooks,
 } from "../controllers/bookController.js";
 import { isLoggedIn } from "../middleware/loginCheck.js";
 import passport from "passport";
@@ -16,9 +17,7 @@ import passport from "passport";
 const bookRouter = express.Router();
 
 bookRouter.get("/", bookList);
-bookRouter.get("/hot-books", hotBooks);
-bookRouter.get("/new-books", newBooks);
-bookRouter.get("/web-fictions", webFictions);
+bookRouter.get("/all", infiniteBooks);
 bookRouter.get("/searchBook", searchBook);
 
 bookRouter.post("/", createBook);
