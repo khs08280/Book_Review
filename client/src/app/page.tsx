@@ -47,7 +47,7 @@ export default function Home() {
   ] = useQueries({
     queries: [
       {
-        queryKey: ["books"],
+        queryKey: ["books", "home"],
         queryFn: () => fetchData("http://localhost:5000/api/books"),
       },
       {
@@ -94,7 +94,9 @@ export default function Home() {
   }, [isLoggedIn, setIsLoggedIn, router]);
 
   const sortByReviewCount = useCallback((books: IBook[]) => {
-    return [...books].sort((a, b) => b.review.length - a.review.length);
+    return [...books].sort(
+      (a, b) => (b.review.length || 0) - (a.review.length || 0),
+    );
   }, []);
 
   const sortByRecentReview = useCallback((books: IBook[]) => {

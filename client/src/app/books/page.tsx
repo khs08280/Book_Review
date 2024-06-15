@@ -9,6 +9,7 @@ import Loading from "@/src/components/loading";
 import { SideBar } from "@/src/components/sideBar";
 import { AllBookList } from "@/src/components/AllBook-list";
 import Footer from "@/src/components/footer";
+import BooksLoading from "./loading";
 
 const fetchBooks = async ({ pageParam = 1 }) => {
   try {
@@ -19,7 +20,7 @@ const fetchBooks = async ({ pageParam = 1 }) => {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    return data || []; // data.data 대신 data로 변경
+    return data || [];
   } catch (error) {
     console.error("Fetch error:", error);
     return [];
@@ -31,7 +32,7 @@ export default function Books() {
   const [sortOption, setSortOption] = useState<string>("리뷰 많은 순");
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
-      queryKey: ["books"],
+      queryKey: ["allBooks"],
       queryFn: fetchBooks,
       initialPageParam: 1, // 페이지 번호는 1부터 시작
       getNextPageParam: (lastPage, allPages) => {
@@ -45,15 +46,16 @@ export default function Books() {
 
   useEffect(() => {
     if (data) {
-      const newBooks = data.pages.flatMap((page) => page.data); // data.data에서 data로 변경
+      const newBooks = data.pages.flatMap((page) => page.data) || []; // data.data에서 data로 변경
       let sortedBooks = [...newBooks];
       if (sortOption === "리뷰 많은 순") {
         sortedBooks = sortedBooks.sort(
-          (a, b) => b.review.length - a.review.length,
+          (a, b) => (b.review.length || 0) - (a.review.length || 0),
         );
       } else if (sortOption === "추천 많은 순") {
         sortedBooks = sortedBooks.sort(
-          (a, b) => b.recommendations.length - a.recommendations.length,
+          (a, b) =>
+            (b.recommendations.length || 0) - (a.recommendations.length || 0),
         );
       } else if (sortOption === "최근 리뷰 순") {
         sortedBooks = sortedBooks.sort((a, b) => {
@@ -84,7 +86,7 @@ export default function Books() {
   }, [handleScroll]);
 
   if (isLoading) {
-    return <Loading />;
+    return <BooksLoading />;
   }
 
   return (
@@ -107,7 +109,6 @@ export default function Books() {
             </div>
             <AllBookList books={sortedBooks} />
             {isFetching && <Loading />}{" "}
-            {/* 추가: 데이터를 추가로 로딩 중일 때 로딩 표시 */}
           </div>
         </div>
       </div>

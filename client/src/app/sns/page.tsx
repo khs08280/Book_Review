@@ -1,7 +1,5 @@
 import { SideBar } from "@/src/components/sideBar";
 import SnsActivityLogs from "@/src/components/snsActivityLogs";
-import { Suspense } from "react";
-import SnsLoading from "./loading";
 
 export default function Sns() {
   return (

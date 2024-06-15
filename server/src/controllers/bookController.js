@@ -207,7 +207,7 @@ export const searchBook = async (req, res) => {
 
 export const infiniteBooks = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const pageSize = 2;
+  const pageSize = 18;
 
   try {
     const totalCount = await Book.countDocuments();

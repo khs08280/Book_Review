@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <>
       <SideBar />
-      <div className=" ml-52 flex h-full bg-slate-400 p-10 dark:bg-dark-darker dark:text-light-light">
+      <div className=" ml-52 flex h-full  p-10 dark:bg-dark-darker dark:text-light-light">
         <div className="mr-5  grid w-4/6 grid-cols-2 grid-rows-4 gap-5">
           <div className="col-span-2 w-full">
             <h2 className="mb-5 text-2xl">Hot 리뷰 북스</h2>
@@ -13,12 +13,12 @@ export default function Loading() {
               {Array.from({ length: 4 }).map((_, index: number) => (
                 <li
                   key={index}
-                  className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                  className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-green-300 bg-green-200 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
                 >
                   <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
-                    <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                    <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                    <div className="h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
+                    <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                    <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                    <div className="h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
                   </div>
                 </li>
               ))}
@@ -29,12 +29,12 @@ export default function Loading() {
                 {Array.from({ length: 4 }).map((_, index: number) => (
                   <li
                     key={index}
-                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-green-300 bg-green-200 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
                   >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
                     </div>
                   </li>
                 ))}
@@ -46,12 +46,12 @@ export default function Loading() {
                 {Array.from({ length: 4 }).map((_, index: number) => (
                   <li
                     key={index}
-                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-green-300 bg-green-200 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
                   >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
                     </div>
                   </li>
                 ))}
@@ -63,12 +63,12 @@ export default function Loading() {
                 {Array.from({ length: 4 }).map((_, index: number) => (
                   <li
                     key={index}
-                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-gray-300 bg-gray-300 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
+                    className="mr-5 flex h-96 w-96 items-center rounded-lg border-2 border-solid border-green-300 bg-green-200 p-5 first-line:flex-col dark:border-opacity-20 dark:bg-dark-darker"
                   >
                     <div className=" h-20 w-full place-self-end rounded-lg bg-light-lighter p-2 dark:bg-dark-dark">
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="mb-2 h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
-                      <div className="h-3 w-full rounded-xl bg-gray-300 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="mb-2 h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
+                      <div className="h-3 w-full rounded-xl bg-green-200 bg-opacity-20" />
                     </div>
                   </li>
                 ))}

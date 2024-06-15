@@ -402,15 +402,15 @@ function Modal({ isOpen, onClose, bookId }: any) {
             </button>
           </div>
           <div
-            className={`mb-7 h-2/3 place-content-center  bg-cover bg-center  text-green-500 dark:text-green-300`}
+            className={`mb-7 h-2/3 place-content-center  rounded-lg bg-green-200 bg-center px-5  text-green-500 dark:text-green-300`}
           >
             <div className="z-30 flex items-center justify-between ">
               <div className="flex flex-col ">
-                <div className="mb-1 flex w-fit items-center rounded-md bg-slate-500 px-1 text-lg font-semibold">
-                  <FaStar className="mr-2 " style={{ flexShrink: 0 }} />
+                <div className="mb-1 flex w-fit  items-center rounded-md bg-slate-200 px-2 py-1 text-lg  font-semibold dark:bg-dark-dark">
+                  <FaStar className="mr-2 size-5 " style={{ flexShrink: 0 }} />
                   <span>{Math.ceil(book.averageRating * 10) / 10}</span>
                 </div>
-                <span className="mb-2 text-3xl font-semibold">
+                <span className="my-4 text-3xl font-semibold">
                   {book.title}
                 </span>
                 <span className="mb-12">
@@ -423,10 +423,10 @@ function Modal({ isOpen, onClose, bookId }: any) {
                 </span>
                 <div
                   onClick={() => handleRecommend(book._id)}
-                  className=" z-50 flex w-fit cursor-pointer items-center rounded-md border-2 border-solid border-white bg-dark-dark p-2 px-4 text-white"
+                  className=" z-50 flex w-fit cursor-pointer  items-center rounded-md border-2 border-solid border-green-200 bg-transparent p-2 px-4 text-green-400 transition-all hover:bg-green-100 dark:border-opacity-10 dark:bg-dark-dark dark:text-white dark:hover:bg-stone-600"
                 >
                   {isRecommendClicked[book._id] ? (
-                    <AiFillLike className=" size-5 cursor-pointer text-white" />
+                    <AiFillLike className=" size-5 cursor-pointer text-green-400" />
                   ) : (
                     <AiOutlineLike className=" size-5 cursor-pointer" />
                   )}
@@ -467,21 +467,21 @@ function Modal({ isOpen, onClose, bookId }: any) {
                   <div
                     onClick={inputActiveClick}
                     ref={textareaRef}
-                    className="relative my-5 h-32 w-full bg-slate-600"
+                    className="relative my-5 h-32 w-full bg-green-500"
                   >
                     <textarea
                       maxLength={300}
                       onChange={(e) => setReviewContent(e.target.value)}
                       value={reviewContent}
                       placeholder="리뷰를 입력해주세요"
-                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-slate-600 p-3 focus:outline-none`}
+                      className={`${isReviewActive ? "h-1/2" : "h-full"} w-full resize-none bg-green-500 p-3 placeholder:text-green-200 focus:outline-none`}
                     />
                     {isReviewActive ? (
                       <div className="absolute bottom-0 flex h-1/2 w-full items-center justify-between px-5">
                         <span>{reviewContent.length} / 300</span>
                         <div
                           onClick={createReview}
-                          className="cursor-pointer rounded-md  px-2 py-3 text-sky-600 transition-all hover:bg-slate-200"
+                          className="cursor-pointer rounded-md  px-2 py-2 text-stone-600 transition-all hover:bg-green-200"
                         >
                           등록
                         </div>

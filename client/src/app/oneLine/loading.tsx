@@ -6,8 +6,8 @@ export default function CommunityLoading() {
   return (
     <div>
       <SideBar />
-      <div className="ml-52 flex justify-center bg-blue-300 pt-20">
-        <main className="flex w-1/2 flex-col bg-slate-400 p-10">
+      <div className="ml-52 flex justify-center  pt-20">
+        <main className="flex w-1/2 flex-col bg-green-200 p-10">
           <h3 className="text-2xl">한줄 책 추천</h3>
           <form className="my-3 w-full">
             <input
