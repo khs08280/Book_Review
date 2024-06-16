@@ -104,7 +104,7 @@ export default function BookList({ books }: BookListProps) {
                       className="absolute left-0 top-0"
                     />
                   </div>
-                  <div className="h-20 w-full rounded-lg bg-green-300 p-2  dark:bg-dark-dark">
+                  <div className="z-20 h-20 w-full rounded-lg bg-green-300 p-2  dark:bg-dark-dark">
                     <span>{book.review[0]?.content}</span>
                   </div>
                 </motion.div>

@@ -12,6 +12,7 @@ import { isLoggedInAtom } from "../states/atoms";
 import { convertJsonToText } from "../hooks/convertToPlainText";
 import SnsLoading from "../app/sns/loading";
 import { formatDate } from "../hooks/checkDate";
+import SnsAllLoading from "../app/sns/loading";
 
 export default function SnsActivityLogs() {
   let accessToken = LocalStorage.getItem("accessToken");
@@ -131,7 +132,9 @@ export default function SnsActivityLogs() {
     return (
       <div className=" mb-5 flex w-full justify-center   p-5 py-20 dark:border-opacity-20">
         <div className="flex flex-col items-center text-2xl">
-          <span>팔로잉 하고 있는 유저가 없어요</span>
+          <span>
+            팔로잉 하고 있는 유저가 없거나 1주일 동안 활동한 친구가 없어요
+          </span>
           <span>커뮤니티에서 소식을 받고 싶은 유저를 팔로우하세요.</span>
         </div>
       </div>

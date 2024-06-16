@@ -423,7 +423,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
                 </span>
                 <div
                   onClick={() => handleRecommend(book._id)}
-                  className=" z-50 flex w-fit cursor-pointer  items-center rounded-md border-2 border-solid border-green-200 bg-transparent p-2 px-4 text-green-400 transition-all hover:bg-green-100 dark:border-opacity-10 dark:bg-dark-dark dark:text-white dark:hover:bg-stone-600"
+                  className=" z-50 flex w-fit cursor-pointer  items-center rounded-md border-2 border-solid border-green-400 bg-transparent p-2 px-4 text-green-400 transition-all hover:bg-green-100 dark:border-opacity-10 dark:bg-dark-dark dark:text-white dark:hover:bg-stone-600"
                 >
                   {isRecommendClicked[book._id] ? (
                     <AiFillLike className=" size-5 cursor-pointer text-green-400" />

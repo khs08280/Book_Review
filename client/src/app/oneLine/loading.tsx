@@ -25,7 +25,10 @@ export default function CommunityLoading() {
           <span className="mb-5">등록</span>
           <section className="flex flex-col">
             {Array.from({ length: 10 }).map((_, index) => (
-              <li className=" flex h-16 flex-col justify-center rounded-lg border-2 border-solid border-black border-opacity-40 bg-light-light p-3">
+              <li
+                key={index}
+                className=" flex h-16 flex-col justify-center rounded-lg border-2 border-solid border-green-200 bg-light-light p-3"
+              >
                 <div className="mb-2 h-3 w-20 rounded-xl bg-gray-300" />
 
                 <div className="mb-2 h-3 w-40 rounded-xl bg-gray-200" />

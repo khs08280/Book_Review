@@ -6,13 +6,17 @@ import RecoilRootProvider from "../utils/recoilRoot-provider";
 import { Header } from "../components/header";
 import React, { Suspense } from "react";
 import Loading from "../components/loading";
-import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "북스 - BOOX",
   description: "북스 - BOOX 책 리뷰, 커뮤니티",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function CommunityLayout({
@@ -35,10 +39,9 @@ export default function CommunityLayout({
 
   return (
     <html lang="en">
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <head>
         <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
-      </Head>
+      </head>
       <body className={inter.className}>
         <RecoilRootProvider>
           <ReactQueryProviders>

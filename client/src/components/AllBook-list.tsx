@@ -19,7 +19,7 @@ export function AllBookList({ books }: BookListProps) {
                     className="left-0 top-0 h-full w-full object-cover"
                   />
                 </div>
-                <div className="h-20 w-full  rounded-lg p-2  text-center text-xl">
+                <div className="z-20 h-20 w-full  rounded-lg p-2  text-center text-xl">
                   <span className="line-clamp-2">{book.title}</span>
                 </div>
               </div>
