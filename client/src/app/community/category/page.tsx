@@ -85,7 +85,7 @@ export default function CommunityCategory() {
     <>
       <SideBar />
       <div className=" flex justify-center px-2 py-5  dark:bg-dark-darker dark:text-light-light sm:p-10 lg:ml-52">
-        <main className="h-screen w-full bg-slate-500 px-2 dark:bg-dark-darker lg:w-7/12">
+        <main className="h-screen w-full bg-green-200 px-2 dark:bg-dark-darker lg:w-7/12">
           <CommunityNav />
           <section className="flex flex-col">
             <ul>

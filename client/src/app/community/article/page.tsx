@@ -1,5 +1,4 @@
 "use client";
-
 import CommunityNav from "@/src/components/communityNav";
 import CommunityReviewItem from "@/src/components/communityCommentItem";
 import { SideBar } from "@/src/components/sideBar";
@@ -7,7 +6,12 @@ import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { maskUsername } from "@/src/hooks/maskUsername";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa";
@@ -39,9 +43,10 @@ export default function ArticlePage() {
   const divRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const params = useParams();
   const queryClient = useQueryClient();
   let accessToken = LocalStorage.getItem("accessToken");
+  const params = useSearchParams();
+  const articleId = params.get("articleId");
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -54,7 +59,7 @@ export default function ArticlePage() {
 
   const fetchData = async () => {
     const response = await fetch(
-      `http://localhost:5000/api/articles/${params.articleId}`,
+      `http://localhost:5000/api/articles/${articleId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +74,7 @@ export default function ArticlePage() {
     return data.data;
   };
   const { data: article, isLoading } = useQuery<IArticle>({
-    queryKey: ["article", params.articleId],
+    queryKey: ["article", articleId],
     queryFn: fetchData,
   });
 
@@ -101,7 +106,7 @@ export default function ArticlePage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["article", params.articleId],
+        queryKey: ["article", articleId],
       });
     },
   });
@@ -162,7 +167,7 @@ export default function ArticlePage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["article", params.articleId],
+        queryKey: ["article", articleId],
       });
     },
   });
@@ -215,7 +220,7 @@ export default function ArticlePage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["article", params.articleId],
+        queryKey: ["article", articleId],
       });
     },
   });

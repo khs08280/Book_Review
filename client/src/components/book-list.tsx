@@ -90,7 +90,11 @@ export default function BookList({ books }: BookListProps) {
             transition={{ duration: 0.5 }}
           >
             {displayedBooks.map((book: IBook) => (
-              <Link key={book._id} href={`/books/${book._id}`} shallow={true}>
+              <Link
+                key={book._id}
+                href={`/books/bookId?bookId=${book._id}`}
+                shallow={true}
+              >
                 <motion.div
                   key={book._id}
                   className=" flex w-full cursor-pointer flex-col items-center rounded-lg border-2 border-solid border-green-400 border-opacity-40 bg-green-200 p-5 dark:border-opacity-10 dark:bg-dark-darker"

@@ -109,7 +109,9 @@ export default function Community() {
                         </span>
                       )}
 
-                      <Link href={`/community/article/${article._id}`}>
+                      <Link
+                        href={`/community/article?articleId=${article._id}`}
+                      >
                         <span>{article.title}</span>
                       </Link>
                     </div>
