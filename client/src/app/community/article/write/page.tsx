@@ -48,14 +48,14 @@ export default function CommunityWrite() {
     if (!response.ok) {
       console.log(data);
     }
-    router.push(`/community/article/${data.data._id}`);
+    router.push(`/community/article?articleId=${data.data._id}`);
   };
 
   return (
     <>
       <SideBar />
       <div className="flex justify-center dark:bg-dark-darker dark:text-light-light lg:ml-52">
-        <main className="flex h-screen  w-full flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark lg:w-7/12">
+        <main className="flex h-screen  w-full flex-col space-y-4 bg-green-200 p-5 dark:bg-dark-dark lg:w-7/12">
           <span className="mb-4 text-2xl text-white">글 쓰기</span>
           <select
             className="rounded-md border-solid p-2 dark:border-2 dark:border-light-light dark:border-opacity-20 dark:bg-dark-dark"

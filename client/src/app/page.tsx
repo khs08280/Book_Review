@@ -182,7 +182,9 @@ export default function Home() {
                 >
                   <div className="flex flex-col">
                     <div className="mb-2">
-                      <Link href={`/community/article/${article._id}`}>
+                      <Link
+                        href={`/community/article?articleId=${article._id}`}
+                      >
                         <span>{article.title}</span>
                       </Link>
                     </div>

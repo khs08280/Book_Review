@@ -3,6 +3,7 @@ import Rating from "../models/rating.js";
 import User from "../models/user.js";
 
 export const bookList = async (req, res) => {
+  console.log(req);
   try {
     const books = await Book.find().populate("review");
     return res.status(200).json({

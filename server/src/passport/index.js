@@ -8,6 +8,7 @@ const passportConfig = () => {
     done(null, user._id);
   });
   passport.deserializeUser((id, done) => {
+    console.log("deserial 문제");
     User.findById(id)
       .then((user) => {
         if (!user) {

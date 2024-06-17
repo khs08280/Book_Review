@@ -99,7 +99,9 @@ export default function CommunityCategory() {
                       <span className="mr-2 rounded-lg bg-green-400 p-2 py-1 text-sm">
                         {article.category || "자유"}
                       </span>
-                      <Link href={`/community/article/${article._id}`}>
+                      <Link
+                        href={`/community/article?articleId=${article._id}`}
+                      >
                         <span>{article.title}</span>
                       </Link>
                     </div>

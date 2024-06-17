@@ -81,7 +81,9 @@ export default function CommunitySearch() {
                         </span>
                       )}
 
-                      <Link href={`/community/article/${article._id}`}>
+                      <Link
+                        href={`/community/article?articleId=${article._id}`}
+                      >
                         <span>{article.title}</span>
                       </Link>
                     </div>

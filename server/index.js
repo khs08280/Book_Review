@@ -18,9 +18,11 @@ dotenv.config();
 const app = express();
 passportConfig();
 
+const password = process.env.MONGO_PASSWORD;
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://d3eesyx6m42g7u.cloudfront.net"],
     credentials: true,
   })
 );
@@ -47,12 +49,16 @@ app.use(
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
     store: MongoStore.create({
-      client: mongoose.connection.getClient(),
+      mongoUrl: `mongodb+srv://alsdnr122014:${password}@cluster0.pgdn31n.mongodb.net/project`,
+      ttl: 24 * 60 * 60,
     }),
     cookie: {
       maxAge: 3600000 * 24,
-      httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      // httpOnly: true,
+      // secure: false,
     },
   })
 );

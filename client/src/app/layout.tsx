@@ -12,6 +12,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "북스 - BOOX",
   description: "북스 - BOOX 책 리뷰, 커뮤니티",
+  icons: {
+    icon: "/BIcon.png",
+  },
 };
 
 export const viewport = {

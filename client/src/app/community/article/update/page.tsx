@@ -6,7 +6,7 @@ import { SideBar } from "@/src/components/sideBar";
 import { isExpired } from "@/src/hooks/isExpired";
 import LocalStorage from "@/src/hooks/localStorage";
 import { isLoggedInAtom } from "@/src/states/atoms";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
@@ -17,8 +17,10 @@ export default function ArticleUpdate() {
   const setIsLoggedIn = useSetRecoilState(isLoggedInAtom);
 
   let accessToken = LocalStorage.getItem("accessToken");
-  const params = useParams();
+
   const router = useRouter();
+  const params = useSearchParams();
+  const articleId = params.get("articleId");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +36,7 @@ export default function ArticleUpdate() {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/articles/${params.articleId}`,
+          `http://localhost:5000/api/articles/${articleId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -55,7 +57,7 @@ export default function ArticleUpdate() {
       }
     };
     fetchData();
-  }, [params.articleId]);
+  }, [articleId]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -84,7 +86,7 @@ export default function ArticleUpdate() {
       if (!response.ok) {
         throw new Error("게시글을 불러오는데 실패했습니다.");
       }
-      router.push(`/community/article/${params.articleId}`);
+      router.push(`/community/article?articleId=${articleId}`);
     } catch (error) {
       console.error(error);
     }
@@ -94,7 +96,7 @@ export default function ArticleUpdate() {
     <>
       <SideBar />
       <div className="flex justify-center dark:bg-dark-darker dark:text-light-light lg:ml-52 lg:p-10">
-        <main className="flex h-screen  w-full flex-col space-y-4 bg-slate-500 p-5 dark:bg-dark-dark lg:w-7/12">
+        <main className="flex h-screen  w-full flex-col space-y-4 bg-green-200 p-5 dark:bg-dark-dark lg:w-7/12">
           <span className="mb-4 text-2xl text-white">게시글 수정</span>
           <input
             onChange={handleTitleChange}

@@ -440,7 +440,9 @@ export default function ArticlePage() {
                         ref={divRef}
                         className="absolute left-0 top-6 z-10 flex w-16 flex-col items-center rounded-sm bg-light-light p-2 shadow-lg"
                       >
-                        <Link href={`/community/article/${article._id}/update`}>
+                        <Link
+                          href={`/community/article/update?articleId=${article._id}`}
+                        >
                           <span className=" cursor-pointer text-center text-blue-500">
                             수정
                           </span>
