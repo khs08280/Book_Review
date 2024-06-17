@@ -48,15 +48,15 @@ export default function Home() {
     queries: [
       {
         queryKey: ["books", "home"],
-        queryFn: () => fetchData("http://localhost:5000/api/books"),
+        queryFn: () => fetchData("http://172.31.7.209/api/books"),
       },
       {
         queryKey: ["oneLines", "home"],
-        queryFn: () => fetchData("http://localhost:5000/api/oneLines"),
+        queryFn: () => fetchData("http://172.31.7.209/api/oneLines"),
       },
       {
         queryKey: ["articles", "home"],
-        queryFn: () => fetchData("http://localhost:5000/api/articles"),
+        queryFn: () => fetchData("http://172.31.7.209/api/articles"),
       },
     ],
   });

@@ -2,9 +2,6 @@ import express from "express";
 import {
   createBook,
   bookList,
-  hotBooks,
-  newBooks,
-  webFictions,
   handleRecommend,
   selectedBook,
   getUserRatingForBook,
