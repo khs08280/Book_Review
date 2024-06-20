@@ -24,7 +24,7 @@ export default function CommunitySearch() {
   useEffect(() => {
     const fetchData = async (page: number) => {
       const response = await fetch(
-        `http://localhost:5000/api/articles/searchArticle?searchText=${searchContent}&page=${page}`,
+        `https://bookreviewserver.shop/api/articles/searchArticle?searchText=${searchContent}&page=${page}`,
         {
           headers: {
             "Content-Type": "application/json",

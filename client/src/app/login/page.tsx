@@ -33,13 +33,16 @@ export default function Login() {
   const handleLogin = async (event: any) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-        mode: "cors",
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/users/login",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+          mode: "cors",
+          credentials: "include",
+        },
+      );
       if (!response.ok) {
         const errorResponse = await response.json();
         setError(errorResponse.error);

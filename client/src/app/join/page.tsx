@@ -24,13 +24,16 @@ export default function Join() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/users/join", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-        mode: "cors",
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/users/join",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+          mode: "cors",
+          credentials: "include",
+        },
+      );
       if (response.status === 201) {
         router.push("/login");
       } else {

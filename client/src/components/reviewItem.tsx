@@ -34,16 +34,19 @@ function ReviewItem({
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("http://localhost:5000/api/reviews", {
-        method: "DELETE",
-        body: JSON.stringify({ reviewId: review._id }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/reviews",
+        {
+          method: "DELETE",
+          body: JSON.stringify({ reviewId: review._id }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");

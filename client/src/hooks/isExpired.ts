@@ -14,7 +14,7 @@ export const isExpired = async (accessToken: string | null) => {
         return false;
       } else {
         const response = await fetch(
-          "http://localhost:5000/api/users/refresh",
+          "https://bookreviewserver.shop/api/users/refresh",
           {
             headers: {
               "Content-Type": "application/json",

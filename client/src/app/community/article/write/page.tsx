@@ -35,7 +35,7 @@ export default function CommunityWrite() {
       return;
     }
     console.log(title, content);
-    const response = await fetch("http://localhost:5000/api/articles", {
+    const response = await fetch("https://bookreviewserver.shop/api/articles", {
       method: "POST",
       body: JSON.stringify(fetchData),
       headers: {

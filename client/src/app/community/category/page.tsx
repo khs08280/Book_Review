@@ -35,7 +35,7 @@ export default function CommunityCategory() {
     console.log(currentPage, page);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/articles/paging?category=${categoryParams}&page=${page}`,
+        `https://bookreviewserver.shop/api/articles/paging?category=${categoryParams}&page=${page}`,
         {
           headers: {
             "Content-Type": "application/json",

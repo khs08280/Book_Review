@@ -50,16 +50,19 @@ function Modal({ isOpen, onClose, bookId }: any) {
   };
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("http://localhost:5000/api/reviews", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/reviews",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");
@@ -79,16 +82,19 @@ function Modal({ isOpen, onClose, bookId }: any) {
   };
   const updateMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("http://localhost:5000/api/reviews", {
-        method: "PATCH",
-        body: JSON.stringify(updateData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/reviews",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updateData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       console.log(response);
     },
 
@@ -137,7 +143,9 @@ function Modal({ isOpen, onClose, bookId }: any) {
   };
   const fetchData = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/books/${bookId}`);
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/books/${bookId}`,
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -179,7 +187,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
     accessToken = LocalStorage.getItem("accessToken");
 
     const response = await fetch(
-      "http://localhost:5000/api/reviews/handleRating",
+      "https://bookreviewserver.shop/api/reviews/handleRating",
       {
         method: "PUT",
         body: JSON.stringify(ratingData),
@@ -212,7 +220,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
         accessToken = LocalStorage.getItem("accessToken");
 
         const response = await fetch(
-          `http://localhost:5000/api/books/${bookId}/rating`,
+          `https://bookreviewserver.shop/api/books/${bookId}/rating`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -317,7 +325,7 @@ function Modal({ isOpen, onClose, bookId }: any) {
     accessToken = LocalStorage.getItem("accessToken");
     try {
       const response = await fetch(
-        "http://localhost:5000/api/reviews/handleLike",
+        "https://bookreviewserver.shop/api/reviews/handleLike",
         {
           method: "POST",
           body: JSON.stringify({ reviewId }),
@@ -359,16 +367,19 @@ function Modal({ isOpen, onClose, bookId }: any) {
       router.push("/login");
       return;
     }
-    const response = await fetch("http://localhost:5000/api/books/recommend", {
-      method: "POST",
-      body: JSON.stringify({ bookId }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetch(
+      "https://bookreviewserver.shop/api/books/recommend",
+      {
+        method: "POST",
+        body: JSON.stringify({ bookId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        credentials: "include",
       },
-      mode: "cors",
-      credentials: "include",
-    });
+    );
     if (!response.ok) {
       console.error("서버 쪽에 문제가 생김");
     }

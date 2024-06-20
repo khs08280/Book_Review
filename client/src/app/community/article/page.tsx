@@ -59,7 +59,7 @@ export default function ArticlePage() {
 
   const fetchData = async () => {
     const response = await fetch(
-      `http://localhost:5000/api/articles/${articleId}`,
+      `https://bookreviewserver.shop/api/articles/${articleId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -84,16 +84,19 @@ export default function ArticlePage() {
       articleId: string | undefined;
       parentCommentId?: string;
     }) => {
-      const response = await fetch("http://localhost:5000/api/comments", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/comments",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");
@@ -145,16 +148,19 @@ export default function ArticlePage() {
   };
   const updateMutation = useMutation({
     mutationFn: async (theData: { commentId: string; content: string }) => {
-      const response = await fetch(`http://localhost:5000/api/comments/`, {
-        method: "PATCH",
-        body: JSON.stringify(theData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/comments/`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(theData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");
@@ -198,16 +204,19 @@ export default function ArticlePage() {
 
   const deleteCommentMutation = useMutation({
     mutationFn: async (theData: { commentId: string }) => {
-      const response = await fetch(`http://localhost:5000/api/comments/`, {
-        method: "DELETE",
-        body: JSON.stringify(theData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/comments/`,
+        {
+          method: "DELETE",
+          body: JSON.stringify(theData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");
@@ -258,16 +267,19 @@ export default function ArticlePage() {
     }
     const check = confirm("삭제 하시겠습니까?");
     if (check) {
-      const response = await fetch(`http://localhost:5000/api/articles/`, {
-        method: "DELETE",
-        body: JSON.stringify({ articleId }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/articles/`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ articleId }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          mode: "cors",
+          credentials: "include",
         },
-        mode: "cors",
-        credentials: "include",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         throw new Error("Network response was not ok");
@@ -290,7 +302,7 @@ export default function ArticlePage() {
     accessToken = LocalStorage.getItem("accessToken");
     try {
       const response = await fetch(
-        "http://localhost:5000/api/articles/handleLike",
+        "https://bookreviewserver.shop/api/articles/handleLike",
         {
           method: "POST",
           body: JSON.stringify({ articleId }),
@@ -351,7 +363,7 @@ export default function ArticlePage() {
     }
     if (isLoggedIn) {
       const response = await fetch(
-        `http://localhost:5000/api/users/handlefollow/${article?.author._id}`,
+        `https://bookreviewserver.shop/api/users/handlefollow/${article?.author._id}`,
         {
           method: "POST",
           headers: {
@@ -385,7 +397,7 @@ export default function ArticlePage() {
       }
       try {
         const response = await fetch(
-          `http://localhost:5000/api/users/isFollowed/${article?.author._id}`,
+          `https://bookreviewserver.shop/api/users/isFollowed/${article?.author._id}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

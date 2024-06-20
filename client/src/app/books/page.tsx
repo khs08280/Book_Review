@@ -14,7 +14,7 @@ import BooksLoading from "./loading";
 const fetchBooks = async ({ pageParam = 1 }) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/books/all?page=${pageParam}`,
+      `https://bookreviewserver.shop/api/books/all?page=${pageParam}`,
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");

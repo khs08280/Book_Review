@@ -37,7 +37,7 @@ export default function SnsActivityLogs() {
     }
     try {
       const response = await fetch(
-        "http://localhost:5000/api/activityLogs/handleLike",
+        "https://bookreviewserver.shop/api/activityLogs/handleLike",
         {
           method: "POST",
           body: JSON.stringify({ referenceId, type }),
@@ -90,13 +90,16 @@ export default function SnsActivityLogs() {
       router.push("/login");
       return;
     }
-    const response = await fetch(`http://localhost:5000/api/activityLogs`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetch(
+      `https://bookreviewserver.shop/api/activityLogs`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    });
+    );
     const data = await response.json();
     console.log(data.data);
     return data.data;

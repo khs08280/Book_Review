@@ -62,14 +62,17 @@ export default function Profile() {
         return;
       }
       accessToken = LocalStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:5000/api/users/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/users/me`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+          method: "GET",
         },
-        credentials: "include",
-        method: "GET",
-      });
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -108,7 +111,7 @@ export default function Profile() {
         }
         accessToken = LocalStorage.getItem("accessToken");
         const response = await fetch(
-          `http://localhost:5000/api/users/delete-account`,
+          `https://bookreviewserver.shop/api/users/delete-account`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -162,7 +165,7 @@ export default function Profile() {
         };
 
         const response = await fetch(
-          `http://localhost:5000/api/users/updatePassword`,
+          `https://bookreviewserver.shop/api/users/updatePassword`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -209,7 +212,7 @@ export default function Profile() {
           return;
         }
         const response = await fetch(
-          `http://localhost:5000/api/users/updateIntroduction`,
+          `https://bookreviewserver.shop/api/users/updateIntroduction`,
           {
             headers: {
               "Content-Type": "application/json",

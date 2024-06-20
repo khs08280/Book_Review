@@ -82,7 +82,7 @@ export default function CommunityReCommentItem({
     }
     try {
       const response = await fetch(
-        "http://localhost:5000/api/comments/handleLike",
+        "https://bookreviewserver.shop/api/comments/handleLike",
         {
           method: "POST",
           body: JSON.stringify({ commentId }),

@@ -48,15 +48,15 @@ export default function Home() {
     queries: [
       {
         queryKey: ["books", "home"],
-        queryFn: () => fetchData("http://172.31.7.209/api/books"),
+        queryFn: () => fetchData("https://bookreviewserver.shop/api/books"),
       },
       {
         queryKey: ["oneLines", "home"],
-        queryFn: () => fetchData("http://172.31.7.209/api/oneLines"),
+        queryFn: () => fetchData("https://bookreviewserver.shop/api/oneLines"),
       },
       {
         queryKey: ["articles", "home"],
-        queryFn: () => fetchData("http://172.31.7.209/api/articles"),
+        queryFn: () => fetchData("https://bookreviewserver.shop/api/articles"),
       },
     ],
   });
@@ -68,7 +68,7 @@ export default function Home() {
     const refreshToLogin = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/users/refreshToLogin",
+          "https://bookreviewserver.shop/api/users/refreshToLogin",
           {
             headers: {
               "Content-Type": "application/json",

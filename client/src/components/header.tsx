@@ -48,14 +48,17 @@ export function Header() {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/users/logout", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        "https://bookreviewserver.shop/api/users/logout",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+          method: "POST",
         },
-        credentials: "include",
-        method: "POST",
-      });
+      );
       if (!response.ok) {
         console.log(response.json());
         console.error("로그아웃 실패:", response.statusText);

@@ -15,7 +15,7 @@ function SearchContent() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `http://localhost:5000/api/books/searchBook?searchText=${searchText}`,
+        `https://bookreviewserver.shop/api/books/searchBook?searchText=${searchText}`,
         {
           headers: {
             "Content-Type": "application/json",

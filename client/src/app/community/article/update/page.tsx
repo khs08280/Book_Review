@@ -36,7 +36,7 @@ export default function ArticleUpdate() {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/articles/${articleId}`,
+          `https://bookreviewserver.shop/api/articles/${articleId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -74,15 +74,18 @@ export default function ArticleUpdate() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/articles`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        `https://bookreviewserver.shop/api/articles`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ title, content, articleId: article?._id }),
+          credentials: "include",
+          method: "PATCH",
         },
-        body: JSON.stringify({ title, content, articleId: article?._id }),
-        credentials: "include",
-        method: "PATCH",
-      });
+      );
       if (!response.ok) {
         throw new Error("게시글을 불러오는데 실패했습니다.");
       }
