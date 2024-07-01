@@ -21,12 +21,12 @@
 
 <div style="display: flex; justify-content: center;">
   <figure style="display: flex; flex-direction: column; align-items:center; width: 50%;">
-    <img src="./client/public/홈.PNG" alt="홈화면" />
     <figcaption>홈화면</figcaption>
+    <img src="./client/public/홈.PNG" alt="홈화면" />
   </figure>
   <figure style="display: flex; flex-direction: column; align-items:center; width: 50%;">
-    <img src="./client/public/모달.PNG" alt="모달화면" style="" />
     <figcaption>모달화면</figcaption>
+    <img src="./client/public/모달.PNG" alt="모달화면" style="" />
   </figure>
 </div>
 
