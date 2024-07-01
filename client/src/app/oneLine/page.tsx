@@ -57,7 +57,7 @@ export default function OneLine() {
   const queryClient = useQueryClient();
 
   const fetchOneLines = async () => {
-    const response = await fetch(`https://bookreviewserver.shop/api/oneLines`, {
+    const response = await fetch(`http://localhost:5000/api/oneLines`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -74,19 +74,16 @@ export default function OneLine() {
 
   const createMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(
-        "https://bookreviewserver.shop/api/oneLines",
-        {
-          method: "POST",
-          body: JSON.stringify({ content, bookId: searchedBookData._id }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          mode: "cors",
-          credentials: "include",
+      const response = await fetch("http://localhost:5000/api/oneLines", {
+        method: "POST",
+        body: JSON.stringify({ content, bookId: searchedBookData._id }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        mode: "cors",
+        credentials: "include",
+      });
       const fetchData = await response.json();
       if (!response.ok) {
         console.log(fetchData);
@@ -135,23 +132,20 @@ export default function OneLine() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ oneLineId, content, bookId }: MutationVariables) => {
-      const response = await fetch(
-        "https://bookreviewserver.shop/api/oneLines",
-        {
-          method: "PATCH",
-          body: JSON.stringify({
-            oneLineId,
-            content,
-            bookId,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          mode: "cors",
-          credentials: "include",
+      const response = await fetch("http://localhost:5000/api/oneLines", {
+        method: "PATCH",
+        body: JSON.stringify({
+          oneLineId,
+          content,
+          bookId,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        mode: "cors",
+        credentials: "include",
+      });
       const fetchData = await response.json();
       if (!response.ok) {
         console.log(fetchData);
@@ -191,19 +185,16 @@ export default function OneLine() {
 
   const deleteMutation = useMutation({
     mutationFn: async (oneLineId: string) => {
-      const response = await fetch(
-        "https://bookreviewserver.shop/api/oneLines",
-        {
-          method: "DELETE",
-          body: JSON.stringify({ oneLineId }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          mode: "cors",
-          credentials: "include",
+      const response = await fetch("http://localhost:5000/api/oneLines", {
+        method: "DELETE",
+        body: JSON.stringify({ oneLineId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        mode: "cors",
+        credentials: "include",
+      });
       const fetchData = await response.json();
       if (!response.ok) {
         console.log(fetchData);
@@ -249,7 +240,7 @@ export default function OneLine() {
   });
   const handleSearch = async (searchText: string) => {
     const response = await fetch(
-      `https://bookreviewserver.shop/api/oneLines/${searchText}`,
+      `http://localhost:5000/api/oneLines/${searchText}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -269,7 +260,7 @@ export default function OneLine() {
   };
   const handleUpdateSearch = async (searchText: string) => {
     const response = await fetch(
-      `https://bookreviewserver.shop/api/oneLines/${searchText}`,
+      `http://localhost:5000/api/oneLines/${searchText}`,
       {
         headers: {
           "Content-Type": "application/json",
