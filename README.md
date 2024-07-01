@@ -19,8 +19,16 @@
 * ###### 프로젝트 이름: BOOX
 * ###### 개발 기간: 2024.05 ~ 2024.06
 
-![홈화면](./client/public/홈.PNG "홈 화면")
-![모달화면](./client/public/모달.PNG "모달 화면")
+<div style="display: flex; justify-content: center;">
+  <figure style="margin-right: 10px;">
+    <img src="./client/public/홈.PNG" alt="홈화면" style="width: 100%;" />
+    <figcaption>홈화면</figcaption>
+  </figure>
+  <figure>
+    <img src="./client/public/모달.PNG" alt="모달화면" style="width: 100%;" />
+    <figcaption>모달화면</figcaption>
+  </figure>
+</div>
 
 
 
@@ -84,6 +92,9 @@ $cd server
 $npm install
 $npm start
 ```
+
+
+
 
 ## ✔ Review
 
