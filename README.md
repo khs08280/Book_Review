@@ -21,11 +21,11 @@
 
 <div style="display: flex; justify-content: center;">
   <figure style="margin-right: 10px;">
-    <img src="./client/public/홈.PNG" alt="홈화면" style="width: 100%;" />
+    <img src="./client/public/홈.PNG" alt="홈화면" style="width: 50%;" />
     <figcaption>홈화면</figcaption>
   </figure>
   <figure>
-    <img src="./client/public/모달.PNG" alt="모달화면" style="width: 100%;" />
+    <img src="./client/public/모달.PNG" alt="모달화면" style="width: 50%;" />
     <figcaption>모달화면</figcaption>
   </figure>
 </div>
