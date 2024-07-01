@@ -2,17 +2,17 @@
 
 ## Index
 
-- [Summary](#Summary)
-- [Info](#Info)
-- [Trouble Shooting](#Trouble-Shooting)
-- [Technology Stacks](#Technology-Stacks)
-- [Getting Started](#Getting-Started)
-- [Review](#Review)
+- [Summary](#summary)
+- [Info](#info)
+- [Trouble Shooting](#trouble-shooting)
+- [Technology Stacks](#technology-stacks)
+- [Getting Started](#getting-started)
+- [Review](#review)
 
 ## 📌 Summary
 
 **책에 대해 소통하고 싶은 사람들을 위한 리뷰 및 커뮤니티 웹사이트**입니다. 블로그의 책 리뷰는 한 사람만의 의견이고 책 ott 서비스를 이용하지 않는 사람은 원하는 책의 리뷰를 보기 어렵기 때문에 이 사이트를 만들었습니다.  
-빠른 렌더링 속도와 SEO 최적화를 위해 Next.js를 사용했습니다. tailwind를 사용해 스타일링을 빠르게 적용할 수 있었고 framer-motion을 통해 interactive함을 더했습니다. RESTful한 API를 만드는 데에 초첨을 맞췄습니다. 인증에는 passport와 jwt를 사용했고 accessToken과 refreshToken을 따로 발급해 보안성을 높였습니다.
+빠른 렌더링 속도와 SEO 최적화를 위해 Next.js를 사용했습니다. Tailwind를 사용해 스타일링을 빠르게 적용할 수 있었고 framer-motion을 통해 interactive함을 더했습니다. RESTful한 API를 만드는 데에 초첨을 맞췄습니다. 인증에는 passport와 jwt를 사용했고 accessToken과 refreshToken을 따로 발급해 보안성을 높였습니다.
 
 ##### **주요 기능**
 
@@ -29,6 +29,7 @@
 - ###### 개발 기간: 2024.05 ~ 2024.06
 
 ![홈화면](./client/public/홈.PNG)
+![모달화면](./client/public/모달.PNG)
 
 ## 💾 Background
 
@@ -54,15 +55,15 @@ Error: Page "/books/[bookId]" is missing "generateStaticParams()" so it cannot b
 
 ##### 1. 기존 "use client"를 사용하는 page.tsx 파일을 index.tsx파일로 파일명을 바꾸고 해당 컴포넌트를 새로 만든 서버 컴포넌트인 page.tsx에서 공식문서를 보며 generateStaticParams()를 사용하여 정적파일을 생성하고 index.tsx 컴포넌트를 불러오기
 
-    해당 방법을 사용 시 오류가 발생하는 빌드 과정은 넘어가지만 공식문서를 보며 적용한 getStaticPaths와 getStaticProps를 사용하는 과정에서 App Router에서는 getStaticProps를 사용하지 않는다고 오류가 발생. getStaticProps를 지우면 getStaticPaths나 generateStaticParams에서 맞물리는 오류가 발생해 해결하려고 시도했지만 정보가 많지 않아 다른 방법을 시도했다.
+해당 방법을 사용 시 오류가 발생하는 빌드 과정은 넘어가지만 공식문서를 보며 적용한 getStaticPaths와 getStaticProps를 사용하는 과정에서 App Router에서는 getStaticProps를 사용하지 않는다고 오류가 발생. getStaticProps를 지우면 getStaticPaths나 generateStaticParams에서 맞물리는 오류가 발생해 해결하려고 시도했지만 정보가 많지 않아 다른 방법을 시도했다.
 
 ##### 2. stackOverFlow에서 next.js 13.4.13 버전에서는 해당 오류가 발생하지 않고 정상적으로 동작한다는 정보 발견 후 적용
 
-    해당 방법으로 nextjs 버전을 다운그레이드 후 빌드 시 정상적으로 빌드가 완료되고 정적 파일이 생성되지만 배포된 사이트의 동적 라우팅을 사용한 페이지 방문 시 404 오류가 발생. 정적 파일이 정상적으로 생성되지 않은 것으로 판단하고 다른 방법을 찾아봄.
+해당 방법으로 Next.js 버전을 다운그레이드 후 빌드 시 정상적으로 빌드가 완료되고 정적 파일이 생성되지만 배포된 사이트의 동적 라우팅을 사용한 페이지 방문 시 404 오류가 발생. 정적 파일이 정상적으로 생성되지 않은 것으로 판단하고 다른 방법을 찾아봄.
 
 ##### 3. next.js의 폴더명으로 자동 동적 라우팅을 사용하는게 아닌 query params를 이용하여 수동 동적 라우팅 적용
 
-    next.js의 공식 문서에도 해당 오류에 대한 내용이 없고 구글링에서 찾아본 내용에서도 더 시도할만한 방법이 없어 해당 방법으로 정적 파일을 생성했다. next.js App Router의 자체적인 문제라는 글도 많아 해당 방법으로 처리한 상태
+Next.js의 공식 문서에도 해당 오류에 대한 내용이 없고 구글링에서 찾아본 내용에서도 더 시도할만한 방법이 없어 해당 방법으로 정적 파일을 생성했다. Next.js App Router의 자체적인 문제라는 글도 많아 해당 방법으로 처리한 상태
 
 ## 🛠 Technology Stacks
 
