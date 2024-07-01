@@ -20,7 +20,7 @@
 * ###### 개발 기간: 2024.05 ~ 2024.06
 
 <div style="display: flex; justify-content: center;">
-  <figure style="margin-right: 10px;">
+  <figure style="margin-right: 10px; display: flex; flex-direction:column;">
     <img src="./client/public/홈.PNG" alt="홈화면" style="width: 50%;" />
     <figcaption>홈화면</figcaption>
   </figure>
