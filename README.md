@@ -1,6 +1,12 @@
 # BOOX(책 리뷰 및 커뮤니티 사이트)
 
-## 📌 Summary
+## 🔍 Info
+
+- ###### 1인 개발
+- ###### 프로젝트 이름: BOOX
+- ###### 개발 기간: 2024.05 ~ 2024.06
+
+- #### 📌 Summary
 
 **책에 대해 소통하고 싶은 사람들을 위한 리뷰 및 커뮤니티 웹사이트**입니다. 블로그의 책 리뷰는 한 사람만의 의견이고 책 ott 서비스를 이용하지 않는 사람은 원하는 책의 리뷰를 보기 어렵기 때문에 이 사이트를 만들었습니다.  
 빠른 렌더링 속도와 SEO 최적화를 위해 Next.js를 사용했습니다. Tailwind를 사용해 스타일링을 빠르게 적용할 수 있었고 framer-motion을 통해 interactive함을 더했습니다. RESTful한 API를 만드는 데에 초첨을 맞췄습니다. 인증에는 passport와 jwt를 사용했고 accessToken과 refreshToken을 따로 발급해 보안성을 높였습니다.
@@ -13,12 +19,6 @@
 - 한줄 책 추천을 통해 심플하게 책을 추천 받을 수 있음.
 - 프로필에서 자신의 활동 한 눈에 보기
 
-## 🔍 Info
-
-- ###### 1인 개발
-- ###### 프로젝트 이름: BOOX
-- ###### 개발 기간: 2024.05 ~ 2024.06
-
 <div style="display: flex; justify-content: center;">
   <figure style="display: flex; flex-direction: column; align-items:center; width: 50%;">
     <figcaption>홈화면</figcaption>
@@ -29,6 +29,8 @@
     <img src="./client/public/모달.PNG" alt="모달화면" style="" />
   </figure>
 </div>
+
+
 
 ## 💾 Background
 
